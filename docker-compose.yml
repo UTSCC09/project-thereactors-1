@@ -1,0 +1,15 @@
+version: '3.5'
+services:
+  recipe-central-mongo:
+    image: mongo:4.2.7-bionic
+    ports:
+      - 27020:27017
+    volumes:
+      - recipe-central-mongo-volume:/data/db/
+      - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: admin
+volumes:
+  recipe-central-mongo-volume:
