@@ -1,24 +1,21 @@
-import logo from './logo.svg';
 import './App.css';
+import { StyledEngineProvider } from '@mui/material';
+import Router from './Router';
+import Navbar from './components/utils/Navbar/Navbar';
+import Footer from './components/utils/Footer/Footer';
 
 function App() {
+  document.title = "RecipeCentral";
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <StyledEngineProvider injectFirst>
+          <div className="App">
+              <div>
+                <Navbar />
+                <Router />
+              </div>
+              <Footer />
+          </div>
+      </StyledEngineProvider>
   );
 }
 
