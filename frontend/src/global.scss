@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&display=swap');
+$fontsize-base: 14px;
+$fontsize-header1: $fontsize-base + 4;
+$fontsize-header2: $fontsize-base + 2;
+$primary-color: #FFA25E;
+
+body, html {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: $fontsize-header2;
+}

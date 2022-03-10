@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import { StyledEngineProvider } from '@mui/material';
 import Router from './Router';
 import Navbar from './components/utils/Navbar/Navbar';
