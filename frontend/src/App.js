@@ -1,7 +1,7 @@
 import './App.scss';
+import React from "react";
 import { StyledEngineProvider } from '@mui/material';
 import Router from './Router';
-import Navbar from './components/utils/Navbar/Navbar';
 import Footer from './components/utils/Footer/Footer';
 
 function App() {
@@ -9,10 +9,7 @@ function App() {
   return (
       <StyledEngineProvider injectFirst>
           <div className="App">
-              <div>
-                <Navbar />
-                <Router />
-              </div>
+              <Router />
               <Footer />
           </div>
       </StyledEngineProvider>

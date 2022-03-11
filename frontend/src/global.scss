@@ -1,10 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&display=swap');
-$fontsize-base: 14px;
+$fontsize-base: 16px;
 $fontsize-header1: $fontsize-base + 4;
 $fontsize-header2: $fontsize-base + 2;
 $primary-color: #FFA25E;
 
-body, html {
-    font-family: 'Nunito Sans', sans-serif;
-    font-size: $fontsize-header2;
+$page-padding: 0 10%;
+
+button {
+    border-radius: 4px;
+    padding: 4px 8px;
+    border: 1px solid grey;
+    
+    &:hover {
+        cursor: pointer;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.8px 1.8px 2.6px;
+    }
 }
