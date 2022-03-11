@@ -16,6 +16,7 @@ export default function Router() {
         <div>
         <BrowserRouter>
             <Navbar />
+            <div className="main-component">
             <Switch>
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/following" component={FollowingPage} />
@@ -23,6 +24,7 @@ export default function Router() {
                 <Route exact path="/profile" component={ProfilePage} />
                 <Route exact path="/*"><Redirect to="/" /></Route>
             </Switch>
+            </div>
         </BrowserRouter>
         </div>
     );

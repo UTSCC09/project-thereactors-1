@@ -8,7 +8,7 @@ export const recipeSchema = new mongoose.Schema({
   steps: [{ type: String }],
   ingredients: [{ description: String, quantity: Number }],
   servings: Number,
-  estimatedTimeTaken: Number,
+  cookingTime: { hours: Number, mins: Number },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });

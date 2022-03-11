@@ -11,6 +11,11 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  .main-component {
+    padding: $page-padding;
+    padding-top: $navbar-height;
+  }
 }
 
 .App-logo {

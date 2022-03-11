@@ -4,9 +4,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px;
+    height: $navbar-height;
     box-shadow: rgb(100 100 111 / 20%) 0px 2px 20px 0px;
     padding: $page-padding;
+    position: fixed;
+    width: 70%;
+    background-color: white;
+    opacity: .9;
 
     .left {
         .title-header {
