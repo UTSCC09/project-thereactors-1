@@ -59,7 +59,8 @@ export const resolvers = {
         pictures: recipe.pictures,
         steps: recipe.steps,
         ingredients: recipe.ingredients,
-        tools: recipe.tools,
+        cookingTime: recipe.cookingTime,
+        servings: recipe.servings
       });
       return new Promise((resolve, reject) => {
         newRecipe.save((err) => {
