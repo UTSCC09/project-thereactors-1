@@ -1,4 +1,4 @@
-import { User, Recipe } from './db';
+import { User, Recipe, Review } from './db';
 import { GraphQLDateTime } from 'graphql-iso-date';
 
 /**
@@ -8,69 +8,88 @@ import { GraphQLDateTime } from 'graphql-iso-date';
 export const resolvers = {
   DateTime: GraphQLDateTime,
   Query: {
-    getAllRecipes: (_) => {
+     getRecipes: (_, args) => {
       return new Promise((resolve, reject) => {
-        Recipe.find((err, recipes) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(recipes);
-          }
-        });
+        // Find by ID
+        if (args.id) {
+          Recipe.findById(args.id, (err, recipe) => {
+            if (err) reject(err);
+            else resolve([recipe]);
+          });
+        }
+        // Find all
+        else {
+          Recipe.find({}, (err, recipes) => {
+            if (err) reject(err);
+            else resolve(recipes);
+          });
+        }
       });
     },
-    getRecipeById: (_, { id }) => {
+    getUsers: (_, args) => {
       return new Promise((resolve, reject) => {
-        Recipe.findOne({ _id: id }, (err, recipe) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(recipe);
-          }
-        });
+        // Find by ID
+        if (args.id) {
+          User.findById(args.id, (err, user) => {
+            if (err) reject(err);
+            else resolve([user]);
+          });
+        }
+        // Find all
+        else {
+          User.find({}, (err, users) => {
+            if (err) reject(err);
+            else resolve(users);
+          });
+        }
+      });
+    },
+    getReviews: (_, args) => {
+      return new Promise((resolve, reject) => {
+        // Find by ID
+        if (args.id) {
+          Review.findById(args.id, (err, review) => {
+            if (err) reject(err);
+            else resolve([review]);
+          });
+        }
+        // Find all
+        else {
+          Review.find({}, (err, reviews) => {
+            if (err) reject(err);
+            else resolve(reviews);
+          });
+        }
       });
     },
   },
   Mutation: {
-    createUser: (root, { user }) => {
-      const newUser = new User({
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        username: user.username,
-        password: user.password,
-        profile_link: user.profileLink,
-      });
+    createUser: (_, { user }) => {
+      const newUser = new User(user);
       return new Promise((resolve, reject) => {
         newUser.save((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(newUser);
-          }
+          if (err) reject(err);
+          else resolve(newUser);
         });
       });
     },
-    createRecipe: (root, { recipe }) => {
-      const newRecipe = new Recipe({
-        title: recipe.title,
-        description: recipe.description,
-        created_by: recipe.createdBy,
-        pictures: recipe.pictures,
-        steps: recipe.steps,
-        ingredients: recipe.ingredients,
-        cookingTime: recipe.cookingTime,
-        servings: recipe.servings
-      });
+    createRecipe: (_, { recipe }) => {
+      const newRecipe = new Recipe(recipe);
       return new Promise((resolve, reject) => {
         newRecipe.save((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(newRecipe);
-          }
+          if (err) reject(err);
+          else resolve(newRecipe);
         });
       });
     },
+    createReview: (_, { review }) => {
+      const newReview = new Review(review);
+      return new Promise((resolve, reject) => {
+        newReview.save((err) => {
+          if (err) reject(err);
+          else resolve(newReview);
+        })
+      });
+    }
   },
 };
