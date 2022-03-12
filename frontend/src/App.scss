@@ -1,7 +1,7 @@
 @import './global.scss';
 
 body, html {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: $fontfamily-base;
   font-size: $fontsize-base;
 }
 

@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400&display=swap');
-$fontsize-base: 16px;
-$fontsize-header1: $fontsize-base + 4;
+$fontfamily-base: 'Nunito Sans', sans-serif;
+$fontsize-base: 14px;
+$fontsize-header1: $fontsize-base + 6;
 $fontsize-header2: $fontsize-base + 2;
 $primary-color: #FFA25E;
 
@@ -11,10 +12,58 @@ button {
     border-radius: 4px;
     padding: 4px 8px;
     border: 1px solid grey;
-    font-size: $fontsize-base - 2;
+    font-size: $fontsize-base;
+    font-family: $fontfamily-base;
     
     &:hover {
         cursor: pointer;
         box-shadow: rgba(0, 0, 0, 0.15) 1.8px 1.8px 2.6px;
+    }
+}
+
+.page-header {
+    font-size: $fontsize-header1;
+}
+
+.header {
+    font-size: $fontsize-header2;
+}
+
+svg:hover {
+    cursor: pointer;
+}
+
+input, textarea {
+    &:focus {
+        outline-color: rgb(130, 192, 255);
+    }
+
+    &::placeholder {
+        font-family: $fontfamily-base;
+        color: rgba(0, 0, 0, .5);
+    }
+}
+
+.form-input {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 0px solid grey;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: rgba(0, 0, 0, .06);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 50px;
+}
+
+.icon-btn {
+    padding: 0;
+    border: none;
+    background-color: white;
+    
+    &:hover {
+        box-shadow: none;
     }
 }

@@ -5,14 +5,15 @@
     justify-content: space-between;
     align-items: center;
     height: $navbar-height;
-    box-shadow: rgb(100 100 111 / 20%) 0px 2px 20px 0px;
+    box-shadow: rgba(100 100 111 / 20%) 0px 2px 20px 0px;
     padding: $page-padding;
     position: fixed;
     width: 70%;
     background-color: white;
     opacity: .9;
+    font-size: $fontsize-header2;
 
-    .left {
+    .col1 {
         .title-header {
             font-size: $fontsize-header1 + 6;
             color: $primary-color;
@@ -23,15 +24,16 @@
         }
     }
 
-    .right {
+    .col2 {
         display: flex;
         justify-content: space-between;
         align-items: center;
         
-        div {
+        .nav-item {
             margin-left: 30px;
             display: flex;
-            flex-direction: column;
+            // flex-direction: column;
+            align-items: center;
         }
 
         .post-btn {
@@ -44,6 +46,20 @@
             &:hover {
                 cursor: pointer;
                 color: $primary-color;
+            }
+        }
+
+        .search-icon svg {
+            font-size: 24px;
+        }
+
+        .user-icon button {
+            @extend .icon-btn;
+            min-width: 0;
+
+            div {
+                width: 30px;
+                height: 30px;
             }
         }
     }
