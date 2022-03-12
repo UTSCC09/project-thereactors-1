@@ -13,6 +13,17 @@ export const typeDefs = gql`
     createdAt: DateTime
   }
 
+  type RecipeIngredient {
+    description: String,
+    quantity: Float,
+    unit: String
+  }
+
+  type RecipeCookingTime {
+    hours: Float,
+    mins: Float
+  }
+
   type Recipe {
     _id: ID
     title: String
@@ -20,8 +31,10 @@ export const typeDefs = gql`
     createdBy: ID
     pictures: [String]
     steps: [String]
-    ingredients: [String]
+    ingredients: [RecipeIngredient]
     tools: [String]
+    servings: Float
+    cookingTime: RecipeCookingTime
     createdAt: DateTime
     updatedAt: DateTime
   }
@@ -45,23 +58,45 @@ export const typeDefs = gql`
     profileLink: String
   }
 
+  input RecipeIngredientInput {
+    description: String,
+    quantity: Float,
+    unit: String
+  }
+
+  input RecipeCookingTimeInput {
+    hours: Float,
+    mins: Float
+  }
+
   input CreateRecipeInput {
     title: String
     description: String
     createdBy: ID
     pictures: [String]
     steps: [String]
-    ingredients: [String]
+    ingredients: [RecipeIngredientInput]
     tools: [String]
+    servings: Float
+    cookingTime: RecipeCookingTimeInput
+  }
+
+  input CreateReviewInput {
+    createdBy: ID
+    recipe: ID
+    content: String,
+    rating: Int
   }
 
   type Query {
-    getAllRecipes: [Recipe]
-    getRecipeById(id: ID): Recipe
+    getRecipes(id: ID): [Recipe]
+    getUsers(id: ID): [User]
+    getReviews(id: ID): [Review]
   }
 
   type Mutation {
     createUser(user: CreateUserInput): User
     createRecipe(recipe: CreateRecipeInput): Recipe
+    createReview(review: CreateReviewInput): Review
   }
 `;

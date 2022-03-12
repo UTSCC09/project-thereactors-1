@@ -13,7 +13,7 @@ async function startServer() {
   const apollo = new ApolloServer({ typeDefs, resolvers });
   const app = express();
   await apollo.start();
-  apollo.applyMiddleware({ app });
+  apollo.applyMiddleware({ app, path: '/api/graphql' });
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use('/graphql', graphqlHTTP({
