@@ -3,40 +3,44 @@
 .post-recipe-page {
     display: flex;
     justify-content: space-around;
-    padding: 2%;
+    margin: 2% 30%;
 
-    .post-recipe-page-content {
-        width: 35%;
-
-        .page-header {
-            font-size: $fontsize-header1;
-        }
-        .recipe-form-wrapper {
+    .recipe-form-wrapper {
+        border: 1px solid grey;
+        border-radius: 10px;
+        padding: 12px;
+        
+        .recipe-form { 
             text-align: left;
-            
-            .recipe-form { 
-                .section {
-                    margin-bottom: 10px;
+            .section {
+                margin-bottom: 10px;
+            }
 
-                    input, textarea {
-                        padding: 5px;
-                        border-radius: 3px;
-                        border: 1px solid grey;
-                        box-sizing: border-box;
-                        width: 100%;
-                    }
+            .desc-section, .steps-section {
+                margin-bottom: 5px;
+            }
 
-                    textarea {
-                        resize: vertical;
-                        min-height: 50px;
-                    }
+            .added-section {
+                padding: 6px 8px;
+
+                .no-item-message {
+                    color: grey;
                 }
 
-                .desc-section, .steps-section {
-                    margin-bottom: 5px;
+                .added-item {
+                    padding: 2px 8px;
+                    border: 1px solid grey;
+                    border-radius: 4px;
+                    margin-bottom: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
                 }
+            }
 
-                .ingr-section .ingr-add-section {
+            .ingr-section {
+
+                .ingr-add-section {
                     display: flex;
                     align-items: center;
 
@@ -56,74 +60,70 @@
                         display: flex;
                     }
                 }
+            }
 
-                .servings-time-section {
-                    display: flex;
+            .servings-time-section {
+                display: flex;
 
-                    .col1 {
-                        width: 49.25%;
-                        margin-right: .75%;
-                    }
-
-                    .col2 {
-                        width: 49.25%;
-                        margin-left: .75%;
-                    }
+                .col1 {
+                    width: 49.25%;
+                    margin-right: .75%;
                 }
 
-                .time-section .time-section-input-wrapper {
+                .col2 {
+                    width: 49.25%;
+                    margin-left: .75%;
+                }
+            }
+
+            .time-section .time-section-input-wrapper {
+                display: flex;
+
+                .col1, .col2 {
                     display: flex;
 
-                    .col1, .col2 {
+                    div {
                         display: flex;
-                        font-size: 14px;
-
-                        div {
-                            display: flex;
-                            align-items: center;
-                            margin-right: 4px;
-                        }
-                    }
-
-                    .col1 {
-                        width: 49.25%;
-                        margin-right: .75%;
-                    }
-
-                    .col2 {
-                        width: 49.25%;
-                        margin-left: .75%;
+                        align-items: center;
+                        margin-right: 4px;
                     }
                 }
 
-                .steps-section .steps-add-section {
+                .col1 {
+                    width: 49.25%;
+                    margin-right: .75%;
+                }
+
+                .col2 {
+                    width: 49.25%;
+                    margin-left: .75%;
+                }
+            }
+
+            .steps-section .steps-add-section {
+                display: flex;
+
+                .col1 {
+                    width: 91%;
+                    margin-right: 1.5%;
+                }
+
+                .col2 {
+                    width: 7.5%;
                     display: flex;
-
-                    .col1 {
-                        width: 91%;
-                        margin-right: 1.5%;
-                    }
-
-                    .col2 {
-                        width: 7.5%;
-                        display: flex;
-                    }
                 }
+            }
 
-                .no-item-message {
-                    padding: 6px 8px;
-                    color: grey;
-                    font-size: 14px;
-                }
+            .item-missing-warning {
+                margin-left: 10px;
+                font-size: 14px;
+                color: red;
+                visibility: hidden;
+            }
 
-                .add-icon:hover {
-                    cursor: pointer;
-                }
-
-                .post-btn-wrapper {
-                    display: flex;
-                    justify-content: space-around;
-                }
+            .post-btn-wrapper {
+                display: flex;
+                justify-content: space-around;
             }
         }
     }

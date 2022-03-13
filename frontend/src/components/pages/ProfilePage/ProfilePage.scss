@@ -1,0 +1,56 @@
+@import '/src/global.scss';
+
+.profile-page {
+    margin: 2% 22%;
+    text-align: left;
+    padding: 8px;
+    border: 1px solid grey;
+    border-radius: 8px;
+
+    .info-section {
+        display: flex;
+        font-size: $fontsize-header2;
+
+        .col1 {
+            width: 28.5%;
+            margin-right: 1.5%;
+
+            img {
+                width: 100%;
+            }
+        }
+
+        .col2 {
+            width: 70%;
+            padding: 1%;
+
+            .row {
+                margin-bottom: 10px;
+            }
+
+            .row1, .row2 {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .row1 {
+                .fullname {
+                    font-size: $fontsize-header2 + 2;
+                }
+            }
+
+            .row2 {
+                padding-right: 10%;
+            }
+
+            .bio {
+                .bio-box {
+                    padding: 8px 10px;
+                    border: 1px solid grey;
+                    border-radius: 4px;
+                }
+            }
+        }
+    }
+}
