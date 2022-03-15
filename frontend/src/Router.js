@@ -14,7 +14,7 @@ import Navbar from "./components/utils/Navbar/Navbar";
 
 export default function Router() {
     return (
-        <div>
+        <div style={{height: '100vh'}}>
         <BrowserRouter>
             <Navbar />
             <div className="main-component">

@@ -30,3 +30,7 @@ export const userQuerySchemas = `
 export const userMutationSchemas = `
   createUser(user: CreateUserInput): User
 `;
+
+export const userSignInSchemas = `
+  signIn(username: String, password: String): [User]
+`;

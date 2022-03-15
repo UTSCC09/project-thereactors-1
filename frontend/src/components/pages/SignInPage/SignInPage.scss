@@ -1,0 +1,36 @@
+@import 'src/global.scss';
+
+.sign-in-page {
+    padding: $page-padding;
+
+    .sign-in-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 35%;
+        padding: 2%;
+        box-shadow: $box-shadow-common;
+        border-radius: 10px;
+
+        .textfield {
+            margin-top: 10px;
+        }
+
+        .sign-up-message {
+            margin-top: 10px;
+
+            .sign-up-btn {
+                text-decoration: underline;
+
+                &:hover {
+                    cursor: pointer;
+                    color: grey;
+                }
+            }
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
+    }
+}

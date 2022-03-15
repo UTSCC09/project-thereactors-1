@@ -1,0 +1,27 @@
+@import 'src/global.scss';
+
+.home-page {
+    display: flex;
+    height: inherit;
+
+    .cover-img-section {
+        width: 50%;
+        background: url('https://g.foolcdn.com/editorial/images/669832/three-young-people-seated-on-a-couch-and-watching-tv.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .main-section {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+
+        button {
+            font-size: $fontsize-header2;
+            padding: 11px 20px 10px;
+        }
+    }
+}

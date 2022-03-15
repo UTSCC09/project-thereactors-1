@@ -1,6 +1,5 @@
 import './Navbar.scss';
-import React from "react";
-import SearchIcon from '@mui/icons-material/Search';
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 
@@ -11,16 +10,22 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import { useLocation } from "react-router-dom";
+
 
 export default function Navbar() {
     const history = useHistory();
+    const [signedIn, setSignedIn] = useState(true);
+
+    const search = useLocation().search;
+    const authBool = new URLSearchParams(search).get('signedIn') === 'true';
 
     const redirectTo = (page) => {
         history.push(page);
     }
 
-    const [open, setOpen] = React.useState(false);
-    const anchorRef = React.useRef(null);
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
 
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -30,25 +35,31 @@ export default function Navbar() {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return;
         }
-
-        redirectTo(page);
+        
+        if (page === 'logout') {
+            redirectTo("/?signedIn=false");
+        } else {
+            redirectTo(page);
+        }
         setOpen(false);
     };
 
     function handleListKeyDown(event) {
         if (event.key === 'Tab') {
-        event.preventDefault();
-        setOpen(false);
+            event.preventDefault();
+            setOpen(false);
         } else if (event.key === 'Escape') {
-        setOpen(false);
+            setOpen(false);
         }
     }
 
     // return focus to the button when we transitioned from !open -> open
-    const prevOpen = React.useRef(open);
-    React.useEffect(() => {
+    const prevOpen = useRef(open);
+    useEffect(() => {
+        setSignedIn(authBool);
+
         if (prevOpen.current === true && open === false) {
-        anchorRef.current.focus();
+            anchorRef.current.focus();
         }
 
         prevOpen.current = open;
@@ -60,54 +71,59 @@ export default function Navbar() {
                 <div className='title-header' onClick={()=>redirectTo('/')}>YTWatchParty</div>
             </div>
             <div className='col2'>
-                <div className='post-btn-wrapper nav-item'>
-                    <button className='theme-btn' onClick={()=>redirectTo('/sign-in')}>sign in</button>
-                </div>
-                {/* <div className='user-icon nav-item'>                
-                    <Button
-                    ref={anchorRef}
-                    id="composition-button"
-                    aria-controls={open ? 'composition-menu' : undefined}
-                    aria-expanded={open ? 'true' : undefined}
-                    aria-haspopup="true"
-                    onClick={handleToggle}
-                    >
-                    <Avatar alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
-                    </Button>
-                    <Popper
-                    open={open}
-                    anchorEl={anchorRef.current}
-                    role={undefined}
-                    placement="bottom-end"
-                    transition
-                    disablePortal
-                    >
-                    {({ TransitionProps, placement }) => (
-                        <Grow
-                        {...TransitionProps}
-                        style={{
-                            transformOrigin:
-                                placement === 'bottom-end' ? 'left top' : 'left bottom',
-                        }}
+                {!signedIn &&
+                    <div className='post-btn-wrapper nav-item'>
+                        {/* <button className='theme-btn' onClick={()=>redirectTo('/sign-in')}>sign in</button> */}
+                        <Button className='theme-btn' onClick={()=>redirectTo('/sign-in')} size='small'>sign in</Button>
+                    </div>
+                }
+                {signedIn &&
+                    <div className='user-icon nav-item'>                
+                        <Button
+                        ref={anchorRef}
+                        id="composition-button"
+                        aria-controls={open ? 'composition-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleToggle}
                         >
-                        <Paper>
-                            <ClickAwayListener onClickAway={handleClose}>
-                            <MenuList
-                                autoFocusItem={open}
-                                id="composition-menu"
-                                aria-labelledby="composition-button"
-                                onKeyDown={handleListKeyDown}
+                        <Avatar alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
+                        </Button>
+                        <Popper
+                        open={open}
+                        anchorEl={anchorRef.current}
+                        role={undefined}
+                        placement="bottom-end"
+                        transition
+                        disablePortal
+                        >
+                        {({ TransitionProps, placement }) => (
+                            <Grow
+                            {...TransitionProps}
+                            style={{
+                                transformOrigin:
+                                    placement === 'bottom-end' ? 'left top' : 'left bottom',
+                            }}
                             >
-                                <MenuItem onClick={(e)=>handleClose(e, 'profile')}>Profile</MenuItem>
-                                <MenuItem onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
-                                <MenuItem onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
-                            </MenuList>
-                            </ClickAwayListener>
-                        </Paper>
-                        </Grow>
-                    )}
-                    </Popper>
-                </div> */}
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList
+                                    autoFocusItem={open}
+                                    id="composition-menu"
+                                    aria-labelledby="composition-button"
+                                    onKeyDown={handleListKeyDown}
+                                >
+                                    <MenuItem onClick={(e)=>handleClose(e, 'profile')}>Profile</MenuItem>
+                                    <MenuItem onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
+                                    <MenuItem onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
+                                </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                            </Grow>
+                        )}
+                        </Popper>
+                    </div>
+                }
             </div>
         </div>
     )
