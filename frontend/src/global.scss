@@ -3,10 +3,10 @@ $fontfamily-base: 'Nunito Sans', sans-serif;
 $fontsize-base: 14px;
 $fontsize-header1: $fontsize-base + 6;
 $fontsize-header2: $fontsize-base + 2;
-$primary-color: #FFA25E;
-
+$primary-color: #ff6969;
 $page-padding: 0 15%;
 $navbar-height: 80px;
+$box-shadow-common: rgba(0, 0, 0, 0.24) 0px 2px 8px;
 
 button {
     border-radius: 4px;
@@ -21,7 +21,17 @@ button {
     }
 }
 
+.theme-btn {
+    border: 1px solid $primary-color;
+    background-color: $primary-color;
+    color: white;
+}
+
 .page-header {
+    font-size: $fontsize-header1;
+}
+
+.header1 {
     font-size: $fontsize-header1;
 }
 
