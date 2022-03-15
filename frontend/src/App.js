@@ -10,7 +10,7 @@ function App() {
       <StyledEngineProvider injectFirst>
           <div className="App">
               <Router />
-              <Footer />
+              {/* <Footer /> */}
           </div>
       </StyledEngineProvider>
   );

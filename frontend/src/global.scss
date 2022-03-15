@@ -4,16 +4,18 @@ $fontsize-base: 14px;
 $fontsize-header1: $fontsize-base + 6;
 $fontsize-header2: $fontsize-base + 2;
 $primary-color: #ff6969;
-$page-padding: 0 15%;
-$navbar-height: 80px;
+$page-padding: 4% 4%;
+$navbar-height: 12vh;
+$navbar-width: 92%;
+$main-component-height: 88vh;
 $box-shadow-common: rgba(0, 0, 0, 0.24) 0px 2px 8px;
 
 button {
-    border-radius: 4px;
-    padding: 4px 8px;
-    border: 1px solid grey;
-    font-size: $fontsize-base;
-    font-family: $fontfamily-base;
+    // border-radius: 4px;
+    // padding: 4px 8px;
+    // border: 1px solid grey;
+    // font-size: $fontsize-base;
+    // font-family: $fontfamily-base;
     
     &:hover {
         cursor: pointer;
@@ -21,10 +23,19 @@ button {
     }
 }
 
+.MuiButton-root {
+    font-family: $fontfamily-base;
+    padding-top: 5px;
+}
+
 .theme-btn {
     border: 1px solid $primary-color;
     background-color: $primary-color;
     color: white;
+
+    &:hover {
+        @extend .theme-btn;
+    }
 }
 
 .page-header {
