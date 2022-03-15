@@ -32,3 +32,16 @@ export const userMutationResolvers = {
     });
   },
 }
+
+export const userSignInResolvers = {
+  signIn: (_, args) => {
+    return new Promise((resolve, reject) => {
+      if (args.username && args.password) {
+        User.findOne({username: args.username, password: args.password}, (err, user) => {
+          if (err) reject(err);
+          else resolve([user]);
+        });
+      }
+    });
+  },
+}

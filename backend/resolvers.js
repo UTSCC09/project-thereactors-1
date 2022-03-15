@@ -2,6 +2,7 @@ import { GraphQLDateTime } from 'graphql-iso-date';
 import {
   userQueryResolvers,
   userMutationResolvers,
+  userSignInResolvers
 } from './graphql/user/user_resolvers';
 import {
   partyQueryResolvers,
@@ -16,6 +17,7 @@ export const resolvers = {
   Query: {
     ...userQueryResolvers,
     ...partyQueryResolvers,
+    ...userSignInResolvers,
   },
   Mutation: {
     ...userMutationResolvers,
