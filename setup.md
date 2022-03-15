@@ -22,7 +22,7 @@ $ npm start
 
 #### Notes
 1. Use `npm start` to run the server instead of `node index.js` because we use `nodemon` so that the server will be reloaded automatically after we edited the files.
-2. You can play around the GraphQL UI to understand it by navigating to [http://localhost:3001/graphql](http://localhost:3001/graphql), make sure your server is running before going to the URL.
+2. You can play around the GraphQL UI to understand it by navigating to [http://localhost:3001/api/graphql](http://localhost:3001/api/graphql), make sure your server is running before going to the URL.
 3. All configurations should be stored in `config.json`, in this way we can handle all configurations in one place.
 
 ## Frontend
