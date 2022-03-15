@@ -6,10 +6,10 @@ import {
     Redirect
 } from "react-router-dom";
 import HomePage from "./components/pages/HomePage/HomePage";
-import FollowingPage from "./components/pages/FollowingPage/FollowingPage";
-import PostRecipePage from "./components/pages/PostRecipePage/PostRecipePage";
-import ProfilePage from "./components/pages/ProfilePage/ProfilePage";
-import SettingsPage from "./components/pages/SettingsPage/SettingsPage";
+import SignInPage from "./components/pages/SignInPage/SignInPage";
+import JoinPartyPage from "./components/pages/JoinPartyPage/JoinPartyPage";
+import SchedulePartyPage from "./components/pages/SchedulePartyPage/SchedulePartyPage";
+import WatchPartyPage from "./components/pages/WatchPartyPage/WatchPartyPage";
 import Navbar from "./components/utils/Navbar/Navbar";
 
 export default function Router() {
@@ -20,10 +20,10 @@ export default function Router() {
             <div className="main-component">
             <Switch>
                 <Route exact path="/" component={HomePage} />
-                <Route exact path="/following" component={FollowingPage} />
-                <Route exact path="/post-recipe" component={PostRecipePage} />
-                <Route exact path="/profile" component={ProfilePage} />
-                <Route exact path="/settings" component={SettingsPage} />
+                <Route exact path="/sign-in" component={SignInPage} />
+                <Route exact path="/join" component={JoinPartyPage} />
+                <Route exact path="/schedule" component={SchedulePartyPage} />
+                <Route exact path="/party" component={WatchPartyPage} />
                 <Route exact path="/*"><Redirect to="/" /></Route>
             </Switch>
             </div>

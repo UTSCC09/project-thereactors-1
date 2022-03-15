@@ -57,16 +57,13 @@ export default function Navbar() {
     return (
         <div className='navbar'>
             <div className='col1'>
-                <div className='title-header' onClick={()=>redirectTo('/')}>RecipeCentral</div>
+                <div className='title-header' onClick={()=>redirectTo('/')}>YTWatchParty</div>
             </div>
             <div className='col2'>
-                <div className='home nav-item' onClick={()=>redirectTo('/')}>home</div>
-                <div className='following nav-item' onClick={()=>redirectTo('/following')}>following</div>
                 <div className='post-btn-wrapper nav-item'>
-                    <button className='post-btn' onClick={()=>redirectTo('/post-recipe')}>post</button>
+                    <button className='theme-btn' onClick={()=>redirectTo('/sign-in')}>sign in</button>
                 </div>
-                <div className='search-icon nav-item'><SearchIcon /></div>
-                <div className='user-icon nav-item'>                
+                {/* <div className='user-icon nav-item'>                
                     <Button
                     ref={anchorRef}
                     id="composition-button"
@@ -110,7 +107,7 @@ export default function Navbar() {
                         </Grow>
                     )}
                     </Popper>
-                </div>
+                </div> */}
             </div>
         </div>
     )

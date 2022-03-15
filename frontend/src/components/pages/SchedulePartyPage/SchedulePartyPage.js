@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 
-export default function FollowingPage() {
-
+export default function SchedulePartyPage() {
+    
     useEffect(() => {
 
     }, []);
 
     return (
-        <div>Following Page</div>
+        <div>ScheduleParty Page</div>
     )
 }

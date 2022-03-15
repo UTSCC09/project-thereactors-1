@@ -5,7 +5,7 @@ import Router from './Router';
 import Footer from './components/utils/Footer/Footer';
 
 function App() {
-  document.title = "RecipeCentral";
+  document.title = "YT Watch Party";
   return (
       <StyledEngineProvider injectFirst>
           <div className="App">
