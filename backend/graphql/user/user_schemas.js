@@ -29,4 +29,4 @@ export const userQuerySchemas = `
 
 export const userMutationSchemas = `
   createUser(user: CreateUserInput): User
-`
+`;

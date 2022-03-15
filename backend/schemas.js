@@ -3,8 +3,14 @@ import {
   userSchema,
   userInputSchema,
   userQuerySchemas,
-  userMutationSchemas
+  userMutationSchemas,
 } from './graphql/user/user_schemas';
+import {
+  partySchema,
+  partyInputSchema,
+  partyQuerySchemas,
+  partyMutationSchemas,
+} from './graphql/party/party_schemas';
 
 export const typeDefs = gql`
   scalar DateTime
@@ -12,11 +18,16 @@ export const typeDefs = gql`
   ${userSchema}
   ${userInputSchema}
 
+  ${partySchema}
+  ${partyInputSchema}
+
   type Query {
     ${userQuerySchemas}
+    ${partyQuerySchemas}
   }
 
   type Mutation {
     ${userMutationSchemas}
+    ${partyMutationSchemas}
   }
 `;
