@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import config from './config.json';
-import { recipeSchema } from './schemas/recipe';
 import { userSchema } from './schemas/user';
-import { reviewSchema } from './schemas/review';
+import { partySchema } from './schemas/party';
 
 mongoose.connect(config.mongodbUrl);
 
@@ -12,5 +11,4 @@ db.on('error', () => {
 });
 
 export const User = mongoose.model("User", userSchema);
-export const Recipe = mongoose.model("Recipe", recipeSchema);
-export const Review = mongoose.model("Review", reviewSchema);
+export const Party = mongoose.model("Party", partySchema);
