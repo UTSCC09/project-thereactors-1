@@ -4,15 +4,21 @@ import config from '../../../environments'
 
 export default function HomePage() {
     const [socket, setSocket] = useState(null);
+    const [connected, setConnected] = useState(false);
 
     useEffect(() => {
         const newSocket = io(config.backendUrl);
+        newSocket.on("connect", () => {
+            setConnected(true);
+        })
         setSocket(newSocket);
-        console.log(newSocket);
         return () => newSocket.close();
-    }, [setSocket]);
+    }, [setSocket, setConnected]);
 
     return (
-        <div>Home Page</div>
+        <div>
+            Home Page
+            {connected && <div>Socket connection success</div>}
+        </div>
     )
 }
