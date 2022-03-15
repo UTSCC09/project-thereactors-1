@@ -33,7 +33,8 @@ async function startServer() {
   });
   const io = new Server(httpServer, {
     cors: {
-      origin: `http://localhost:${config.port}`,
+      origin: `*`,
+      methods: ["GET", "POST"]
     }
   });
   setupSocketHandlers(io);
