@@ -9,6 +9,13 @@ export const userSchema = `
     profileLink: String
     createdAt: DateTime
   }
+
+  type UserSignInRespone {
+    _id: ID
+    username: String
+    email: String
+    token: String
+  }
 `;
 
 export const userInputSchema = `
@@ -32,5 +39,5 @@ export const userMutationSchemas = `
 `;
 
 export const userSignInSchemas = `
-  signIn(username: String, password: String): String
+  signIn(username: String, password: String): UserSignInRespone
 `;

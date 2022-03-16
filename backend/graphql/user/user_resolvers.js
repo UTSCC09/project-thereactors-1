@@ -1,3 +1,4 @@
+import { ValidationError } from 'apollo-server-express';
 import { User } from '../../db';
 import { signJwt } from '../../utils';
 
@@ -46,12 +47,18 @@ export const userSignInResolvers = {
         User.findOne({ username: args.username, password: args.password }, (err, user) => {
           if (err) {
             reject(err);
-          } else {
-            resolve(signJwt({
+          }
+          else if (!user) {
+            reject(new ValidationError("Authentication failed"));
+          }
+          else {
+            const jwt = signJwt({ username: user.username, _id: user.id, nickname: user.nickname });
+            resolve({
+              _id: user._id,
               username: user.username,
-              _id: user.id,
-              nickname: user.nickname
-            }));
+              email: user.email,
+              token: jwt,
+            });
           }
         });
       }
