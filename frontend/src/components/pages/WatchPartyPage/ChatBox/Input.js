@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 
 export const Input = ({ message, setMessage, sendMessage }) => (
     <form className="form chat-form">
-        <input
+        <textarea
             className="input"
             type="text"
             placeholder="Type a message..."
