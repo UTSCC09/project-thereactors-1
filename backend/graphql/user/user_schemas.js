@@ -32,5 +32,5 @@ export const userMutationSchemas = `
 `;
 
 export const userSignInSchemas = `
-  signIn(username: String, password: String): [User]
+  signIn(username: String, password: String): String
 `;

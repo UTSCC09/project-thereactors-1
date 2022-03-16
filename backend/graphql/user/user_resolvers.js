@@ -1,4 +1,5 @@
 import { User } from '../../db';
+import { signJwt } from '../../utils';
 
 export const userQueryResolvers = {
   getUsers: (_, args) => {
@@ -34,12 +35,24 @@ export const userMutationResolvers = {
 }
 
 export const userSignInResolvers = {
+  /**
+   * When username and password match, we generate a JWT and return it to
+   * the frontend. The frontend then will include the JWT in the header for
+   * all the requests that required authentication.
+   */
   signIn: (_, args) => {
     return new Promise((resolve, reject) => {
       if (args.username && args.password) {
-        User.findOne({username: args.username, password: args.password}, (err, user) => {
-          if (err) reject(err);
-          else resolve([user]);
+        User.findOne({ username: args.username, password: args.password }, (err, user) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(signJwt({
+              username: user.username,
+              _id: user.id,
+              nickname: user.nickname
+            }));
+          }
         });
       }
     });
