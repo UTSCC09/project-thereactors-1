@@ -33,7 +33,7 @@ export default function HomePage() {
             <div className="main-section">
                 <Stack spacing={2} direction="column">
                     <Button variant='outlined' onClick={()=>redirectTo('join')}>Join a live party</Button>
-                    <Button variant='outlined' onClick={()=>redirectTo('party')}>Start a new party</Button>
+                    <Button variant='outlined' onClick={()=>redirectTo('create')}>Start a new party</Button>
                     <Button variant='outlined' onClick={()=>redirectTo('schedule')}>Schedule for later</Button>
                 </Stack>
                 {connected && <>socket connected</>}

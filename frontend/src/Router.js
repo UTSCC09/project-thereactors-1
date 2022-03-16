@@ -10,6 +10,7 @@ import SignInPage from "./components/pages/SignInPage/SignInPage";
 import SignUpPage from "components/pages/SignInPage/SignUpPage";
 import JoinPartyPage from "./components/pages/JoinPartyPage/JoinPartyPage";
 import SchedulePartyPage from "./components/pages/SchedulePartyPage/SchedulePartyPage";
+import CreatePartyPage from "./components/pages/CreatePartyPage/CreatePartyPage";
 import WatchPartyPage from "./components/pages/WatchPartyPage/WatchPartyPage";
 import Navbar from "./components/utils/Navbar/Navbar";
 
@@ -26,6 +27,7 @@ export default function Router() {
                 <Route exact path="/join" component={JoinPartyPage} />
                 <Route exact path="/schedule" component={SchedulePartyPage} />
                 <Route exact path="/party" component={WatchPartyPage} />
+                <Route exact path="/create" component={CreatePartyPage}/>
                 <Route exact path="/*"><Redirect to="/" /></Route>
             </Switch>
             </div>
