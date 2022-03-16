@@ -1,8 +1,9 @@
 import React from 'react';
+import { Button } from '@mui/material';
 
 
 export const Input = ({ message, setMessage, sendMessage }) => (
-    <form className="form">
+    <form className="form chat-form">
         <input
             className="input"
             type="text"
@@ -11,5 +12,6 @@ export const Input = ({ message, setMessage, sendMessage }) => (
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
         />
+        <Button classname="send-button">Send</Button>
     </form>
 );

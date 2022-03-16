@@ -1,17 +1,40 @@
 .messageBox {
     background: #F3F3F3;
     border-radius: 20px;
-    padding: 5px 20px;
+    padding: 2px 5px;
     color: white;
     display: inline-block;
     max-width: 80%;
   }
+  ::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    /* background: transparent;  Optional: just make scrollbar invisible */
+    scrollbar-width: thin;
+
+}
+
+.nopaddingtop {
+  padding-top:0px;
+}
+
   .chatbox {
+    display:flex;
+    flex-direction:column;
     float:right;
-    max-width: 400px;
-    margin-right:20px;
+    width: 400px;
+    margin-right:50px;
     margin-top:20px;
     margin-left:10px;
+    border-radius: 25px;
+    padding: 20px;
+    height: 550px; 
+    border: 2px solid #000000;
+  }
+  .messages {
+    overflow: scroll;
+    
+    overflow-x: hidden; 
+
   }
   .messageText {
     width: 100%;
@@ -28,8 +51,12 @@
   .messageContainer {
     display: flex;
     justify-content: flex-end;
-    padding: 0 5%;
+    padding: 0 20px;
     margin-top: 3px;
+    p {
+      margin-top: 3px;
+      margin-bottom: 4px;
+    }
   }
   
   .sentText {
@@ -71,3 +98,16 @@
   .backgroundLight {
     background: #F3F3F3;
   }
+
+  .chat-form {
+    padding-top: 20px;
+    display:flex;
+    input {
+      flex:5;
+    }
+    .send-button {
+      flex:1;
+      background-color: #ff6969;
+    }
+  }
+

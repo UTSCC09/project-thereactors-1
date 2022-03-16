@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from "react";
 import { MessageContainer } from "./MessageContainer";
 import { Input } from "./Input";
-import './Message.css';
+import './Message.scss';
 
 export default function ChatBox({socket}) {
     const [message, setMessage] = useState('');
@@ -30,7 +30,7 @@ export default function ChatBox({socket}) {
 
     return (
         <div className="chatbox">
-            <MessageContainer messages={messages} curr_user={curr_user} />
+            <MessageContainer className="" messages={messages} curr_user={curr_user} />
             <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
         </div>
     )
