@@ -7,6 +7,12 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Avatar, Button, TextField } from '@mui/material';
+import ChatBox from "./ChatBox/ChatBox";
+import io from 'socket.io-client';
+import config from 'environments';
+
+const socket = io.connect(config.backendUrl);
+socket.emit('join-room',"blah");
 
 export default function WatchPartyPage() {
     const [videoId, setVideoId] = useState('');
@@ -135,7 +141,9 @@ export default function WatchPartyPage() {
                         </AccordionDetails>
                     </Accordion>
                 </div>
-                <div className='chat-box-wrapper' style={{minHeight: videoHeight}}>chat</div>
+                <div className='chat-box-wrapper' style={{minHeight: videoHeight}}>
+                    <ChatBox socket={socket}></ChatBox>
+                </div>
             </div>
         </div>
     )

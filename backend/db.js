@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import config from './config.json';
 import { userSchema } from './schemas/user';
 import { partySchema } from './schemas/party';
+import { messageSchema } from "./schemas/messageSchema";
 
 mongoose.connect(config.mongodbUrl);
 
@@ -12,3 +13,4 @@ db.on('error', () => {
 
 export const User = mongoose.model("User", userSchema);
 export const Party = mongoose.model("Party", partySchema);
+export const Message = mongoose.model("Message", messageSchema);
