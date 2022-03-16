@@ -1,0 +1,25 @@
+@import 'global.scss';
+
+.watch-party-page {
+    display: flex;
+    padding: $page-padding;
+    padding-top: 2.5%;
+    text-align: left;
+
+    .col1 {
+        width: 68%;
+        margin-right: 2%;
+        border: 1px solid grey;
+        height: 100px;
+
+        .party-name {
+            font-size: $fontsize-header1 + 2;
+            padding-left: 8px;
+        }
+    }
+
+    .col2 {
+        width: 30%;
+        border: 1px solid grey;
+    }
+}
