@@ -10,21 +10,13 @@ $navbar-width: 92%;
 $main-component-height: 88vh;
 $box-shadow-common: rgba(0, 0, 0, 0.24) 0px 2px 8px;
 
-button {
-    // border-radius: 4px;
-    // padding: 4px 8px;
-    // border: 1px solid grey;
-    // font-size: $fontsize-base;
-    // font-family: $fontfamily-base;
-    
+.MuiButton-root {
+    font-family: $fontfamily-base;
+
     &:hover {
         cursor: pointer;
         box-shadow: rgba(0, 0, 0, 0.15) 1.8px 1.8px 2.6px;
     }
-}
-
-.MuiButton-root {
-    font-family: $fontfamily-base;
 }
 
 .theme-btn {

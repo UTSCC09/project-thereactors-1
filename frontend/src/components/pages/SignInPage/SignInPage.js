@@ -53,8 +53,7 @@ export default function SignInPage() {
                     value={username}
                     onChange={(e)=>setUsername(e.target.value)}
                     required
-                >
-                </TextField>
+                />
                 <TextField 
                     className='textfield'
                     size='small'
@@ -63,8 +62,7 @@ export default function SignInPage() {
                     type='password'
                     onChange={(e)=>setPassword(e.target.value)}
                     required
-                >
-                </TextField>
+                />
                 <div className='sign-up-message'>
                     <span>Not registered yet? </span> 
                     <span className='sign-up-btn' onClick={()=>toSignUp()}>Sign up</span>
