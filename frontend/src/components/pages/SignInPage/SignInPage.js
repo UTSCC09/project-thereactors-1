@@ -1,6 +1,6 @@
 import './SignInPage.scss';
 import React, { useEffect, useState } from "react";
-import { 
+import {
     Button,
     TextField,
 } from "@mui/material";
@@ -21,7 +21,7 @@ export default function SignInPage() {
         UserAPI.signIn(username, password, (err, res) => {
             if (err) console.log(err[0]);
             else {
-                if (!res[0]) {
+                if (!res) {
                     document.getElementById('invalid-cred-warning').style.display = 'block';
                     setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
@@ -46,7 +46,7 @@ export default function SignInPage() {
                     Sign In
                 </div>
                 <form id='form' onSubmit={(e)=>signIn(e)}>
-                <TextField 
+                <TextField
                     className='textfield'
                     size='small'
                     label='Username'
@@ -54,7 +54,7 @@ export default function SignInPage() {
                     onChange={(e)=>setUsername(e.target.value)}
                     required
                 />
-                <TextField 
+                <TextField
                     className='textfield'
                     size='small'
                     label='Password'
@@ -64,11 +64,11 @@ export default function SignInPage() {
                     required
                 />
                 <div className='sign-up-message'>
-                    <span>Not registered yet? </span> 
+                    <span>Not registered yet? </span>
                     <span className='sign-up-btn' onClick={()=>toSignUp()}>Sign up</span>
                 </div>
-                <div 
-                    id='invalid-cred-warning' 
+                <div
+                    id='invalid-cred-warning'
                     style={{display:'none', color:'red'}}
                 >
                    Invalid username or password!

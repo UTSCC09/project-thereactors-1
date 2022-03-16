@@ -88,6 +88,7 @@ export const signIn = (username, password, callback) => {
                 _id
                 username
                 email
+                token
             }
         }
     `;
