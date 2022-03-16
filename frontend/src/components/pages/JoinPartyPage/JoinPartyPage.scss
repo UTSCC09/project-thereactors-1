@@ -12,6 +12,10 @@
         box-shadow: $box-shadow-common;
         border-radius: 10px;
 
+        .header1 {
+            margin-bottom: 6px;
+        }
+
         .inputs-btn-box {
             display: flex;
             flex-direction: column;
@@ -23,7 +27,7 @@
                 justify-content: space-around;
                 
                 .textfield {
-                    margin-top: 20px;
+                    margin-top: 10px;
                 }
             }
     
