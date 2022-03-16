@@ -6,5 +6,5 @@ export const partySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   startedAt: { type: Date, default: Date.now },
   hostedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  ytLink: String,
+  ytLink: [String],
 });

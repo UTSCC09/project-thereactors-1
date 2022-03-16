@@ -1,0 +1,39 @@
+@import 'src/global.scss';
+
+.join-party-page {
+    padding: $page-padding;
+
+    .content-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 35%;
+        padding: 2%;
+        box-shadow: $box-shadow-common;
+        border-radius: 10px;
+
+        .header1 {
+            margin-bottom: 6px;
+        }
+
+        .inputs-btn-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .inputs-box {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                
+                .textfield {
+                    margin-top: 10px;
+                }
+            }
+    
+            .btn {
+                margin: 20px auto 10px;
+            }
+        }
+    }
+}

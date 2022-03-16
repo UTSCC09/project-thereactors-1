@@ -4,7 +4,7 @@ export const partySchema = `
     title: String
     password: String
     hostedBy: ID
-    ytLink: String
+    ytLink: [String]
     createdAt: DateTime
     startedAt: DateTime
   }
@@ -15,7 +15,7 @@ export const partyInputSchema = `
     title: String
     password: String
     hostedBy: ID
-    ytLink: String
+    ytLink: [String]
     startedAt: DateTime
   }
 `;
