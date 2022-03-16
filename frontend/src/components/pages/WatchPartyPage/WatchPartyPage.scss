@@ -1,0 +1,85 @@
+@import 'global.scss';
+
+.watch-party-page {
+    display: flex;
+    padding: 1.2% 8%;
+    text-align: left;
+    height: 100%;
+
+    .col1 {
+        width: 66%;
+        margin-right: 2%;
+
+        .desc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .party-name {
+                display: flex;
+                align-items: center;
+                font-size: $fontsize-header1 + 6;
+                height: 57px;
+            }
+    
+            .host {
+                display: flex;
+                align-items: center;
+
+                &-icon {
+                    width: 35px;
+                    height: 35px;
+                }
+            }
+        }
+
+        .video-player-wrapper {
+            .add-video-wrapper {
+                border: 1px solid grey;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+
+                .inner-wrapper {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: 60%;
+                }
+            }
+        }
+    }
+
+    .col2 {
+        width: 32%;
+
+        .connected-users-wrapper {
+            .header {
+                line-height: 16px;
+            }
+
+            .Accordion {
+                min-height: 45px;
+                margin-bottom: 12px;
+
+                .AccordionSummary {
+                    min-height: 0;
+                    
+                    div {
+                        margin: 12px 0;
+                    }
+                }
+    
+                .user {
+                    margin-top: 2px;
+                }
+            }
+
+        }
+        
+        .chat-box-wrapper {
+            // margin-top: 12px;
+            border: 1px solid grey;
+        }
+    }
+}
