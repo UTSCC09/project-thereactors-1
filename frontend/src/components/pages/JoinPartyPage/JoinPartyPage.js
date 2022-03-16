@@ -52,7 +52,6 @@ export default function JoinPartyPage() {
                 }
                 <div className='inputs-btn-box'>
                 <form id='party-form' onSubmit={(e)=>joinRoom(e, partyId, partyCode, partyUsername)}>
-                <div className='inputs-box'>
                 {!alreadyHasId &&
                     <TextField 
                         className='textfield'
@@ -61,8 +60,7 @@ export default function JoinPartyPage() {
                         value={partyId}
                         onChange={(e)=>setPartyId(e.target.value)}
                         required
-                    >
-                    </TextField>
+                    />
                 }
                 <TextField 
                     className='textfield'
@@ -71,8 +69,7 @@ export default function JoinPartyPage() {
                     value={partyCode}
                     onChange={(e)=>setPartyCode(e.target.value)}
                     required
-                >
-                </TextField>
+                />
                 <TextField 
                     className='textfield'
                     size='small'
@@ -80,10 +77,8 @@ export default function JoinPartyPage() {
                     value={partyUsername}
                     onChange={(e)=>setPartyUsername(e.target.value)}
                     required
-                >
-                </TextField>
-                </div>
-                <Button type='submit' className='btn'  variant='outlined' size='small'>join</Button>
+                />
+                <div><Button type='submit' className='btn'  variant='outlined' size='small'>join</Button></div>
                 </form>
                 </div>
             </div>

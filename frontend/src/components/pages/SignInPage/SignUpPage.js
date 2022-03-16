@@ -119,8 +119,7 @@ export default function SignUpPage() {
                     label='Username'
                     onChange={(e)=>changeField(e, 'username')}
                     required
-                >
-                </TextField>
+                />
                 <TextField 
                     className='textfield'
                     size='small'
@@ -128,8 +127,7 @@ export default function SignUpPage() {
                     type='email'
                     onChange={(e)=>changeField(e, 'email')}
                     required
-                >
-                </TextField>
+                />
                 <TextField 
                     className='textfield'
                     size='small'
@@ -137,8 +135,7 @@ export default function SignUpPage() {
                     type='password'
                     onChange={(e)=>changeField(e, 'password')}
                     required
-                >
-                </TextField>
+                />
                 <TextField 
                     className='textfield'
                     size='small'
@@ -146,8 +143,7 @@ export default function SignUpPage() {
                     type='password'
                     onChange={(e)=>setConfirmPassword(e.target.value)}
                     required
-                >
-                </TextField>
+                />
                 <div className='sign-up-message'>
                     <span>Already have an account? </span> 
                     <span className='sign-up-btn' onClick={()=>toSignIn()}>Sign in</span>

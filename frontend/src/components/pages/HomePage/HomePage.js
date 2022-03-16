@@ -7,19 +7,10 @@ import Stack from '@mui/material/Stack';
 import { useHistory } from 'react-router-dom';
 
 export default function HomePage() {
-    const [socket, setSocket] = useState(null);
-    const [connected, setConnected] = useState(false);
 
     useEffect(() => {
-        // Socket test
-        const newSocket = io(config.backendUrl);
-        newSocket.on("connect", () => {
-            setConnected(true);
-        })
-        setSocket(newSocket);
 
-        return ()=>newSocket.close();
-    }, [setSocket, setConnected]);
+    }, []);
 
     const history = useHistory();
 
@@ -31,12 +22,11 @@ export default function HomePage() {
         <div className="home-page">
             <div className="cover-img-section"></div>
             <div className="main-section">
-                <Stack spacing={2} direction="column">
+                <Stack spacing={2.5} direction="column">
                     <Button variant='outlined' onClick={()=>redirectTo('join')}>Join a live party</Button>
                     <Button variant='outlined' onClick={()=>redirectTo('party')}>Start a new party</Button>
                     <Button variant='outlined' onClick={()=>redirectTo('schedule')}>Schedule for later</Button>
                 </Stack>
-                {connected && <>socket connected</>}
             </div>
         </div>
     )
