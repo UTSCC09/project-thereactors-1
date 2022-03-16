@@ -29,12 +29,26 @@
     padding: 20px;
     height: 550px; 
     border: 2px solid #000000;
-  }
-  .messages {
-    overflow: scroll;
-    
-    overflow-x: hidden; 
-
+    .messages {
+      flex:9;
+      overflow: scroll;
+      
+      overflow-x: hidden; 
+  
+    }
+  
+    .chat-form {
+      flex:1;
+      padding-top: 20px;
+      display:flex;
+      input {
+        flex:5;
+      }
+      .send-button {
+        flex:1;
+        background-color: #ff6969;
+      }
+    }
   }
   .messageText {
     width: 100%;
@@ -99,15 +113,5 @@
     background: #F3F3F3;
   }
 
-  .chat-form {
-    padding-top: 20px;
-    display:flex;
-    input {
-      flex:5;
-    }
-    .send-button {
-      flex:1;
-      background-color: #ff6969;
-    }
-  }
+
 
