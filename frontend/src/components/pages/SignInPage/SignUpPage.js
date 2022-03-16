@@ -41,19 +41,21 @@ export default function SignUpPage() {
 
     const signUp = (e) => {
         e.preventDefault();
-        if (newUser.password !== confirmPassword) {
-            document.getElementById('warning').style.display = 'block';
-            document.getElementById('warning').innerHTML = "Password doesn't match!";
-            setTimeout(() => {
-                document.getElementById('warning').style.display = 'none';
-            }, 5000)
-        } if (!validateEmail(newUser.email)) {
+        if (!validateEmail(newUser.email)) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Invalid email address!";
             setTimeout(() => {
                 document.getElementById('warning').style.display = 'none';
             }, 5000)
-        } else {
+        }
+        else if (newUser.password !== confirmPassword) {
+            document.getElementById('warning').style.display = 'block';
+            document.getElementById('warning').innerHTML = "Password doesn't match!";
+            setTimeout(() => {
+                document.getElementById('warning').style.display = 'none';
+            }, 5000)
+        }
+        else {
             UserAPI.addUser(newUser, (err, res) => {
                 if (err) {
                     if (err[0].extensions.exception.code === 11000) {
