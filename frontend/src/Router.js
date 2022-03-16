@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import HomePage from "./components/pages/HomePage/HomePage";
 import SignInPage from "./components/pages/SignInPage/SignInPage";
+import SignUpPage from "components/pages/SignInPage/SignUpPage";
 import JoinPartyPage from "./components/pages/JoinPartyPage/JoinPartyPage";
 import SchedulePartyPage from "./components/pages/SchedulePartyPage/SchedulePartyPage";
 import WatchPartyPage from "./components/pages/WatchPartyPage/WatchPartyPage";
@@ -21,6 +22,7 @@ export default function Router() {
             <Switch>
                 <Route exact path="/" component={HomePage} />
                 <Route exact path="/sign-in" component={SignInPage} />
+                <Route exact path="/sign-up" component={SignUpPage} />
                 <Route exact path="/join" component={JoinPartyPage} />
                 <Route exact path="/schedule" component={SchedulePartyPage} />
                 <Route exact path="/party" component={WatchPartyPage} />

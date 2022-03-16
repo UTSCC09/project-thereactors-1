@@ -12,6 +12,41 @@
         box-shadow: $box-shadow-common;
         border-radius: 10px;
 
+        .profilePic-box {
+            margin-top: 10px;
+
+            .pic-container {
+                position: relative;
+                width: 100%;
+                max-width: 400px;
+
+                &:hover .edit-overlay {
+                    opacity: .5;
+                }
+
+                .edit-overlay {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 100%;
+                    width: 100%;
+                    opacity: .3;
+                    transition: .2s ease;
+                    background-color: grey;
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    border-radius: 50%;
+
+                    .edit-icon {
+                        color: black;
+                    }
+                }
+            }
+        }
+
         .textfield {
             margin-top: 10px;
         }
