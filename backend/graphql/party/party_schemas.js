@@ -1,7 +1,6 @@
 export const partySchema = `
   type Party {
     _id: ID
-    title: String
     password: String
     hostedBy: ID
     ytLink: [String]
@@ -26,4 +25,8 @@ export const partyQuerySchemas = `
 
 export const partyMutationSchemas = `
   createParty(party: CreatePartyInput): Party
+`;
+
+export const partySignInResolvers = `
+joinParty(_id: String, password: String): UserSignInRespone
 `;

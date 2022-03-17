@@ -46,7 +46,7 @@
       }
       .send-button {
         flex:1;
-        background-color: #ff6969;
+        // background-color: #ff6969;
       }
     }
   }
@@ -64,6 +64,7 @@
   
   .messageContainer {
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     padding: 0 20px;
     margin-top: 3px;

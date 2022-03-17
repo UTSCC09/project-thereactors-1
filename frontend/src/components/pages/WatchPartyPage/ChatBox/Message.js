@@ -6,12 +6,13 @@ import React, { useState, useEffect } from "react";
 
 export const Message = ({ message: { sender, content }, current_user })  => {
     function isSelf() {
-        return current_user._id == sender._id;
+        return current_user == sender;
     }
     return (
         isSelf
             ? (
                 <div className="messageContainer justifyEnd">
+                    <div className="messageUser">{sender} </div>
                     <div className="messageBox backgroundBlue" >
                         <p className="messageText colorWhite">{content}</p>
                     </div>
@@ -19,6 +20,7 @@ export const Message = ({ message: { sender, content }, current_user })  => {
             )
             : (
                 <div className="messageContainer justifyStart">
+                    <div className="messageUser">{sender} </div>
                     <div className="messageBox backgroundLight">
                         <p className="messageText colorDark">{content}</p>
                     </div>

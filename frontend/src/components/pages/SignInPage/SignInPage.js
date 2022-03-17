@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { useHistory } from 'react-router-dom';
 import * as UserAPI from 'api/user';
+import * as authAPI from 'auth/auth_utils.js';
 
 export default function SignInPage() {
     const history = useHistory();
@@ -26,17 +27,25 @@ export default function SignInPage() {
                     setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
                     }, 5000);
+                    console.log("didnt work");
                 } else {
                     setUsername('');
                     setPassword('');
-                    console.log('signedIn', res);
+                    authAPI.setJWT(res.token);
+                    authAPI.setUser(res.username);
+                    if(history.length !=0) {
+                        history.goBack();
+                    } else {
+                        history.replace('');
+                    }
+                    
                 }
             }
         });
     }
 
     const toSignUp = () => {
-        history.push('sign-up');
+        history.replace('sign-up');
     }
 
     return (

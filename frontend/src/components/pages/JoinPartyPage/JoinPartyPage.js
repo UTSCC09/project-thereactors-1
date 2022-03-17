@@ -5,34 +5,35 @@ import {
     TextField 
 } from "@mui/material";
 import { useLocation, useHistory } from "react-router-dom";
+import * as PartyAPI from 'api/party';
 
 export default function JoinPartyPage() {
     const [partyId, setPartyId] = useState('');
-    const [partyName, setPartyName] = useState('');
     const [partyCode, setPartyCode] = useState('');
-    const [partyUsername, setPartyUsername] = useState('');
     const [alreadyHasId, setAlreadyHasId] = useState(false);
     const location = useLocation();
     const history = useHistory();
     
     const getParty = (id) => {
         // api call
+
         if (id !== null) {
             setPartyId(id)
-            setPartyName(String(id))
             setAlreadyHasId(true)
         }
     }
 
-    const joinRoom = (e, id, code, username) => {
+
+    const joinRoom = (e, id, code) => {
         e.preventDefault();
-        console.log(id, code, username);
-        setPartyId('');
-        setPartyName('');
+        console.log(id, code);
         setPartyCode('');
-        setPartyUsername('');
         // redirect to generated room
-        history.push('party?id='+id);
+        PartyAPI.joinParty(id,code,(err,res)=> {
+            if(res)
+                history.push('party?id='+res);
+        })
+        
     }
 
     useEffect(() => {
@@ -45,13 +46,13 @@ export default function JoinPartyPage() {
         <div className='join-party-page'>
             <div className='content-box'>
                 {alreadyHasId &&
-                    <div className='header1'>Joining Party "{partyName}"</div>
+                    <div className='header1'>Joining Party "{partyId}"</div>
                 }
                 {!alreadyHasId &&
                     <div className='header1'>Join Party</div>
                 }
                 <div className='inputs-btn-box'>
-                <form id='party-form' onSubmit={(e)=>joinRoom(e, partyId, partyCode, partyUsername)}>
+                <form id='party-form' onSubmit={(e)=>joinRoom(e, partyId, partyCode)}>
                 {!alreadyHasId &&
                     <TextField 
                         className='textfield'
@@ -68,14 +69,6 @@ export default function JoinPartyPage() {
                     label='Party code'
                     value={partyCode}
                     onChange={(e)=>setPartyCode(e.target.value)}
-                    required
-                />
-                <TextField 
-                    className='textfield'
-                    size='small'
-                    label='Party username'
-                    value={partyUsername}
-                    onChange={(e)=>setPartyUsername(e.target.value)}
                     required
                 />
                 <div><Button type='submit' className='btn'  variant='outlined' size='small'>join</Button></div>

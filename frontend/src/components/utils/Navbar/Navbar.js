@@ -11,6 +11,7 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { useLocation } from "react-router-dom";
+import * as authAPI from 'auth/auth_utils.js';
 
 
 export default function Navbar() {
@@ -18,7 +19,7 @@ export default function Navbar() {
     const [signedIn, setSignedIn] = useState(true);
 
     const search = useLocation().search;
-    const authBool = new URLSearchParams(search).get('signedIn') === 'true';
+    const authBool = authAPI.getToken() != '';
 
     const redirectTo = (page) => {
         history.push(page);
@@ -56,7 +57,17 @@ export default function Navbar() {
     // return focus to the button when we transitioned from !open -> open
     const prevOpen = useRef(open);
     useEffect(() => {
-        setSignedIn(authBool);
+        setSignedIn(authAPI.getToken() != null);
+
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current.focus();
+        }
+
+        prevOpen.current = open;
+    }, [open]);
+
+    useEffect(() => {
+        setSignedIn(authAPI.getToken() != null);
 
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();

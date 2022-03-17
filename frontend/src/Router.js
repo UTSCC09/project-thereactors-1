@@ -13,6 +13,7 @@ import SchedulePartyPage from "./components/pages/SchedulePartyPage/SchedulePart
 import CreatePartyPage from "./components/pages/CreatePartyPage/CreatePartyPage";
 import WatchPartyPage from "./components/pages/WatchPartyPage/WatchPartyPage";
 import Navbar from "./components/utils/Navbar/Navbar";
+import { PrivateRoute } from "components/utils/PrivateRoute";
 
 export default function Router() {
     return (
@@ -21,13 +22,13 @@ export default function Router() {
             <Navbar />
             <div className="main-component">
             <Switch>
-                <Route exact path="/" component={HomePage} />
+                <PrivateRoute exact path="/" component={HomePage} />
                 <Route exact path="/sign-in" component={SignInPage} />
                 <Route exact path="/sign-up" component={SignUpPage} />
-                <Route exact path="/join" component={JoinPartyPage} />
-                <Route exact path="/schedule" component={SchedulePartyPage} />
-                <Route exact path="/party" component={WatchPartyPage} />
-                <Route exact path="/create" component={CreatePartyPage}/>
+                <PrivateRoute exact path="/join" component={JoinPartyPage} />
+                <PrivateRoute exact path="/schedule" component={SchedulePartyPage} />
+                <PrivateRoute exact path="/party" component={WatchPartyPage} />
+                <PrivateRoute exact path="/create" component={CreatePartyPage}/>
                 <Route exact path="/*"><Redirect to="/" /></Route>
             </Switch>
             </div>
