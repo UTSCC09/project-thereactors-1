@@ -4,7 +4,6 @@
     display: flex;
     padding: 1.2% 8%;
     text-align: left;
-    height: 100%;
 
     .col1 {
         width: 66%;
@@ -14,17 +13,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-
-            .party-name {
-                display: flex;
-                align-items: center;
-                font-size: $fontsize-header1 + 6;
-                height: 57px;
-            }
+            height: 57px;
     
             .host {
                 display: flex;
                 align-items: center;
+                padding-top: 4px;
 
                 &-icon {
                     width: 35px;
@@ -36,6 +30,7 @@
         .video-player-wrapper {
             .add-video-wrapper {
                 border: 1px solid grey;
+                border-radius: 10px;
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
@@ -45,6 +40,10 @@
                     align-items: center;
                     justify-content: space-around;
                     width: 60%;
+
+                    .load-btn {
+                        padding: 6px 8px;
+                    }
                 }
             }
         }
@@ -80,6 +79,7 @@
         .chat-box-wrapper {
             // margin-top: 12px;
             border: 1px solid grey;
+            border-radius: 10px;
         }
     }
 }

@@ -45,31 +45,6 @@ svg:hover {
     cursor: pointer;
 }
 
-input, textarea {
-    &:focus {
-        outline-color: rgb(130, 192, 255);
-    }
-
-    &::placeholder {
-        font-family: $fontfamily-base;
-        color: rgba(0, 0, 0, .5);
-    }
-}
-
-.form-input {
-    padding: 8px 10px;
-    border-radius: 4px;
-    border: 0px solid grey;
-    box-sizing: border-box;
-    width: 100%;
-    background-color: rgba(0, 0, 0, .06);
-}
-
-textarea {
-    resize: vertical;
-    min-height: 50px;
-}
-
 .icon-btn {
     padding: 0;
     border: none;
