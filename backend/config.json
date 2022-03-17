@@ -1,5 +1,6 @@
 {
   "port": 3001,
   "mongodbUrl": "mongodb://admin:admin@localhost:27020/recipeCentral?authSource=admin",
-  "jwtSecret": "ThisIsASecretForJWT"
+  "jwtSecret": "bWNYDRHFFHrndh4qK7dgS7ky5DpX3EeC",
+  "cookieMaxAge": 604800
 }

@@ -15,6 +15,7 @@ export const addParty = (password, callback) => {
     }
     fetch(config.graphqlUrl, {
         method: "POST",
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -41,6 +42,7 @@ export const joinParty = (id, password, callback) => {
     }
     fetch(config.graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

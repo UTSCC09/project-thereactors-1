@@ -13,6 +13,7 @@ export const getUsers = (callback) => {
     `;
     fetch(config.graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -54,58 +55,31 @@ export const getUser = (id, callback) => {
 }
 
 export const addUser = (user, callback) => {
-    const query = `
-        mutation($user: CreateUserInput) {
-            createUser(user: $user) {
-                _id
-                username
-                email
-                profileLink
-            }
-        }
-    `;
-    const variables = {
-        user
-    }
-    fetch(config.graphqlUrl, {
+    fetch(`${config.backendUrl}/api/signup`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
-        body: JSON.stringify({ query, variables }),
+        body: JSON.stringify(user),
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.createUser);
+        callback(result.errors, result);
     });
 }
 
 export const signIn = (username, password, callback) => {
-    const query = `
-        query($username: String, $password: String) {
-            signIn(username: $username, password: $password) {
-                _id
-                username
-                email
-                token
-            }
-        }
-    `;
-    const variables = {
-        username,
-        password
-    }
-    fetch(config.graphqlUrl, {
+    fetch(`${config.backendUrl}/api/signin`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
-        body: JSON.stringify({ query, variables }),
+        body: JSON.stringify({ username, password }),
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.signIn);
+        callback(result.errors, result);
     });
 }

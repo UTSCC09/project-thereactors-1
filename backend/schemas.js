@@ -4,7 +4,6 @@ import {
   userInputSchema,
   userQuerySchemas,
   userMutationSchemas,
-  userSignInSchemas
 } from './graphql/user/user_schemas';
 import {
   partySchema,
@@ -26,7 +25,6 @@ export const typeDefs = gql`
   type Query {
     ${userQuerySchemas}
     ${partyQuerySchemas}
-    ${userSignInSchemas}
     ${partySignInSchemas}
   }
 

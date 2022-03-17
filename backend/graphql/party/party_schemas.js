@@ -31,5 +31,5 @@ export const partyMutationSchemas = `
 `;
 
 export const partySignInSchemas = `
-  joinParty(_id: String, password: String): UserSignInRespone
+  joinParty(_id: String, password: String): Party
 `;
