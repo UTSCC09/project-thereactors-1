@@ -23,7 +23,14 @@ async function startServer() {
   app.use('/graphql', graphqlHTTP({ graphiql: true }));
 
   // Apollo Server
-  const apollo = new ApolloServer({ typeDefs, resolvers });
+  const apollo = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => {
+      const jwt = req.headers.authorization || '';
+      return { jwt };
+    }
+  });
   await apollo.start();
   apollo.applyMiddleware({ app, path: '/api/graphql' });
 
