@@ -22,7 +22,7 @@ export default function WatchPartyPage() {
     const [videoWidth, setVideoWidth] = useState(0);
     const [videoHeight, setVideoHeight] = useState(0);
     const [connectedUsers, setConnectedUsers] = useState([]);
-    const [host, setHost] = useState('user1');
+    const [host, setHost] = useState('');
     
     useEffect(() => {
         const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
@@ -42,15 +42,12 @@ export default function WatchPartyPage() {
         }
         else
             window.location.href = window.location.origin;
-
-        setConnectedUsers(
-            [
-                "user1",
-                "user2",
-                "user3",
-                "user4",
-            ]
-        )
+        socket.on('curr_users',(usernames)=> {
+            setConnectedUsers(usernames);
+        });
+        socket.on('host',(host)=> {
+            setHost(host);
+        });
     }, []);
 
     const play = () => {
@@ -86,8 +83,9 @@ export default function WatchPartyPage() {
             <div className='col1'>
                 <div className='desc-row'>
                     <div className='host'>
-                        <span style={{marginRight: 4}}>host:</span>
-                        <Avatar title={host} className='host-icon' />
+                        <span style={{marginRight: 4}}>Host:</span>
+                        <Avatar  style={{marginRight: 4}} title={host} className='host-icon' />
+                        <p >{host}</p>
                     </div>
                 </div>
                 <div id='video-player-wrapper' className='video-player-wrapper'>

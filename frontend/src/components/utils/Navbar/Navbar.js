@@ -38,7 +38,9 @@ export default function Navbar() {
         }
         
         if (page === 'logout') {
-            redirectTo("/?signedIn=false");
+            authAPI.setJWT('');
+            authAPI.setUser('');
+            redirectTo('/');
         } else {
             redirectTo(page);
         }

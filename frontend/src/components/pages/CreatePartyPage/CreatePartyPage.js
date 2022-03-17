@@ -16,13 +16,14 @@ export default function CreatePartyPage() {
         e.preventDefault();
         setPartyCode('');
         // redirect to generated room
-        partyAPI.addParty(password,(err,id)=> {if(err) console.log(err);
-            console.log(id); 
-            if(id) 
-            history.push( {
-                pathname:'party?id='+id,
-                state: password
-            });
+        partyAPI.addParty(password,(err,id)=> {
+            if(err) 
+                console.log(err);
+            console.log(id);
+            if(id) {
+                history.push('/party?id='+id);
+            }
+
         });   
         
     }

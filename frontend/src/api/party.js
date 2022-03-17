@@ -1,6 +1,8 @@
 import config from 'environments';
+import * as authAPI from 'auth/auth_utils.js';
 
-export const addParty = (partyPassword, callback) => {
+export const addParty = (password, callback) => {
+    let party = {password, hostedBy: authAPI.getToken()};
     const query = `
         mutation($party: CreatePartyInput) {
             createParty(party: $party) {
@@ -9,7 +11,7 @@ export const addParty = (partyPassword, callback) => {
         }
     `;
     const variables = {
-        partyPassword
+        party
     }
     fetch(config.graphqlUrl, {
         method: "POST",
@@ -21,7 +23,7 @@ export const addParty = (partyPassword, callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data._id);
+        callback(result.errors, result.data.createParty._id);
     });
 }
 

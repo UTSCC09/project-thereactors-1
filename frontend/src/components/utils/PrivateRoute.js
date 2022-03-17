@@ -6,8 +6,6 @@ export const PrivateRoute = ({ component: Component, ...rest }) => (
     
     <Route {...rest} render={props => {
         const isauthenticated = authAPI.getToken();
-        console.log(authAPI.getToken());
-        console.log(isauthenticated);
         if (!isauthenticated) {
             // console.log("not auth");
             // not logged in so redirect to login page with the return url

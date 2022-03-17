@@ -2,20 +2,23 @@ export const partySchema = `
   type Party {
     _id: ID
     password: String
-    hostedBy: ID
+    hostedBy: String
     ytLink: [String]
     createdAt: DateTime
     startedAt: DateTime
+    connectedUsers:[String]
+    authenticatedUsers: [String]
   }
 `;
 
 export const partyInputSchema = `
   input CreatePartyInput {
-    title: String
     password: String
-    hostedBy: ID
+    hostedBy: String
     ytLink: [String]
     startedAt: DateTime
+    connectedUsers:[String]
+    authenticatedUsers: [String]
   }
 `;
 

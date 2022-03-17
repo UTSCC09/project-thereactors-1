@@ -33,12 +33,7 @@ export default function SignInPage() {
                     setPassword('');
                     authAPI.setJWT(res.token);
                     authAPI.setUser(res.username);
-                    if(history.length !=0) {
-                        history.goBack();
-                    } else {
-                        history.replace('');
-                    }
-                    
+                    history.replace('');
                 }
             }
         });

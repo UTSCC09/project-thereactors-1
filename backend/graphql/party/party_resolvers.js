@@ -1,5 +1,5 @@
 import { Party } from '../../db';
-
+import * as auth from '../../utils.js';
 export const partyQueryResolvers = {
   getParties: (_, args) => {
     return new Promise((resolve, reject) => {
@@ -52,7 +52,14 @@ export const partySignInResolvers = {
 export const partyMutationResolvers = {
   createParty: (_, { party }) => { 
     console.log(party);
+    const jwt = auth.verifyJwt(party.hostedBy);
+    if(jwt.valid) {
+      party.hostedBy = jwt.decoded.username;
+      party.authenticatedUsers = [jwt.decoded.username];
+    }
+      
     const newParty = new Party(party); 
+    console.log(newParty);
     return new Promise((resolve, reject) => {
       newParty.save((err) => {
         if (err) reject(err);
