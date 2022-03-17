@@ -9,35 +9,12 @@ export const userSchema = `
     profileLink: String
     createdAt: DateTime
   }
-
-  type UserSignInRespone {
-    _id: ID
-    username: String
-    email: String
-    token: String
-  }
 `;
 
-export const userInputSchema = `
-  input CreateUserInput {
-    firstName: String
-    lastName: String
-    nickname: String
-    email: String
-    username: String
-    password: String
-    profileLink: String
-  }
-`;
+export const userInputSchema = ``;
 
 export const userQuerySchemas = `
   getUsers(id: ID): [User]
 `;
 
-export const userMutationSchemas = `
-  createUser(user: CreateUserInput): User
-`;
-
-export const userSignInSchemas = `
-  signIn(username: String, password: String): UserSignInRespone
-`;
+export const userMutationSchemas = ``;

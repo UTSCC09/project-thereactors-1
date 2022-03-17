@@ -1,5 +1,4 @@
 import { saveMessage } from './chatroom_util.js';
-import { verifyJwt } from './utils.js';
 import { Party, Message } from './db.js';
 
 const checkUserInvited = (username,roomid, callback) =>  {
@@ -68,11 +67,12 @@ export function setupSocketHandlers(io) {
 
     socket.on('sign-in',(session) =>{
       // take session information and extract user id
-      let res = verifyJwt(session.token);
-      if(res.valid) {
-        socket.data.user = res.decoded.username;
-        console.log(socket.data.user + " signed in");
-      }
+      // let res = verifyJwt(session.token);
+      // if(res.valid) {
+      //   socket.data.user = res.decoded.username;
+      //   console.log(socket.data.user + " signed in");
+      // }
+      console.log(session);
     });
 
     socket.on('join-room',(roomdata)=> {

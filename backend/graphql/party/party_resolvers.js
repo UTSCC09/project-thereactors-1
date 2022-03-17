@@ -1,6 +1,5 @@
 import { ValidationError } from 'apollo-server-express';
 import { Party } from '../../db';
-import * as auth from '../../utils.js';
 
 export const partyQueryResolvers = {
   getParties: (_, args) => {
@@ -24,13 +23,9 @@ export const partyQueryResolvers = {
 }
 
 export const partySignInResolvers = {
-  /**
-   * When username and password match, we generate a JWT and return it to
-   * the frontend. The frontend then will include the JWT in the header for
-   * all the requests that required authentication.
-   */
-   joinParty: (_, args) => {
+   joinParty: (_, args, context) => {
     return new Promise((resolve, reject) => {
+      const { username } = context.userData;
       if (args._id && args.password) {
         Party.findOne({ _id: args._id, password: args.password }, (err, party) => {
           if (err) {
@@ -40,9 +35,9 @@ export const partySignInResolvers = {
             reject(new ValidationError("Authentication failed"));
           }
           else {
-            resolve({
-              _id: party._id,
-            });
+            party.authenticatedUsers.push(username);
+            party.save();
+            resolve({ _id: party._id });
           }
         });
       }
@@ -50,19 +45,14 @@ export const partySignInResolvers = {
   },
 }
 
-
 export const partyMutationResolvers = {
-  createParty: (_, { party }) => {
-    console.log(party);
-    const jwt = auth.verifyJwt(party.hostedBy);
-    if(jwt.valid) {
-      party.hostedBy = jwt.decoded.username;
-      party.authenticatedUsers = [jwt.decoded.username];
-    }
-
-    const newParty = new Party(party);
-    console.log(newParty);
+  createParty: (_, { party }, context) => {
     return new Promise((resolve, reject) => {
+      const { username } = context.userData;
+      party.hostedBy = username;
+      party.authenticatedUsers = [username];
+      // Create new party
+      const newParty = new Party(party);
       newParty.save((err) => {
         if (err) reject(err);
         else resolve(newParty);
