@@ -85,7 +85,6 @@ export default function WatchPartyPage() {
         <div className="watch-party-page">
             <div className='col1'>
                 <div className='desc-row'>
-                    <div className='party-name'>Movie Night</div>
                     <div className='host'>
                         <span style={{marginRight: 4}}>host:</span>
                         <Avatar title={host} className='host-icon' />
@@ -116,7 +115,7 @@ export default function WatchPartyPage() {
                                 }}
                                 onChange={(e)=>setTempVideoId(e.target.value)}
                             />
-                            <Button type='submit' variant='outlined'>load</Button>
+                            <Button type='submit' className='load-btn' variant='outlined'>load</Button>
                             </form>
                         </div>
                     }
@@ -150,7 +149,7 @@ export default function WatchPartyPage() {
                     </Accordion>
                 </div>
                 <div className='chat-box-wrapper' style={{minHeight: videoHeight}}>
-                    <ChatBox socket={socket}></ChatBox>
+                    <ChatBox socket={socket} height={videoHeight}></ChatBox>
                 </div>
             </div>
         </div>

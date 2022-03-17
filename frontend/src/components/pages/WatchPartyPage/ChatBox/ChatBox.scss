@@ -1,0 +1,74 @@
+@import 'src/global.scss';
+
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+
+  .messages {
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0 4px;
+
+    .message-container-other {
+      .inner-box {
+        display: flex;
+        margin-bottom: 10px;
+
+        .user-icon {
+          margin-right: 6px;
+          height: 35px;
+          width: 35px;
+          margin-top: 4px;
+        }
+
+        .message-box {
+          .message-text {
+            border-radius: 4px;
+            background-color: $primary-color;
+
+            color: white;
+            padding: 3px 7px;
+            overflow-wrap: break-word;
+          }
+        }
+      }
+    }
+
+    .message-container-self {
+      @extend .message-container-other;
+      display: flex;
+      justify-content: space-between;
+      
+      .inner-box {
+        .user-icon {
+          margin-right: 0;
+          margin-left: 6px;
+        }
+  
+        .sender {
+          text-align: right;
+        }
+  
+        .message-box {
+          .message-text {
+            background-color: rgb(16, 156, 255);
+          }
+        }
+      }
+    }
+  }
+
+  .chat-form {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 8px;
+
+    .send-button {
+      margin-left: 6px;
+      padding: 6px 8px;
+    }
+  }
+}

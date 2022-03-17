@@ -1,9 +1,9 @@
+import './ChatBox.scss';
 import React, { useEffect,useState } from "react";
-import { MessageContainer } from "./MessageContainer";
+import { MessagesContainer } from "./MessagesContainer";
 import { Input } from "./Input";
-import './Message.scss';
 
-export default function ChatBox({socket}) {
+export default function ChatBox({socket, height}) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const curr_user ="victor";
@@ -27,10 +27,9 @@ export default function ChatBox({socket}) {
         }
     }
 
-
     return (
-        <div className="chatbox">
-            <MessageContainer className="" messages={messages} curr_user={curr_user} />
+        <div className="chatbox" style={{height: height - 16}}>
+            <MessagesContainer messages={messages} curr_user={curr_user} />
             <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
         </div>
     )
