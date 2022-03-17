@@ -117,6 +117,7 @@ export default function SignUpPage() {
                     className='textfield'
                     size='small'
                     label='Username'
+                    value={newUser.username}
                     onChange={(e)=>changeField(e, 'username')}
                     required
                 />
@@ -124,6 +125,7 @@ export default function SignUpPage() {
                     className='textfield'
                     size='small'
                     label='Email address'
+                    value={newUser.email}
                     type='email'
                     onChange={(e)=>changeField(e, 'email')}
                     required
@@ -132,6 +134,7 @@ export default function SignUpPage() {
                     className='textfield'
                     size='small'
                     label='Password'
+                    value={newUser.password}
                     type='password'
                     onChange={(e)=>changeField(e, 'password')}
                     required
@@ -140,6 +143,7 @@ export default function SignUpPage() {
                     className='textfield'
                     size='small'
                     label='Confirm Password'
+                    value={confirmPassword}
                     type='password'
                     onChange={(e)=>setConfirmPassword(e.target.value)}
                     required
