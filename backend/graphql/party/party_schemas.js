@@ -30,6 +30,6 @@ export const partyMutationSchemas = `
   createParty(party: CreatePartyInput): Party
 `;
 
-export const partySignInResolvers = `
-joinParty(_id: String, password: String): UserSignInRespone
+export const partySignInSchemas = `
+  joinParty(_id: String, password: String): UserSignInRespone
 `;

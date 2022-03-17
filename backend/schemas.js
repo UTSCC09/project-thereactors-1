@@ -11,6 +11,7 @@ import {
   partyInputSchema,
   partyQuerySchemas,
   partyMutationSchemas,
+  partySignInSchemas,
 } from './graphql/party/party_schemas';
 
 export const typeDefs = gql`
@@ -26,6 +27,7 @@ export const typeDefs = gql`
     ${userQuerySchemas}
     ${partyQuerySchemas}
     ${userSignInSchemas}
+    ${partySignInSchemas}
   }
 
   type Mutation {

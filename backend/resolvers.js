@@ -7,6 +7,7 @@ import {
 import {
   partyQueryResolvers,
   partyMutationResolvers,
+  partySignInResolvers,
 } from './graphql/party/party_resolvers';
 
 /**
@@ -18,6 +19,7 @@ export const resolvers = {
     ...userQueryResolvers,
     ...partyQueryResolvers,
     ...userSignInResolvers,
+    ...partySignInResolvers,
   },
   Mutation: {
     ...userMutationResolvers,
