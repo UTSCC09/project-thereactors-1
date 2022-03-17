@@ -1,8 +1,8 @@
 import './JoinPartyPage.scss';
 import React, { useEffect, useState } from "react";
-import { 
+import {
     Button,
-    TextField 
+    TextField
 } from "@mui/material";
 import { useLocation, useHistory } from "react-router-dom";
 import * as PartyAPI from 'api/party';
@@ -13,7 +13,7 @@ export default function JoinPartyPage() {
     const [alreadyHasId, setAlreadyHasId] = useState(false);
     const location = useLocation();
     const history = useHistory();
-    
+
     const getParty = (id) => {
         // api call
 
@@ -29,16 +29,18 @@ export default function JoinPartyPage() {
         console.log(id, code);
         setPartyCode('');
         // redirect to generated room
-        PartyAPI.joinParty(id,code,(err,res)=> {
-            if(res)
-                history.push('party?id='+res);
-        })
-        
+        PartyAPI.joinParty(id, code, (err, res)=> {
+            if (err) {
+                console.log(err);
+            } else {
+                history.push('party?id=' + res._id);
+            }
+        });
     }
 
     useEffect(() => {
         const search = location.search;
-        const partyId = new URLSearchParams(search).get('id'); 
+        const partyId = new URLSearchParams(search).get('id');
         getParty(partyId);
     }, []);
 
@@ -54,7 +56,7 @@ export default function JoinPartyPage() {
                 <div className='inputs-btn-box'>
                 <form id='party-form' onSubmit={(e)=>joinRoom(e, partyId, partyCode)}>
                 {!alreadyHasId &&
-                    <TextField 
+                    <TextField
                         className='textfield'
                         size='small'
                         label='Party ID'
@@ -63,7 +65,7 @@ export default function JoinPartyPage() {
                         required
                     />
                 }
-                <TextField 
+                <TextField
                     className='textfield'
                     size='small'
                     label='Party code'

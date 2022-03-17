@@ -49,6 +49,6 @@ export const joinParty = (id, password, callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data);
+        callback(result.errors, result.data.joinParty);
     });
 }
