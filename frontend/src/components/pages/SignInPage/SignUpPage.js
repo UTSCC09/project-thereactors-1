@@ -28,7 +28,7 @@ export default function SignUpPage() {
     }, []);
 
     const toSignIn = () => {
-        history.push('sign-in');
+        history.replace('sign-in');
     }
 
     const validateEmail = (email) => {

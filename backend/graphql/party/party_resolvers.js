@@ -21,9 +21,38 @@ export const partyQueryResolvers = {
   },
 }
 
+export const partySignInResolvers = {
+  /**
+   * When username and password match, we generate a JWT and return it to
+   * the frontend. The frontend then will include the JWT in the header for
+   * all the requests that required authentication.
+   */
+   joinParty: (_, args) => {
+    return new Promise((resolve, reject) => {
+      if (args._id && args.password) {
+        Party.findOne({ _id: args._id, password: args.password }, (err, party) => {
+          if (err) {
+            reject(err);
+          }
+          else if (!party) {
+            reject(new ValidationError("Authentication failed"));
+          }
+          else {
+            resolve({
+              _id: party._id,
+            });
+          }
+        });
+      }
+    });
+  },
+}
+
+
 export const partyMutationResolvers = {
-  createParty: (_, { party }) => {
-    const newParty = new Party(party);
+  createParty: (_, { party }) => { 
+    console.log(party);
+    const newParty = new Party(party); 
     return new Promise((resolve, reject) => {
       newParty.save((err) => {
         if (err) reject(err);

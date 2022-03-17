@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 export const Message = ({ message: { sender, content }, current_user })  => {
     const isSelf = () => {
-        return current_user._id == sender._id;
+        return current_user == sender;
     }
 
     return (

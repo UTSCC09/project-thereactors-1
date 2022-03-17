@@ -10,9 +10,9 @@ import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
 import io from 'socket.io-client';
 import config from 'environments';
+import * as authAPI from 'auth/auth_utils.js';
 
-const socket = io.connect(config.backendUrl);
-socket.emit('join-room',"blah");
+const socket = io.connect(config.backendUrl,{extraHeaders: {Authorization: "Bearer " + authAPI.getToken()}});
 
 export default function WatchPartyPage() {
     const [videoId, setVideoId] = useState('');
@@ -34,6 +34,14 @@ export default function WatchPartyPage() {
             setVideoWidth(vidWrapperBox1.width);
             setVideoHeight((vidWrapperBox1.width / 16) * 9);
         }
+
+        if(new URLSearchParams(window.location.search).get("id") && authAPI.getToken){
+            socket.emit('sign-in', {token: authAPI.getToken() });
+
+            socket.emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+        }
+        else
+            window.location.href = window.location.origin;
 
         setConnectedUsers(
             [
