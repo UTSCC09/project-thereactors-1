@@ -11,11 +11,13 @@ import ChatBox from "./ChatBox/ChatBox";
 import io from 'socket.io-client';
 import * as authAPI from 'auth/auth_utils.js';
 import { getSocket,connectToSocket } from 'components/utils/socket_utils';
+import SidePanel from './SidePanel/SidePanel';
 
 
 export default function WatchPartyPage() {
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
+    const [tempVideoId2, setTempVideoId2] = useState('');
     const [playing, setPlaying] = useState(false);
     const [controls, setControls] = useState(true);
     const [videoWidth, setVideoWidth] = useState(0);
@@ -76,21 +78,26 @@ export default function WatchPartyPage() {
         // will use the host's current video playtime to make them catch up.
     }
 
-    const loadVideo = (e) => {
-        e.preventDefault();
+    const loadVideo = () => {
         setVideoId(tempVideoId);
+        setTempVideoId('');
+    }
+
+    const loadVideo2 = () => {
+        setVideoId(tempVideoId2);
+        setTempVideoId2('');
+    }
+
+    const addToPlaylist = () => {
+
     }
 
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                <div className='desc-row'>
-                    <div className='host'>
-                        <span style={{marginRight: 4}}>Host:</span>
-                        <Avatar  style={{marginRight: 4}} title={host} className='host-icon' />
-                        <p >{host}</p>
-                    </div>
-                </div>
+                <SidePanel />
+            </div>
+            <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
                     {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
                         <ReactPlayer 
@@ -106,7 +113,7 @@ export default function WatchPartyPage() {
                     }
                     {videoId === '' &&
                         <div className='add-video-wrapper' style={{height: videoHeight, width: videoWidth}}>
-                            <form className='inner-wrapper' onSubmit={(e)=>loadVideo(e)}>
+                            <div className='inner-wrapper'>
                             <TextField 
                                 label="Enter video url"
                                 size='small'
@@ -114,42 +121,36 @@ export default function WatchPartyPage() {
                                     marginRight: 5,
                                     width: '100%'
                                 }}
+                                value={tempVideoId}
                                 onChange={(e)=>setTempVideoId(e.target.value)}
                             />
-                            <Button type='submit' className='load-btn' variant='outlined'>load</Button>
-                            </form>
+                            <Button type='submit' className='load-btn' variant='outlined' onClick={()=>loadVideo()}>load</Button>
+                            </div>
                         </div>
                     }
                 </div>
+                <div className='desc-row'>
+                    <div className='host'>
+                        <span style={{marginRight: 4}}>Host:</span>
+                        <Avatar  style={{marginRight: 4}} title={host} className='host-icon' />
+                        <p >{host}</p>
+                    </div>
+                    <div className='addToPlaylist-wrapper'>
+                        <TextField
+                            className='input-field'
+                            label='Enter video url'
+                            size='small'
+                            value={tempVideoId2}
+                            onChange={(e)=>setTempVideoId2(e.target.value)}
+                        />
+                        <Button className='load-btn' variant='outlined' onClick={()=>loadVideo2()}>load</Button>
+                        <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist()}>queue</Button>
+                    </div>
+                </div>
                 <div className='video-queue-wrapper'></div>
             </div>
-            <div className='col2'>
-                <div className='connected-users-wrapper'>
-                    <Accordion className='Accordion'>
-                        <AccordionSummary
-                            className='AccordionSummary'
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                        <Typography>Connected Users</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails
-                            style={{
-                                padding: '0 16px 10px'
-                            }}
-                        >
-                            {connectedUsers?.length > 0 &&
-                                connectedUsers.map((user, index) => {
-                                    return (
-                                        <div key={index} className='user'>{user}</div>
-                                    )
-                                })
-                            }
-                        </AccordionDetails>
-                    </Accordion>
-                </div>
-                <div className='chat-box-wrapper' style={{minHeight: videoHeight}}>
+            <div className='col3'>
+                <div className='chat-box-wrapper'>
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
             </div>
