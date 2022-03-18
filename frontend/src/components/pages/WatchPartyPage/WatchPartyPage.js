@@ -32,6 +32,7 @@ export default function WatchPartyPage() {
     const [videoWidth, setVideoWidth] = useState(0);
     const [videoHeight, setVideoHeight] = useState(0);
     const playerRef = useRef();
+    const [playerRefValid,setPlayerRefValid] = useState(false);
     // custom states 
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [host, setHost] = useState('');
@@ -94,7 +95,6 @@ export default function WatchPartyPage() {
             setPlaying(true)
             setPlaying(party_video_state.video_is_playing);
             console.log("play  "+ party_video_state.video_is_playing);
-            // setPlaying(true);
         }
 
 
@@ -134,6 +134,7 @@ export default function WatchPartyPage() {
     }
     const handleOnReady = () => {
         // check if state of video should be playing
+        setPlaying(false);
         setPlaying(party_video_state.video_is_playing);
         playerRef.current.seekTo(party_video_state.playedSeconds);
     }
@@ -158,7 +159,19 @@ export default function WatchPartyPage() {
 
     // handle socket events
     const handleUpdateProgress= (party_video_state)=> {
-        if(videoId && Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds)  > 1) {
+        
+        if(playerRef) {
+            console.log('newvideostate ')
+            console.log(party_video_state.playedSeconds)
+            console.log(playerRef.current.getCurrentTime())
+            console.log(Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds) >1)
+        }
+        if(!playerRef) {
+
+        }
+        if(videoId && Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds) > 1) {
+            console.log("out of sync")
+
             playerRef.current.seekTo(party_video_state.playedSeconds);
         }
         setPartyVideoState(party_video_state);
@@ -201,7 +214,7 @@ export default function WatchPartyPage() {
                 <div id='video-player-wrapper' className='video-player-wrapper'>
                     {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
                         <ReactPlayer 
-                            ref ={playerRef}
+                            ref ={(player)=> {playerRef.current = player; setPlayerRefValid(!!player)}}
                             url={videoId}
                             controls={controls}
                             playing={playing}
