@@ -8,4 +8,7 @@ export const partySchema = new mongoose.Schema({
   ytLink: { type: [String], default: [] },
   connectedUsers: { type: [String], default: [] },
   authenticatedUsers: { type: [String], default: [] },
+  playedSeconds : {type: Number, default: 0},
+  video_is_playing : {type: Boolean, default: false},
+  current_vid : {type: Number, default: 0},
 });

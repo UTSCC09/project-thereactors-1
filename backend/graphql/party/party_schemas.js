@@ -8,6 +8,9 @@ export const partySchema = `
     startedAt: DateTime
     connectedUsers:[String]
     authenticatedUsers: [String]
+    video_is_playing : Boolean
+    playedSeconds : Int
+    current_vid : Int
   }
 `;
 
@@ -19,6 +22,10 @@ export const partyInputSchema = `
     startedAt: DateTime
     connectedUsers:[String]
     authenticatedUsers: [String]
+    video_is_playing : Boolean
+    playedSeconds : Int
+    current_vid : Int
+
   }
 `;
 
