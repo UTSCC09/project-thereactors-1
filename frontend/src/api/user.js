@@ -75,7 +75,9 @@ export const signIn = (username, password, callback) => {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            
         },
+        credentials: 'include',
         body: JSON.stringify({ username, password }),
     })
     .then((response) => response.json())

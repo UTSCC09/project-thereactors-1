@@ -13,6 +13,7 @@
     padding: 0 4px;
 
     .message-container-other {
+      justify-content: start;
       .inner-box {
         display: flex;
         margin-bottom: 10px;
@@ -41,7 +42,6 @@
       @extend .message-container-other;
       display: flex;
       justify-content: space-between;
-      
       .inner-box {
         .user-icon {
           margin-right: 0;
@@ -63,12 +63,12 @@
 
   .chat-form {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     margin-top: 8px;
 
     .send-button {
       margin-left: 6px;
-      padding: 6px 8px;
+      padding: 6.5px 8px;
     }
   }
 }

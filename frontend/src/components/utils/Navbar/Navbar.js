@@ -19,7 +19,7 @@ export default function Navbar() {
     const [signedIn, setSignedIn] = useState(true);
 
     const search = useLocation().search;
-    const authBool = authAPI.getToken() != '';
+    const authBool = authAPI.signedIn();
 
     const redirectTo = (page) => {
         history.push(page);
@@ -38,8 +38,7 @@ export default function Navbar() {
         }
         
         if (page === 'logout') {
-            authAPI.setJWT('');
-            authAPI.setUser('');
+            authAPI.signOut('');
             redirectTo('/');
         } else {
             redirectTo(page);
@@ -59,7 +58,7 @@ export default function Navbar() {
     // return focus to the button when we transitioned from !open -> open
     const prevOpen = useRef(open);
     useEffect(() => {
-        setSignedIn(authAPI.getToken() != null);
+        setSignedIn(authAPI.signedIn());
 
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
@@ -69,7 +68,7 @@ export default function Navbar() {
     }, [open]);
 
     useEffect(() => {
-        setSignedIn(authAPI.getToken() != null);
+        setSignedIn(authAPI.signedIn());
 
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();

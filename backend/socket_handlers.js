@@ -1,56 +1,7 @@
-import { saveMessage } from './chatroom_util.js';
+import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
+,pauseVideo,playVideo,updateVideoProgress} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
-import { Party, Message } from './db.js';
 
-const checkUserInvited = (username,roomid, callback) =>  {
-  const query = Party.where({_id : roomid}).findOne((err,doc)=> {
-    if(doc && doc.authenticatedUsers.includes(username) ) {
-      callback(null, true);
-    } else {
-      callback(true);
-    }
-  });
-}
-
-const addConnectedUser = (username,roomid) =>  {
-  Party.where({_id : roomid}).findOne((err,doc)=> {
-    if(doc) {
-      if(!doc.connectedUsers.includes(username)) {
-        doc.connectedUsers.push(username);
-        doc.save();
-      }
-    } else {
-    }
-  });
-}
-
-const removeConnectedUser = (username,roomid) =>  {
-  Party.where({_id : roomid}).findOne((err,doc)=> {
-    if(doc) {
-      doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
-      doc.save();
-    } else {
-    }
-  });
-}
-
-const sendPrevPartyMessages = (roomid, callback) =>  {
-  Message.where({party : roomid}).find((err,docs)=> {
-    if(docs) {
-      callback(null, docs);
-    }
-  });
-}
-
-const sendPartyInfo = (roomid, callback) =>  {
-  Party.where({_id : roomid}).findOne((err,doc)=> {
-    if(doc) {
-      callback(null, doc);
-    } else {
-      callback(err,null);
-    }
-  });
-}
 export function setupSocketHandlers(io) {
   io.on('connection', (socket) => {
     /*
@@ -59,53 +10,102 @@ export function setupSocketHandlers(io) {
     socket.data.userid // user id in the db
     */
 
-    console.log('a user connected ' + socket.id);
-    socket.on("disconnecting", (reason) => {
+    if(socket.handshake.headers.cookie) {
+      let res = verifyJwt(getCookie('token',socket.handshake.headers.cookie));
+      if(res.valid) {
+        socket.data.user = res.decoded.username;
+        console.log(socket.data.user + " signed in");
+      }
+    }
+
+    socket.on("disconnecting", () => {
       io.to(socket.data.current_party).emit('user-left',socket.data.user);
       removeConnectedUser(socket.data.user,socket.data.current_party);
       console.log( socket.data.user+' disconnected');
     });
 
-    socket.on('sign-in',(session) =>{
-      // take session information and extract user id
-      let res = verifyJwt(session.token);
-      if(res.valid) {
-        socket.data.user = res.decoded.username;
-        console.log(socket.data.user + " signed in");
-      }
-    });
 
     socket.on('join-room',(roomdata)=> {
-      console.log("user requests to join "+ roomdata.roomname);
+      console.log(socket.data.user + " attempts to join")
       if(socket.data.user && roomdata.roomname) // do real sanitization on these fields
         checkUserInvited(socket.data.user,roomdata.roomname,(err, res) =>{
           if(res) {
-            console.log("user joins room " + roomdata.roomname);
+            console.log( socket.data.user+" joins room " + roomdata.roomname);
 
             socket.join(roomdata.roomname);
             socket.data.current_party = roomdata.roomname;
-            addConnectedUser(socket.data.user,roomdata.roomname);
-            io.to(socket.data.current_party).emit('new-joiner',socket.data.user);
-            sendPrevPartyMessages(roomdata.roomname,(err,messages) => {
-              socket.emit('joined',messages);
+            
+            addConnectedUser(socket.data.user,roomdata.roomname, () => {
+              io.to(socket.data.current_party).emit('new-joiner',socket.data.user);
+              sendPrevPartyMessages(roomdata.roomname,(err,messages) => {
+                socket.emit('joined',messages);
+              });
+              console.log("here");
+              sendPartyInfo(roomdata.roomname,(err,data) => {
+                if(data)
+                  io.to(socket.data.current_party).emit('curr_users',data.connectedUsers);
+                  io.to(socket.data.current_party).emit('host',data.hostedBy);
+                  socket.emit('playlist-changed',{'playlist':data.ytLink,'current_vid':data.current_vid});
+                  socket.emit('update-progress',{ 'playedSeconds' :data.playedSeconds, 'video_is_playing':data.video_is_playing})
+              });
             });
-            sendPartyInfo(roomdata.roomname,(err,data) => {
-              if(data)
-                io.to(socket.data.current_party).emit('curr_users',data.connectedUsers);
-                io.to(socket.data.current_party).emit('host',data.hostedBy);
-            });
+          }
+          if(err) {
+            socket.emit("password-missing");
           }
         });
     });
 
     socket.on('send',(content)=> {
-      console.log("a user sent a message");
       if(socket.data.current_party) {
         saveMessage(content,socket.data.user,socket.data.current_party,
           (new_message) => {
             io.to(socket.data.current_party).emit('receive',new_message);
           });
       }
+    });
+    // video socket handling
+    socket.on('update-playlist',(playlist)=> {
+      setPartyPlaylist(playlist,socket.data.current_party,socket.data.user, (err,res)=>{
+        if(res) {
+          io.to(socket.data.current_party).emit('playlist-changed',{'playlist': res.playlist, 'current_vid':res.current_vid });
+        }
+      });
+    });
+
+    socket.on('pause-video',(playedSeconds)=> {
+      pauseVideo(playedSeconds,socket.data.current_party,socket.data.user,(err,res)=> {
+        if(res){
+          console.log('pause-video');
+          io.to(socket.data.current_party).emit('update-progress',res);
+        }
+          
+      });
+    });
+    socket.on('play-video',()=> {
+      playVideo(socket.data.current_party,socket.data.user,(err,res)=> {
+        if(res) {
+          io.to(socket.data.current_party).emit('update-progress',res);
+          console.log('play-video');
+        }
+          
+      });
+    });
+    socket.on('update-video-progress',(playedSeconds)=> {
+      updateVideoProgress(playedSeconds,socket.data.current_party,socket.data.user,(err,res)=> {
+        if(res) {
+          console.log('update-progress');
+          io.to(socket.data.current_party).emit('update-progress',res);
+        }
+          
+      });
+    });
+    socket.on('update-index', (newIndex)=> {
+      updateCurrentVid(newIndex,socket.data.current_party,socket.data.user,(err,res)=> {
+        if(res) {
+          io.to(socket.data.current_party).emit('playlist-changed',{'playlist':res.playlist, 'current_vid':res.current_vid });
+        }
+      });
     });
   });
 }

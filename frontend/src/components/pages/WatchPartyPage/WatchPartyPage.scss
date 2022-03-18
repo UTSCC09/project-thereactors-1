@@ -1,85 +1,101 @@
-@import 'global.scss';
+@import "global.scss";
 
 .watch-party-page {
-    display: flex;
-    padding: 1.2% 8%;
-    text-align: left;
+  display: flex;
+  padding: 1.5% 4% 6px;
+  text-align: left;
 
-    .col1 {
-        width: 66%;
-        margin-right: 2%;
+  .col1 {
+    width: 4%;
+  }
 
-        .desc-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 57px;
-    
-            .host {
-                display: flex;
-                align-items: center;
-                padding-top: 4px;
+  .col2 {
+    width: 66.5%;
+    margin-right: 1.5%;
 
-                &-icon {
-                    width: 35px;
-                    height: 35px;
-                }
-            }
+    .desc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+
+      .host {
+        display: flex;
+        align-items: center;
+
+        &-icon {
+          width: 35px;
+          height: 35px;
+        }
+      }
+
+      .addToPlaylist-wrapper {
+        display: flex;
+        align-items: center;
+
+        .input-field {
+          width: 20vw;
         }
 
-        .video-player-wrapper {
-            .add-video-wrapper {
-                border: 1px solid grey;
-                border-radius: 10px;
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-
-                .inner-wrapper {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-around;
-                    width: 60%;
-
-                    .load-btn {
-                        padding: 6px 8px;
-                    }
-                }
-            }
+        .load-btn, .addToPlaylist-btn {
+            padding: 6.5px 12px;
+            margin-left: 4px;
         }
+      }
     }
 
-    .col2 {
-        width: 32%;
+    .video-player-wrapper {
+      .add-video-wrapper {
+        border: 1px solid grey;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
 
-        .connected-users-wrapper {
-            .header {
-                line-height: 16px;
-            }
+        .inner-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          width: 60%;
 
-            .Accordion {
-                min-height: 45px;
-                margin-bottom: 12px;
-
-                .AccordionSummary {
-                    min-height: 0;
-                    
-                    div {
-                        margin: 12px 0;
-                    }
-                }
-    
-                .user {
-                    margin-top: 2px;
-                }
-            }
-
+          .load-btn {
+            padding: 6.5px 12px;
+          }
         }
-        
-        .chat-box-wrapper {
-            // margin-top: 12px;
-            border: 1px solid grey;
-            border-radius: 10px;
-        }
+      }
     }
+  }
+
+  .col3 {
+    width: 28%;
+
+    .connected-users-wrapper {
+      .header {
+        line-height: 16px;
+      }
+
+      .Accordion {
+        min-height: 45px;
+        margin-bottom: 12px;
+
+        .AccordionSummary {
+          min-height: 0;
+
+          div {
+            margin: 12px 0;
+          }
+        }
+
+        .user {
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .chat-box-wrapper {
+      // margin-top: 12px;
+      border: 1px solid grey;
+      border-radius: 10px;
+    }
+  }
 }

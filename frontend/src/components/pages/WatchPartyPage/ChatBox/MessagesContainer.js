@@ -5,7 +5,7 @@ export const MessagesContainer = ({ messages, curr_user }) => {
     return(
         <div className="messages">
             <div>
-            {messages.map((message, i) => <div key={i}><Message message={message} curr_user={curr_user}/></div>)}
+            {messages.map((message, i) => <div key={i}><Message message={message}/></div>)}
             </div>
         </div>
     )
