@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import config from './config.json';
 import cors from 'cors';
+import bcrypt from 'bcrypt';
 
 // GraphQL
 import { graphqlHTTP } from 'express-graphql';
@@ -50,14 +51,18 @@ async function startServer() {
       if (!isUnique) {
         return res.status(400).json({ message: error });
       } else {
-        // Create a user and sign a token
-        User.create({ username, email, password }, (err, user) => {
-          const token = signJwt({ username: user.username });
-          res.cookie('token', token, {
-            maxAge: config.cookieMaxAge,
-            httpOnly: true,
+        // Hash the given password, create a user and sign a token
+        bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
+          if (err) return res.status(500).json({ message: err });
+          User.create({ username, email, password: hash }, (err, user) => {
+            if (err) return res.status(500).json({ message: err });
+            const token = signJwt({ username: user.username });
+            res.cookie('token', token, {
+              maxAge: config.cookieMaxAge,
+              httpOnly: true,
+            });
+            return res.json({ usenrame: user.username, token });
           });
-          return res.json({ usenrame: user.username, token });
         });
       }
     });

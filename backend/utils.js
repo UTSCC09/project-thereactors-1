@@ -1,6 +1,7 @@
-import { User } from './db';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import config from './config.json';
+import { User } from './db';
 
 /**
  * Authenticate the user by searching the database.
@@ -9,11 +10,17 @@ import config from './config.json';
  * first arg is false and second arg is null.
  */
 export function authUser(username, password, callback) {
-  User.findOne({ username, password }, (err, user) => {
+  User.findOne({ username }, (err, user) => {
     if (err || !user) {
       callback(false, null);
     } else {
-      callback(true, user);
+      bcrypt.compare(password, user.password, (err, same) => {
+        if (err || !same) {
+          callback(false, null);
+        } else {
+          callback(true, user);
+        }
+      });
     }
   });
 }
