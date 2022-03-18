@@ -22,7 +22,7 @@ export default function SignInPage() {
         UserAPI.signIn(username, password, (err, res) => {
             if (err) console.log(err[0]);
             else {
-                if (!res) {
+                if (!res.token) {
                     document.getElementById('invalid-cred-warning').style.display = 'block';
                     setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
