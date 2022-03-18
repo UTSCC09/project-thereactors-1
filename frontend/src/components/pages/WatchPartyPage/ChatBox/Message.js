@@ -4,11 +4,11 @@ import * as authAPI from 'auth/auth_utils';
 
 export const Message = ({ message: { sender, content } })  => {
     const isSelf = () => {
-        return authAPI.getUser == sender;
+        return authAPI.getUser() === sender;
     }
 
     return (
-        !isSelf ? (
+        !isSelf() ? (
             <div className="message-container-other">
                 <div className="inner-box">
                 <Avatar className="user-icon" />

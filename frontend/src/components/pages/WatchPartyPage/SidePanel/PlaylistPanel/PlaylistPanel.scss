@@ -1,0 +1,47 @@
+@import 'src/global.scss';
+
+.playlist-panel {
+    padding: 20px 0;
+
+    .header {
+        margin-bottom: 5px;
+        padding: 0 20px;
+    }
+
+    .playlist-item-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 8px 8px 0 20px;
+        
+        &:hover {
+            background-color: rgba(0,0,0,.15);
+        }
+
+        &-current {
+            @extend .playlist-item-wrapper;
+            background-color: rgba(0,0,0,.35);
+
+            &:hover {
+                background-color: rgba(0,0,0,.35);
+            }
+        }
+
+        .item {
+            width: 88%;
+            margin-bottom: 3px;
+
+            .thumbnail {
+                width: 100%;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .item-delete-btn {
+            width: 12%;
+            text-align: right;
+        }
+    }
+}
