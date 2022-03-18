@@ -25,7 +25,7 @@ export function getCookie(name,cookies) {
 export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
       if(doc && doc.hostedBy == user ) {
-        doc.playlist = playlist;
+        doc.ytLink = playlist;
         doc.save().then((res)=> {callback(null,playlist)});
       } 
     });

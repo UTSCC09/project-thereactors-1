@@ -47,6 +47,10 @@ export default function WatchPartyPage() {
         getSocket().on('host',(host)=> {
             setHost(host);
         });
+        getSocket().on('playlist-changed',(newPlaylist)=>{
+            
+        })
+
     }, []);
 
     const play = () => {
