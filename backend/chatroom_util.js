@@ -26,15 +26,15 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
       if(doc && doc.hostedBy == user ) {
         let indexChanged = true;
-        if(doc.current_vid < doc.ytLink.length())
-            indexChanged = doc.ytLink[doc.current_vid] != playlist[current_vid];
-        let newIndex = current_vid;
+        if(doc.current_vid < doc.ytLink.length)
+            indexChanged = doc.ytLink[doc.current_vid] != playlist[doc.current_vid];
+        let newIndex = doc.current_vid;
         if(indexChanged && playlist.includes(doc.ytLink[doc.current_vid])) {
             newIndex = playlist.indexOf(doc.ytLink[doc.current_vid]);
         }
         doc.ytLink = playlist;
         doc.current_vid = newIndex;
-        doc.save().then( (res) => {callback(null, {playlist, indexChanged, "current_vid":newIndex} )});
+        doc.save().then( (res) => {callback(null, {playlist, "current_vid":newIndex} )});
       } 
     });
   

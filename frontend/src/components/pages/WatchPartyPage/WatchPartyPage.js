@@ -91,6 +91,7 @@ export default function WatchPartyPage() {
         if(host == authAPI.getUser()) {
             getSocket().emit('play-video');
         } else {
+            setPlaying(true)
             setPlaying(party_video_state.video_is_playing);
             console.log("play  "+ party_video_state.video_is_playing);
             // setPlaying(true);
@@ -105,6 +106,7 @@ export default function WatchPartyPage() {
             getSocket().emit('pause-video', playerRef.current.getCurrentTime());
         } else {
             console.log("pause "+ party_video_state.video_is_playing);
+            setPlaying(false)
             setPlaying(party_video_state.video_is_playing);
         }
         
@@ -156,13 +158,13 @@ export default function WatchPartyPage() {
 
     // handle socket events
     const handleUpdateProgress= (party_video_state)=> {
-        // console.log(party_video_state);
-        setPartyVideoState(party_video_state);
-        setPlaying(party_video_state.video_is_playing);
-
         if(videoId && Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds)  > 1) {
             playerRef.current.seekTo(party_video_state.playedSeconds);
         }
+        setPartyVideoState(party_video_state);
+        setPlaying(party_video_state.video_is_playing);
+
+
     }
     const handlePlaylistIndexUpdate= (newIndex)=> {
         setPlaylistIndex(newIndex);
@@ -178,7 +180,7 @@ export default function WatchPartyPage() {
         setPlaylist(data.playlist);
         setPlaylistIndex(data.current_vid);
         // console.log(data.current_vid + " playlist index")
-        // console.log(data.playlist)
+        console.log(data.playlist)
 
         if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
             console.log("here")
