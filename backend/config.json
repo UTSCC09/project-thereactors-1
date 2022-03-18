@@ -2,7 +2,7 @@
   "port": 3001,
   "mongodbUrl": "mongodb://admin:admin@localhost:27020/recipeCentral?authSource=admin",
   "jwtSecret": "bWNYDRHFFHrndh4qK7dgS7ky5DpX3EeC",
-  "passwordSaltRounds": 10
+  "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
   "frontend_url":"http://localhost:3000"
 }
