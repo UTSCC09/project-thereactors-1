@@ -1,9 +1,10 @@
 import { Avatar } from "@mui/material";
 import React, { useState, useEffect } from "react";
+import * as authAPI from 'auth/auth_utils';
 
-export const Message = ({ message: { sender, content }, current_user })  => {
+export const Message = ({ message: { sender, content } })  => {
     const isSelf = () => {
-        return current_user == sender;
+        return authAPI.getUser == sender;
     }
 
     return (

@@ -29,10 +29,10 @@ export default function SignInPage() {
                     }, 5000);
                     console.log("didnt work");
                 } else {
+                    console.log(res);
                     setUsername('');
                     setPassword('');
-                    authAPI.setJWT(res.token);
-                    authAPI.setUser(res.username);
+                    authAPI.signIn(res.username);
                     history.replace('');
                 }
             }

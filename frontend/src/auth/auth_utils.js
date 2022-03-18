@@ -1,17 +1,15 @@
-import Cookies from 'js-cookie';
 
-
-export function setJWT(token) {
-    Cookies.set("token",token);
+export function signedIn() {
+    return localStorage.getItem('signed-in') && localStorage.getItem('signed-in')!='' ;
 }
-
-export function getToken() {
-    return Cookies.get('token');
+export function signIn(username) {
+    localStorage.setItem('signed-in','true');
+    localStorage.setItem('username',username);
 }
-export function setUser(user) {
-    Cookies.set("user",user);
+export function signOut() {
+    localStorage.setItem('signed-in','');
+    localStorage.setItem('username','');
 }
-
 export function getUser() {
-    return Cookies.get('user');;
+    return localStorage.getItem('username');
 }

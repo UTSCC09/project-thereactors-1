@@ -4,6 +4,8 @@ import { StyledEngineProvider } from '@mui/material';
 import Router from './Router';
 import Footer from './components/utils/Footer/Footer';
 
+
+
 function App() {
   document.title = "YT Watch Party";
   return (

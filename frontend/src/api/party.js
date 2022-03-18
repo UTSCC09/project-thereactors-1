@@ -2,7 +2,7 @@ import config from 'environments';
 import * as authAPI from 'auth/auth_utils.js';
 
 export const addParty = (password, callback) => {
-    let party = {password, hostedBy: authAPI.getToken()};
+    let party = {password};
     const query = `
         mutation($party: CreatePartyInput) {
             createParty(party: $party) {

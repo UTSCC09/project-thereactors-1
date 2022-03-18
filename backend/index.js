@@ -86,7 +86,8 @@ async function startServer() {
   });
   const io = new Server(httpServer, {
     cors: {
-      origin: `*`,
+      origin: config.frontend_url,
+      credentials: true,
       methods: ["GET", "POST"]
     }
   });
