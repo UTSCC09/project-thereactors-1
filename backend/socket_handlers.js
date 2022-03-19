@@ -1,5 +1,5 @@
 import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
-,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid} from './chatroom_util.js';
+,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
 
 export function setupSocketHandlers(io) {
@@ -35,6 +35,12 @@ export function setupSocketHandlers(io) {
             console.log( socket.data.user+" joins room " + roomdata.roomname);
 
             socket.join(roomdata.roomname);
+            if(socket.data.current_party) {
+              removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
+                io.to(socket.data.current_party).emit('user-left',users);
+              });
+              socket.leave(socket.data.current_party);
+            }
             socket.data.current_party = roomdata.roomname;
             
             addConnectedUser(socket.data.user,roomdata.roomname, () => {
@@ -67,11 +73,18 @@ export function setupSocketHandlers(io) {
       }
     });
     // video socket handling
-    socket.on('update-playlist',(playlist, callback) => {
+    socket.on('update-playlist',(playlist) => {
       setPartyPlaylist(playlist,socket.data.current_party,socket.data.user, (err,res)=>{
         if(res) {
           io.to(socket.data.current_party).emit('playlist-changed',{'playlist': res.playlist, 'current_vid':res.current_vid });
-          callback({'playlist': res.playlist, 'current_vid':res.current_vid })
+        }
+      });
+    });
+
+    socket.on('load-playlist',(playlist) => {
+      loadPartyPlaylist(playlist,socket.data.current_party,socket.data.user, (err,res)=>{
+        if(res) {
+          io.to(socket.data.current_party).emit('playlist-changed',{'playlist': res.playlist, 'current_vid':res.current_vid });
         }
       });
     });
