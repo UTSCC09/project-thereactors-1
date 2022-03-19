@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import config from './config.json';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
+import { body, validationResult } from 'express-validator';
 
 // GraphQL
 import { graphqlHTTP } from 'express-graphql';
@@ -27,7 +28,11 @@ async function startServer() {
   app.use(cookieParser());
   app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
   app.use('/graphql', graphqlHTTP({ graphiql: true }));
-  app.post("/api/signin", (req, res) => {
+  app.post("/api/signin", body("username").trim().escape(), (req, res) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      return res.status(400).json({ message: "Invalid input", errors: validationErrors });
+    }
     authUser(req.body.username, req.body.password, (valid, user) => {
       if (valid) {
         // If validated, return a cookie with the token stored
@@ -43,28 +48,36 @@ async function startServer() {
       }
     });
   });
-  app.post("/api/signup", (req, res) => {
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
-    isUniqueUser(req.body.username, req.body.email, (isUnique, error) => {
-      if (!isUnique) {
-        return res.status(400).json({ message: error });
-      } else {
-        // Hash the given password, create a user and sign a token
-        bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
-          if (err) return res.status(500).json({ message: err });
-          User.create({ username, email, password: hash }, (err, user) => {
-            if (err) return res.status(500).json({ message: err });
-            const token = signJwt({ username: user.username });
-            res.cookie('token', token, {
-              maxAge: config.cookieMaxAge,
-              httpOnly: true,
-            });
-            return res.json({ usenrame: user.username, token });
-          });
-        });
+  app.post("/api/signup",
+    body("email").isEmail().normalizeEmail(),
+    body("username").trim().escape(),
+    body("password").isLength({ min: 8 }),
+    (req, res) => {
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(400).json({ message: "Invalid input", errors: validationErrors });
       }
+      const username = req.body.username;
+      const email = req.body.email;
+      const password = req.body.password;
+      isUniqueUser(req.body.username, req.body.email, (isUnique, error) => {
+        if (!isUnique) {
+          return res.status(400).json({ message: error });
+        } else {
+          // Hash the given password, create a user and sign a token
+          bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
+            if (err) return res.status(500).json({ message: err });
+            User.create({ username, email, password: hash }, (err, user) => {
+              if (err) return res.status(500).json({ message: err });
+              const token = signJwt({ username: user.username });
+              res.cookie('token', token, {
+                maxAge: config.cookieMaxAge,
+                httpOnly: true,
+              });
+              return res.json({ usenrame: user.username, token });
+            });
+          });
+        }
     });
   });
 
