@@ -139,6 +139,9 @@ export default function WatchPartyPage() {
         // check if state of video should be playing
         if(host === authAPI.getUser()) {
             getSocket().emit('video-ended');
+            if (playlist_index < playlist.length - 1) {
+                getSocket().emit('update-index', playlist_index + 1);
+            }
         }
     }
     const handleVideoProgress = (progress) => {
