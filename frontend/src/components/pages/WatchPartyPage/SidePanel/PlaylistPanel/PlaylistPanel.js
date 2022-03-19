@@ -7,7 +7,7 @@ export default function PlaylistPanel({playlistData}) {
     const [list, setList] = useState(playlistData.list);
     const [currentIdx, setCurrentIdx] = useState(playlistData.currentIdx);
 
-    const getVideoId = (link) => {
+    const getVideoThumbnail = (link) => {
         if (link.includes("https://www.youtube.com/watch?v=")) {
             return "https://img.youtube.com/vi/" + link.split('watch?v=')[1] + "/0.jpg";
         }
@@ -35,7 +35,7 @@ export default function PlaylistPanel({playlistData}) {
                 list.map((link, index) => {
                     return (
                         <div key={index} className={currentIdx === index ? 'playlist-item-wrapper-current' : 'playlist-item-wrapper'}>
-                            <div className='item' onClick={()=>changeVideo(index)}><img className='thumbnail' src={getVideoId(link)} /></div>
+                            <div className='item' onClick={()=>changeVideo(index)}><img className='thumbnail' src={getVideoThumbnail(link)} /></div>
                             <div className='item-delete-btn'>
                                 <ClearIcon onClick={()=>removeFromList(index)} />
                             </div>
