@@ -31,6 +31,8 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         let newIndex = doc.current_vid;
         if(indexChanged && playlist.includes(doc.ytLink[doc.current_vid])) {
             newIndex = playlist.indexOf(doc.ytLink[doc.current_vid]);
+        }else if(indexChanged) {
+          newIndex= 0;
         }
         doc.ytLink = playlist;
         doc.current_vid = newIndex;
@@ -64,7 +66,8 @@ export const addConnectedUser = (username,roomid,callback) =>  {
   
   export const removeConnectedUser = (username,roomid) =>  {
     Party.where({_id : roomid}).findOne((err,doc)=> {
-      if(doc) {
+      if(doc&& doc.connectedUsers) {
+        
         doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
         doc.save();
       } else {

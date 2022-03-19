@@ -27,6 +27,7 @@ export function setupSocketHandlers(io) {
 
     socket.on('join-room',(roomdata)=> {
       console.log(socket.data.user + " attempts to join")
+      // how to make sure that the user leaves other rooms 
       if(socket.data.user && roomdata.roomname) // do real sanitization on these fields
         checkUserInvited(socket.data.user,roomdata.roomname,(err, res) =>{
           if(res) {
