@@ -11,6 +11,7 @@ import ChatBox from "./ChatBox/ChatBox";
 import * as authAPI from 'auth/auth_utils.js';
 import { getSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
+import * as videoUtils from 'components/utils/video_utils';
 
 /*
     party_video_state 
@@ -194,7 +195,7 @@ export default function WatchPartyPage() {
             setVideoId('');
         } else {
             if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
-                setVideoId(data.playlist[data.current_vid]);
+                setVideoId(videoUtils.getValidLink(data.playlist[data.current_vid]));
         }
 
     }
