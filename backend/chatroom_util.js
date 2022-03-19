@@ -136,9 +136,6 @@ export  const playVideo = ( roomid, username, callback) =>  {
 export  const updateCurrentVid = ( newIndex,roomid, username, callback) =>  {
     Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
         if(doc) {
-            if (doc.ytLink.length() >= newIndex || newIndex <0) {
-                newIndex = 0;
-            }
             doc.current_vid = newIndex;
             doc.save().then( (res) => {callback(null, {'playlist':doc.ytLink, "current_vid":newIndex} )});
         } else {

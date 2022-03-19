@@ -1,16 +1,11 @@
 import './PlaylistPanel.scss';
 import React, { useEffect, useState } from "react";
 import ClearIcon from '@mui/icons-material/Clear';
+import { getSocket } from 'components/utils/socket_utils';
 
-const videos = [
-    "https://youtu.be/HCDVN7DCzYE",
-    "https://youtu.be/pTn6Ewhb27k",
-    "https://youtu.be/XRr1kaXKBsU"
-];
-
-export default function PlaylistPanel() {
-    const [list, setList] = useState(videos);
-    const [currentIdx, setCurrentIdx] = useState(0);
+export default function PlaylistPanel({playlistData}) {
+    const [list, setList] = useState(playlistData.list);
+    const [currentIdx, setCurrentIdx] = useState(playlistData.currentIdx);
 
     const getVideoId = (link) => {
         if (link.includes("https://www.youtube.com/watch?v=")) {
@@ -23,17 +18,19 @@ export default function PlaylistPanel() {
         let temp = [...list];
         temp.splice(index, 1);
         setList(temp);
-        // call socket to sync
+        getSocket().emit('update-playlist', temp);
     }
 
     const changeVideo = (index) => {
         setCurrentIdx(index);
-        // call socket to sync
+        getSocket().emit('update-index', index);
     }
 
     return (
         <div className='playlist-panel'>
-            <div className='header'>Queue ({currentIdx+1}/{list.length})</div>
+            <div className='header'>Queue 
+                {list?.length > 0 && <span> ({currentIdx+1}/{list.length})</span>}
+            </div>
             {list?.length > 0 &&
                 list.map((link, index) => {
                     return (
