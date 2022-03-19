@@ -21,9 +21,6 @@ import { authUser, signJwt, verifyJwt, isUniqueUser } from './utils';
 import { User } from './db';
 
 async function startServer() {
-  User.find({}, (err, users) => {
-    console.log(users);
-  });
   // Express server
   const app = express();
   app.use(bodyParser.urlencoded({ extended: false }));
