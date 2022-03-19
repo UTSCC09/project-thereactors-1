@@ -19,9 +19,10 @@ export function setupSocketHandlers(io) {
     }
 
     socket.on("disconnecting", () => {
-      io.to(socket.data.current_party).emit('user-left',socket.data.user);
-      removeConnectedUser(socket.data.user,socket.data.current_party);
       console.log( socket.data.user+' disconnected');
+      removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
+        io.to(socket.data.current_party).emit('user-left',users);
+      });
     });
 
 

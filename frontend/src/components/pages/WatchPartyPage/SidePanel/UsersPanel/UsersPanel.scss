@@ -1,0 +1,17 @@
+@import 'src/global.scss';
+
+.users-panel {
+    padding: 20px;
+
+    .user-wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+        
+        .icon {
+            margin-right: 6px;
+            width: 35px;
+            height: 35px;
+        }
+    }
+}

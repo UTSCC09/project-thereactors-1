@@ -80,6 +80,10 @@ export default function WatchPartyPage() {
         getSocket().on('playlist-changed',(data)=>{
             handlePlayListChange(data);
         })
+
+        getSocket().on('user-left', (users) => {
+            setConnectedUsers(users);
+        })
     }, []);
 
     // handle video and playlist events
@@ -200,6 +204,7 @@ export default function WatchPartyPage() {
             <div className='col1'>
                 <SidePanel 
                     playlistData={{list:playlist, currentIdx:playlist_index}}
+                    usersData={{users: connectedUsers, host: host}}
                 />
             </div>
             <div className='col2'>
