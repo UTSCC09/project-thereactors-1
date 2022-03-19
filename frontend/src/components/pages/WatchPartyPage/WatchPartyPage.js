@@ -25,7 +25,7 @@ export default function WatchPartyPage() {
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
     const [tempVideoId2, setTempVideoId2] = useState('');
-    const [playing, setPlaying] = useState(true);
+    const [playing, setPlaying] = useState(false);
     const [controls, setControls] = useState(true);
     const [videoWidth, setVideoWidth] = useState(0);
     const [videoHeight, setVideoHeight] = useState(0);
@@ -95,7 +95,7 @@ export default function WatchPartyPage() {
             } else {
                 setPlaying(true)
                 setPlaying(videoIsPlaying);
-                console.log("play  "+ videoIsPlaying);
+                // console.log("play  "+ videoIsPlaying);
             }
         }
 
@@ -107,7 +107,7 @@ export default function WatchPartyPage() {
             if(host === authAPI.getUser()) {
                 getSocket().emit('pause-video', playerRef.current.getCurrentTime());
             } else {
-                console.log("pause "+ videoIsPlaying);
+                // console.log("pause "+ videoIsPlaying);
                 setPlaying(false)
                 setPlaying(videoIsPlaying);
             }
@@ -119,25 +119,38 @@ export default function WatchPartyPage() {
 
     const addToPlaylist = (url, type) => {
         if (host === authAPI.getUser()) {
-            if(ReactPlayer.canPlay(url)) {
+            
+            if(ReactPlayer.canPlay(url) && type === 'queue') {
                 setTempVideoId('');
                 setTempVideoId2('');
-                getSocket().emit('update-playlist',[...playlist,url], (data) => {
-                    if (type === 'load') {
-                        getSocket().emit('update-index', data.playlist.length-1);
-                    }
-                })
+                getSocket().emit('update-playlist',[...playlist,url])
+            } else if( ReactPlayer.canPlay(url) && type === 'load') {
+                addPlaylistAndLoad(url);
             }
         }
     }
+    const addPlaylistAndLoad = (url) => {
+        if (host === authAPI.getUser()) {
+            if(ReactPlayer.canPlay(url)) {
+                setTempVideoId('');
+                setTempVideoId2('');
+                getSocket().emit('load-playlist',[...playlist,url])
+            }
+        }
+    }
+
     const handleOnReady = () => {
-        // check if state of video should be playing
         console.log("ready");
         setPlayerRefValid(true);
         setVideoReady(true);
+        console.log(playerRefValid);
         // setPlaying(party_video_state.video_is_playing);
         // playerRef.current.seekTo(party_video_state.playedSeconds);
         console.log("ready done");
+
+    }
+    const handleOnBufferEnd = () => {
+        // check if state of video should be playing
     }
     const handleOnEnded = () => {
         // check if state of video should be playing
@@ -155,7 +168,7 @@ export default function WatchPartyPage() {
         // i.e, if other users stop their video, once they resume it, we 
         // will use the host's current video playtime to make them catch up.
         console.log("progress")
-        console.log(progress);
+        console.log(playerRefValid);
         if(host === authAPI.getUser()) {
             // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
@@ -165,23 +178,24 @@ export default function WatchPartyPage() {
 
     // handle socket events
     const handleUpdateProgress= (new_party_video_state)=> {
-        console.log('old video state ' + videoIsPlaying + " " + videoPlayedSeconds);
+        // console.log('old video state ' + playing + " " + videoPlayedSeconds);
         console.log(" new video state")
-        console.log(new_party_video_state)
+        // console.log(new_party_video_state)
         setVideoPlayedSeconds(new_party_video_state.playedSeconds);
         setVideoIsPlaying(new_party_video_state.video_is_playing);
-
-        if(playerRef.current) {
-            console.log("here1");
+        // console.log(playerRef.current );
+        console.log(playerRefValid);
+        if(playerRef.current ) {
+            // console.log("here1");
             setPlaying(new_party_video_state.video_is_playing);
-            console.log("here2.6");
-            if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > 1) {
-                console.log("here3");
+            // console.log("here2.6");
+            if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > .5) {
+                // console.log("here3");
                 playerRef.current.seekTo(new_party_video_state.playedSeconds);
-                console.log("here4");
+                // console.log("here4");
             }
       
-            console.log("here5");
+            // console.log("here5");
         }
     }
 
@@ -190,11 +204,10 @@ export default function WatchPartyPage() {
         setPlaylistIndex(data.current_vid);
 
         if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
-            console.log("here")
             setVideoId('');
         } else {
             if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
-                setVideoId(data.playlist[data.current_vid]);
+                setVideoId(data.playlist[data.current_vid]);                    
         }
 
     }
@@ -216,7 +229,7 @@ export default function WatchPartyPage() {
                 <div id='video-player-wrapper' className='video-player-wrapper'>
                     {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
                         <ReactPlayer 
-                            ref ={(player)=> {playerRef.current = player; setPlayerRefValid(!!player)}}
+                            ref ={(player)=> {playerRef.current = player}}
                             url={videoId}
                             controls={controls}
                             playing={playing}
@@ -226,6 +239,7 @@ export default function WatchPartyPage() {
                             width={videoWidth}
                             height={videoHeight}
                             onReady={handleOnReady}
+                            // onBufferEnd={handleOnBufferEnd}
                             onEnded={handleOnEnded}
                             muted={muted}
                             volume={0.4}

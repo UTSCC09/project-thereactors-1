@@ -32,7 +32,7 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         if(indexChanged && playlist.includes(doc.ytLink[doc.current_vid])) {
             newIndex = playlist.indexOf(doc.ytLink[doc.current_vid]);
         }else if(indexChanged) {
-          newIndex= 0;
+          newIndex= doc.current_vid;
         }
         doc.ytLink = playlist;
         doc.current_vid = newIndex;
@@ -41,6 +41,18 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
     });
   
   }
+  export const loadPartyPlaylist = (playlist,roomid,user,callback) =>  {
+    const query = Party.where({_id : roomid}).findOne((err,doc)=> {
+      if(doc && doc.hostedBy == user ) {
+        
+        doc.ytLink = playlist;
+        doc.current_vid = playlist.length -1 ;
+        doc.save().then( (res) => {callback(null, {playlist, "current_vid":res.current_vid} )});
+      } 
+    });
+  
+  }
+
   
 export const checkUserInvited = (username,roomid, callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
@@ -138,6 +150,7 @@ export  const updateCurrentVid = ( newIndex,roomid, username, callback) =>  {
     Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
         if(doc) {
             doc.current_vid = newIndex;
+            doc.playedSeconds = 0;
             doc.save().then( (res) => {callback(null, {'playlist':doc.ytLink, "current_vid":newIndex} )});
         } else {
         callback(err,null);
