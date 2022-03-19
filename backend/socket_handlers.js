@@ -1,5 +1,5 @@
 import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
-,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist} from './chatroom_util.js';
+,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist,updateHost} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
 
 export function setupSocketHandlers(io) {
@@ -123,5 +123,12 @@ export function setupSocketHandlers(io) {
         }
       });
     });
+
+    socket.on('host-change', (newUser) => {
+      updateHost(newUser,socket.data.current_party,socket.data.user, (err,res)=> {
+        if(res) 
+          io.to(socket.data.current_party).emit('host',res);
+      });
+    } ); 
   });
 }

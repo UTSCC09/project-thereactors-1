@@ -23,6 +23,7 @@ import * as videoUtils from 'components/utils/video_utils';
 
 export default function WatchPartyPage() {
     // these are react-player states
+
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
     const [tempVideoId2, setTempVideoId2] = useState('');
@@ -87,6 +88,12 @@ export default function WatchPartyPage() {
         })
     }, []);
 
+    // useEffect(()=> {
+    //     // playlist and video updates handling 
+    //     getSocket().on('update-progress',(party_video_state)=> {
+    //         handleUpdateProgress(party_video_state);
+    //     });
+    // },[playerRefValid]);
     // handle video and playlist events
 
     const play = () => {
@@ -174,7 +181,7 @@ export default function WatchPartyPage() {
             // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
         }
-        setMuted(false);
+        // setMuted(false);
     }
 
     // handle socket events
@@ -187,7 +194,7 @@ export default function WatchPartyPage() {
         // console.log(playerRef.current );
         console.log(playerRefValid);
         if(playerRef.current ) {
-            // console.log("here1");
+            console.log("here1");
             setPlaying(new_party_video_state.video_is_playing);
             // console.log("here2.6");
             if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > .5) {
@@ -243,7 +250,7 @@ export default function WatchPartyPage() {
                             // onBufferEnd={handleOnBufferEnd}
                             onEnded={handleOnEnded}
                             muted={muted}
-                            volume={0.4}
+                            // volume={0.4}
                         />
                     }
                     {videoId === '' &&

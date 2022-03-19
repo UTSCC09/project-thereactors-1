@@ -39,7 +39,6 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         doc.save().then( (res) => {callback(null, {playlist, "current_vid":newIndex} )});
       } 
     });
-  
   }
   export const loadPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
@@ -156,4 +155,15 @@ export  const updateCurrentVid = ( newIndex,roomid, username, callback) =>  {
         callback(err,null);
         }
     });
+}
+
+export  const updateHost = ( newuser,roomid, username, callback) =>  {
+  Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
+      if(doc && doc.connectedUsers.includes(newuser)) {
+          doc.hostedBy = newuser;
+          doc.save().then( (res) => {callback(null, newuser)});
+      } else {
+        callback(err,null);
+      }
+  });
 }
