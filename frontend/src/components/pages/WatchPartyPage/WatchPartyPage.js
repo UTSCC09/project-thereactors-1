@@ -199,12 +199,17 @@ export default function WatchPartyPage() {
 
     }
 
+    const getUsersRightOrder = (users) => {
+        let temp = users.filter(user => user !== host);
+        return [host].concat(temp);
+    }
+
     return (
         <div className="watch-party-page">
             <div className='col1'>
                 <SidePanel 
                     playlistData={{list:playlist, currentIdx:playlist_index}}
-                    usersData={{users: connectedUsers, host: host}}
+                    usersData={{users:getUsersRightOrder(connectedUsers), host:host}}
                 />
             </div>
             <div className='col2'>
