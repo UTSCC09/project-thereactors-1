@@ -8,11 +8,9 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
-import io from 'socket.io-client';
 import * as authAPI from 'auth/auth_utils.js';
 import { getSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
-import { set } from 'lodash';
 
 /*
     party_video_state 
@@ -27,16 +25,19 @@ export default function WatchPartyPage() {
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
     const [tempVideoId2, setTempVideoId2] = useState('');
-    const [playing, setPlaying] = useState(false);
+    const [playing, setPlaying] = useState(true);
     const [controls, setControls] = useState(true);
     const [videoWidth, setVideoWidth] = useState(0);
     const [videoHeight, setVideoHeight] = useState(0);
     const playerRef = useRef();
     const [playerRefValid,setPlayerRefValid] = useState(false);
+    const [videoReady, setVideoReady] = useState(false);
+    const [muted, setMuted] = useState(true);
     // custom states 
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [host, setHost] = useState('');
-    const [party_video_state,setPartyVideoState] = useState({playedSeconds: 0,video_is_playing:false}); 
+    const [videoPlayedSeconds,setVideoPlayedSeconds] = useState(0);
+    const [videoIsPlaying,setVideoIsPlaying] = useState(true); 
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
     
@@ -56,8 +57,7 @@ export default function WatchPartyPage() {
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
             else 
                 window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
-        }
-        else{
+        } else{
             window.location.href = '/join';
         }
             
@@ -88,28 +88,29 @@ export default function WatchPartyPage() {
     // handle video and playlist events
 
     const play = () => {
-        setPlaying(true);
-        if(host == authAPI.getUser()) {
-            getSocket().emit('play-video');
-        } else {
-            setPlaying(true)
-            setPlaying(party_video_state.video_is_playing);
-            console.log("play  "+ party_video_state.video_is_playing);
+        if(playerRefValid) {
+            if(host == authAPI.getUser()) {
+                getSocket().emit('play-video');
+            } else {
+                setPlaying(true)
+                setPlaying(videoIsPlaying);
+                console.log("play  "+ videoIsPlaying);
+            }
         }
-
 
         // sync with all users
     }
 
     const pause = () => {
-        if(host == authAPI.getUser()) {
-            getSocket().emit('pause-video', playerRef.current.getCurrentTime());
-        } else {
-            console.log("pause "+ party_video_state.video_is_playing);
-            setPlaying(false)
-            setPlaying(party_video_state.video_is_playing);
+        if(playerRefValid) {
+            if(host == authAPI.getUser()) {
+                getSocket().emit('pause-video', playerRef.current.getCurrentTime());
+            } else {
+                console.log("pause "+ videoIsPlaying);
+                setPlaying(false)
+                setPlaying(videoIsPlaying);
+            }
         }
-        
         
 
         // sync with all users
@@ -134,9 +135,12 @@ export default function WatchPartyPage() {
     }
     const handleOnReady = () => {
         // check if state of video should be playing
-        setPlaying(false);
-        setPlaying(party_video_state.video_is_playing);
-        playerRef.current.seekTo(party_video_state.playedSeconds);
+        console.log("ready");
+        setPlayerRefValid(true);
+        setVideoReady(true);
+        // setPlaying(party_video_state.video_is_playing);
+        // playerRef.current.seekTo(party_video_state.playedSeconds);
+        console.log("ready done");
     }
     const handleOnEnded = () => {
         // check if state of video should be playing
@@ -150,34 +154,35 @@ export default function WatchPartyPage() {
         // to make it seems like everyone is watching at the same time.
         // i.e, if other users stop their video, once they resume it, we 
         // will use the host's current video playtime to make them catch up.
-
+        console.log("progress")
+        console.log(progress);
         if(host == authAPI.getUser()) {
             // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
         }
+        setMuted(false);
     }
 
     // handle socket events
-    const handleUpdateProgress= (party_video_state)=> {
-        
-        if(playerRef) {
-            console.log('newvideostate ')
-            console.log(party_video_state.playedSeconds)
-            console.log(playerRef.current.getCurrentTime())
-            console.log(Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds) >1)
+    const handleUpdateProgress= (new_party_video_state)=> {
+        console.log('old video state ' + videoIsPlaying + " " + videoPlayedSeconds);
+        console.log(" new video state")
+        console.log(new_party_video_state)
+        setVideoPlayedSeconds(new_party_video_state.playedSeconds);
+        setVideoIsPlaying(new_party_video_state.video_is_playing);
+
+        if(playerRef.current) {
+            console.log("here1");
+            setPlaying(new_party_video_state.video_is_playing);
+            console.log("here2.6");
+            if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > 1) {
+                console.log("here3");
+                playerRef.current.seekTo(new_party_video_state.playedSeconds);
+                console.log("here4");
+            }
+      
+            console.log("here5");
         }
-        if(!playerRef) {
-
-        }
-        if(videoId && Math.abs(playerRef.current.getCurrentTime() - party_video_state.playedSeconds) > 1) {
-            console.log("out of sync")
-
-            playerRef.current.seekTo(party_video_state.playedSeconds);
-        }
-        setPartyVideoState(party_video_state);
-        setPlaying(party_video_state.video_is_playing);
-
-
     }
     const handlePlaylistIndexUpdate= (newIndex)=> {
         setPlaylistIndex(newIndex);
@@ -225,7 +230,8 @@ export default function WatchPartyPage() {
                             height={videoHeight}
                             onReady={handleOnReady}
                             onEnded={handleOnEnded}
-                            
+                            muted={muted}
+                            volume={0.4}
                         />
                     }
                     {videoId === '' &&
