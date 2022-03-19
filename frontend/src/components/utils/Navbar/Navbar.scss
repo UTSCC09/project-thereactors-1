@@ -36,13 +36,22 @@
             align-items: center;
         }
 
-        .user-icon button {
-            @extend .icon-btn;
-            min-width: 0;
+        .user-wrapper {
+            display: flex;
+            align-items: center;
 
-            div {
-                width: 30px;
-                height: 30px;
+            .username {
+                margin-right: 6px;
+            }
+
+            .user-btn {
+                @extend .icon-btn;
+                min-width: 0;
+                
+                .user-icon {
+                    width: 35px;
+                    height: 35px;
+                }
             }
         }
     }
