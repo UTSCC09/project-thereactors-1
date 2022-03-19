@@ -1,5 +1,5 @@
 import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
-,pauseVideo,playVideo,updateVideoProgress} from './chatroom_util.js';
+,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
 
 export function setupSocketHandlers(io) {
@@ -66,10 +66,11 @@ export function setupSocketHandlers(io) {
       }
     });
     // video socket handling
-    socket.on('update-playlist',(playlist)=> {
+    socket.on('update-playlist',(playlist, callback) => {
       setPartyPlaylist(playlist,socket.data.current_party,socket.data.user, (err,res)=>{
         if(res) {
           io.to(socket.data.current_party).emit('playlist-changed',{'playlist': res.playlist, 'current_vid':res.current_vid });
+          callback({'playlist': res.playlist, 'current_vid':res.current_vid })
         }
       });
     });

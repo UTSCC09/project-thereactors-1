@@ -80,16 +80,13 @@ export default function WatchPartyPage() {
         getSocket().on('playlist-changed',(data)=>{
             handlePlayListChange(data);
         })
-        getSocket().on('playlist-index-updated',(newIndex)=> {
-            handlePlaylistIndexUpdate(newIndex);
-        });
     }, []);
 
     // handle video and playlist events
 
     const play = () => {
         if(playerRefValid) {
-            if(host == authAPI.getUser()) {
+            if(host === authAPI.getUser()) {
                 getSocket().emit('play-video');
             } else {
                 setPlaying(true)
@@ -103,7 +100,7 @@ export default function WatchPartyPage() {
 
     const pause = () => {
         if(playerRefValid) {
-            if(host == authAPI.getUser()) {
+            if(host === authAPI.getUser()) {
                 getSocket().emit('pause-video', playerRef.current.getCurrentTime());
             } else {
                 console.log("pause "+ videoIsPlaying);
@@ -116,20 +113,16 @@ export default function WatchPartyPage() {
         // sync with all users
     }
 
-    const loadVideo = () => {
-        addToPlaylist(tempVideoId); // only if host
-        setTempVideoId('');
-    }
-
-    const loadVideo2 = () => {
-        addToPlaylist(tempVideoId2); // only if host
-        setTempVideoId2('');
-    }
-
-    const addToPlaylist = (url) => {
-        if(host == authAPI.getUser()) {
+    const addToPlaylist = (url, type) => {
+        if (host === authAPI.getUser()) {
             if(ReactPlayer.canPlay(url)) {
-                getSocket().emit('update-playlist',[...playlist,url])
+                setTempVideoId('');
+                setTempVideoId2('');
+                getSocket().emit('update-playlist',[...playlist,url], (data) => {
+                    if (type === 'load') {
+                        getSocket().emit('update-index', data.playlist.length-1);
+                    }
+                })
             }
         }
     }
@@ -144,7 +137,7 @@ export default function WatchPartyPage() {
     }
     const handleOnEnded = () => {
         // check if state of video should be playing
-        if(host == authAPI.getUser()) {
+        if(host === authAPI.getUser()) {
             getSocket().emit('video-ended');
         }
     }
@@ -156,7 +149,7 @@ export default function WatchPartyPage() {
         // will use the host's current video playtime to make them catch up.
         console.log("progress")
         console.log(progress);
-        if(host == authAPI.getUser()) {
+        if(host === authAPI.getUser()) {
             // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
         }
@@ -184,27 +177,16 @@ export default function WatchPartyPage() {
             console.log("here5");
         }
     }
-    const handlePlaylistIndexUpdate= (newIndex)=> {
-        setPlaylistIndex(newIndex);
-        if(newIndex < 0 || newIndex >= playlist.length) {
-            setVideoId('');
-        } else {
-            if( videoId ==''  || playlist[newIndex] != videoId)
-                setVideoId(playlist[newIndex]);
-        }
-    }
 
     const handlePlayListChange= (data)=> {
         setPlaylist(data.playlist);
         setPlaylistIndex(data.current_vid);
-        // console.log(data.current_vid + " playlist index")
-        console.log(data.playlist)
 
         if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
             console.log("here")
             setVideoId('');
         } else {
-            if( videoId ==''  ||data.playlist[data.current_vid] != videoId)
+            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
                 setVideoId(data.playlist[data.current_vid]);
         }
 
@@ -213,7 +195,9 @@ export default function WatchPartyPage() {
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                <SidePanel />
+                <SidePanel 
+                    playlistData={{list:playlist, currentIdx:playlist_index}}
+                />
             </div>
             <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
@@ -247,7 +231,7 @@ export default function WatchPartyPage() {
                                 value={tempVideoId}
                                 onChange={(e)=>setTempVideoId(e.target.value)}
                             />
-                            <Button type='submit' className='load-btn' variant='outlined' onClick={()=>loadVideo()}>load</Button>
+                            <Button type='submit' className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId, 'load')}>load</Button>
                             </div>
                         </div>
                     }
@@ -266,8 +250,8 @@ export default function WatchPartyPage() {
                             value={tempVideoId2}
                             onChange={(e)=>setTempVideoId2(e.target.value)}
                         />
-                        <Button className='load-btn' variant='outlined' onClick={()=>loadVideo2()}>load</Button>
-                        <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist()}>queue</Button>
+                        <Button className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'load')}>load</Button>
+                        <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'queue')}>queue</Button>
                     </div>
                 </div>
                 <div className='video-queue-wrapper'></div>

@@ -8,8 +8,8 @@ import GroupIcon from '@mui/icons-material/Group';
 const PLAYLIST_TYPE = 0;
 const USERS_TYPE = 1;
 
-export default function SidePanel() {
-    const [panelType, setPanelType] = useState(PLAYLIST_TYPE);
+export default function SidePanel({playlistData}) {
+    const [panelType, setPanelType] = useState(-1);
 
     const sidePanel = document.getElementById('sidePanel');
     const openPlaylistBtn = document.getElementById("openPlaylistBtn");
@@ -49,7 +49,7 @@ export default function SidePanel() {
             </div>
             <div id="sidePanel" className="side-panel">
                 {panelType !== -1 && panelType === PLAYLIST_TYPE &&
-                    <PlaylistPanel />
+                    <PlaylistPanel playlistData={playlistData} />
                 }
                 {panelType !== -1 && panelType === USERS_TYPE &&
                     <UsersPanel />
