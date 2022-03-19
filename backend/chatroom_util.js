@@ -64,12 +64,13 @@ export const addConnectedUser = (username,roomid,callback) =>  {
     });
   }
   
-  export const removeConnectedUser = (username,roomid) =>  {
+  export const removeConnectedUser = (username,roomid, callback) =>  {
     Party.where({_id : roomid}).findOne((err,doc)=> {
       if(doc&& doc.connectedUsers) {
-        
         doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
+        let temp = doc.connectedUsers;
         doc.save();
+        callback(temp);
       } else {
       }
     });
