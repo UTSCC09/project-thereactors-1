@@ -18,9 +18,6 @@ export default function Navbar() {
     const history = useHistory();
     const [signedIn, setSignedIn] = useState(true);
 
-    const search = useLocation().search;
-    const authBool = authAPI.signedIn();
-
     const redirectTo = (page) => {
         history.push(page);
     }
@@ -58,24 +55,15 @@ export default function Navbar() {
     // return focus to the button when we transitioned from !open -> open
     const prevOpen = useRef(open);
     useEffect(() => {
-        setSignedIn(authAPI.signedIn());
-
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
         }
-
         prevOpen.current = open;
     }, [open]);
 
     useEffect(() => {
         setSignedIn(authAPI.signedIn());
-
-        if (prevOpen.current === true && open === false) {
-            anchorRef.current.focus();
-        }
-
-        prevOpen.current = open;
-    }, [open]);
+    }, [useLocation()]);
 
     return (
         <div className='navbar'>
@@ -85,13 +73,14 @@ export default function Navbar() {
             <div className='col2'>
                 {!signedIn &&
                     <div className='post-btn-wrapper nav-item'>
-                        {/* <button className='theme-btn' onClick={()=>redirectTo('/sign-in')}>sign in</button> */}
                         <Button className='theme-btn' onClick={()=>redirectTo('/sign-in')} size='small'>sign in</Button>
                     </div>
                 }
                 {signedIn &&
-                    <div className='user-icon nav-item'>                
+                    <div className='user-wrapper nav-item'>  
+                        <div className='username'>{authAPI.getUser()}</div>              
                         <Button
+                        className='user-btn'
                         ref={anchorRef}
                         id="composition-button"
                         aria-controls={open ? 'composition-menu' : undefined}
@@ -99,7 +88,7 @@ export default function Navbar() {
                         aria-haspopup="true"
                         onClick={handleToggle}
                         >
-                        <Avatar alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
+                        <Avatar className='user-icon' alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
                         </Button>
                         <Popper
                         open={open}
@@ -125,7 +114,6 @@ export default function Navbar() {
                                     aria-labelledby="composition-button"
                                     onKeyDown={handleListKeyDown}
                                 >
-                                    <MenuItem onClick={(e)=>handleClose(e, 'profile')}>Profile</MenuItem>
                                     <MenuItem onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
                                     <MenuItem onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
                                 </MenuList>

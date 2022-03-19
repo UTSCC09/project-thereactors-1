@@ -29,7 +29,7 @@ export default function CreatePartyPage() {
     }
 
     return (
-        <div className='join-party-page'>
+        <div className='create-party-page'>
             <div className='content-box'>
                 <div className='header1'>Create Party</div>
                 <div className='inputs-btn-box'>
