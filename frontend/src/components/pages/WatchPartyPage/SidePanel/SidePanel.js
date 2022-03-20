@@ -24,7 +24,7 @@ export default function SidePanel({playlistData, usersData}) {
     
     const openPanel = (type) => {
         setPanelType(type);
-        sidePanel.style.width = "18%";
+        sidePanel.style.width = "19%";
 
     }
 

@@ -19,22 +19,44 @@
             background-color: rgba(0,0,0,.1);
         }
 
-        .item {
-            width: 88%;
+        .clickable-row {
+            width: 90%;
+            display: flex;
+            align-items: center;
             margin-bottom: 3px;
-
-            .thumbnail {
-                width: 100%;
-            }
 
             &:hover {
                 cursor: pointer;
             }
+
+            .thumbnail-wrapper {
+                width: 35%;
+                
+                .thumbnail {
+                    width: 100%;
+                }
+                
+            }
+    
+            .title {
+                width: 65%;
+                margin-bottom: 4px;
+                padding-left: 6px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 3; /* number of lines to show */
+                        line-clamp: 3; 
+                -webkit-box-orient: vertical;
+            }
         }
 
         .item-delete-btn {
-            width: 12%;
-            text-align: right;
+            width: 10%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: 8px;
         }
 
         &-current, &-current-guest {
@@ -46,14 +68,24 @@
             }
         }
 
-        &-current-guest {
-            .item:hover {
-                cursor: default;
+        &-current-guest, &-guest {
+            @extend .playlist-item-wrapper;
+
+            .clickable-row {
+                width: 100%;
+                padding-right: 12px;
+
+                &:hover {
+                    cursor: default;
+                }
+            }
+
+            .item-delete-btn {
+                display: none;
             }
         }
-
+        
         &-guest {
-            @extend .playlist-item-wrapper;
             &:hover {
                 background-color: white;
             }

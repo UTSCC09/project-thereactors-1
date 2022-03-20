@@ -9,7 +9,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 export default function PlaylistPanel({playlistData, setCloseIcon}) {
 
     const removeFromList = (index) => {
-        let temp = [...playlistData.list];
+        let temp = [...playlistData.playlist];
         temp.splice(index, 1);
         getSocket().emit('update-playlist', temp);
     }
@@ -26,17 +26,20 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
         <div className='playlist-panel'>
             <div className='header'>
                 <div>Queue 
-                {playlistData.list?.length > 0 && <span> ({playlistData.currentIdx+1}/{playlistData.list.length})</span>}
+                {playlistData.playlist?.length > 0 && <span> ({playlistData.currentIdx+1}/{playlistData.playlist.length})</span>}
                 </div>
                 <ArrowBackIosNewIcon id='close-icon' />
             </div>
-            {playlistData.list?.length > 0 &&
-                playlistData.list.map((link, index) => {
+            {playlistData.playlist?.length > 0 &&
+                playlistData.playlist.map((item, index) => {
                     return (
                         <div key={index}>
                             {authAPI.getUser() === playlistData.host &&
                                 <div className={playlistData.currentIdx === index ? 'playlist-item-wrapper-current' : 'playlist-item-wrapper'}>
-                                    <div className='item' onClick={()=>changeVideo(index)}><img className='thumbnail' src={videoUtils.getVideoThumbnail(link)} /></div>
+                                    <div class='clickable-row' onClick={()=>changeVideo(index)}>
+                                        <div className='thumbnail-wrapper'><img className='thumbnail' src={item.thumbnail} /></div>
+                                        <div className='title'>{item.title}</div>
+                                    </div>
                                     <div className='item-delete-btn'>
                                         <ClearIcon onClick={()=>removeFromList(index)} />
                                     </div>
@@ -44,7 +47,10 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
                             }
                             {authAPI.getUser() !== playlistData.host &&
                                 <div className={playlistData.currentIdx === index ? 'playlist-item-wrapper-current-guest' : 'playlist-item-wrapper-guest'}>
-                                    <div className='item'><img className='thumbnail' src={videoUtils.getVideoThumbnail(link)} /></div>
+                                    <div class='clickable-row'>
+                                        <div className='thumbnail-wrapper'><img className='thumbnail' src={item.thumbnail} /></div>
+                                        <div className='title'>{item.title}</div>
+                                    </div>
                                 </div>
                             }
                         </div>

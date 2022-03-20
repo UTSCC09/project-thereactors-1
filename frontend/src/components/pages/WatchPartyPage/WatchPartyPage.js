@@ -130,11 +130,15 @@ export default function WatchPartyPage() {
             setTempVideoId('');
             setTempVideoId2('');
             if (ReactPlayer.canPlay(url) && videoUtils.isYtLink(url)) {
-                if (type === 'queue') {
-                    getSocket().emit('update-playlist',[...playlist,url])
-                } else {
-                    getSocket().emit('load-playlist',[...playlist,url])
-                }
+                let obj = {title: "", link: videoUtils.getValidLink(url), thumbnail: videoUtils.getVideoThumbnail(url)};
+                videoUtils.getVideoTitle(url).then(res => {
+                    obj.title = res;
+                    if (type === 'queue') {
+                        getSocket().emit('update-playlist',[...playlist,obj])
+                    } else {
+                        getSocket().emit('load-playlist',[...playlist,obj])
+                    }
+                })
             }
         }
     }
@@ -207,7 +211,7 @@ export default function WatchPartyPage() {
             setVideoId('');
         } else {
             if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
-                setVideoId(videoUtils.getValidLink(data.playlist[data.current_vid]));
+                setVideoId(data.playlist[data.current_vid].link);
         }
 
     }
@@ -221,7 +225,7 @@ export default function WatchPartyPage() {
         <div className="watch-party-page">
             <div className='col1'>
                 <SidePanel 
-                    playlistData={{list:playlist, currentIdx:playlist_index, host:host}}
+                    playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
                     usersData={{users:getUsersRightOrder(connectedUsers), host:host}}
                 />
             </div>
