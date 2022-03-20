@@ -1,5 +1,5 @@
 import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
-,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist,updateHost} from './chatroom_util.js';
+,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist,updateHost,updateHostClosestOrClose} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
 
 export function setupSocketHandlers(io) {
@@ -22,7 +22,13 @@ export function setupSocketHandlers(io) {
       console.log( socket.data.user+' disconnected');
       removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
         io.to(socket.data.current_party).emit('user-left',users);
+        updateHostClosestOrClose(socket.data.user,socket.data.current_party,(err,host) => {
+          if(host) {
+            io.to(socket.data.current_party).emit('new-host',host);
+          }
+        });
       });
+
     });
 
 

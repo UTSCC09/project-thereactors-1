@@ -167,3 +167,18 @@ export  const updateHost = ( newuser,roomid, username, callback) =>  {
       }
   });
 }
+export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
+  Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
+      if(doc ) {
+          if(doc.connectedUsers) {
+            doc.hostedBy = doc.connectedUsers[0];
+            doc.save().then( (res) => {callback(null, res.hostedBy)});
+          } else {
+
+          }
+          
+      } else {
+        callback(err,null);
+      }
+  });
+}
