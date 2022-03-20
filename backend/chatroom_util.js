@@ -80,8 +80,8 @@ export const addConnectedUser = (username,roomid,callback) =>  {
       if(doc&& doc.connectedUsers) {
         doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
         let temp = doc.connectedUsers;
-        doc.save();
-        callback(temp);
+        doc.save().then(()=>{callback(temp)});
+        
       } else {
       }
     });
@@ -166,4 +166,27 @@ export  const updateHost = ( newuser,roomid, username, callback) =>  {
         callback(err,null);
       }
   });
+}
+export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
+  Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
+      if(doc ) {
+          console.log(doc.connectedUsers);
+          if(doc.connectedUsers.length > 0) {
+            console.log("update host");
+            doc.hostedBy = doc.connectedUsers[0];
+            doc.save().then((res) => {callback(null, res.hostedBy)});
+          } else {
+            // close room
+            console.log("remove room");
+            deleteRoom(roomid, ()=> {callback(null,null);});
+          }
+          
+      } else {
+        callback(err,null);
+      }
+  });
+}
+const deleteRoom = (roomid,callback) => {
+  Party.deleteOne({_id : roomid}).then(()=>{Message.deleteMany({party: roomid}).then(()=>callback(null,true))});
+  
 }
