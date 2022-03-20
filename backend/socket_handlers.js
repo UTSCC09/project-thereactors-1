@@ -25,7 +25,7 @@ export function setupSocketHandlers(io) {
         console.log("removed connected user");
         updateHostClosestOrClose(socket.data.user,socket.data.current_party,(err,host) => {
           if(host) {
-            io.to(socket.data.current_party).emit('new-host',host);
+            io.to(socket.data.current_party).emit('host',host);
           }
         });
       });
@@ -34,8 +34,8 @@ export function setupSocketHandlers(io) {
 
 
     socket.on('join-room',(roomdata)=> {
-      console.log(socket.data.user + " attempts to join")
-      console.log(socket.data.current_party);
+      console.log(socket.data.user + " attempts to join " +roomdata.roomname );
+      console.log("current party "+ socket.data.current_party);
       // how to make sure that the user leaves other rooms 
       if(socket.data.user && roomdata.roomname) // do real sanitization on these fields
         checkUserInvited(socket.data.user,roomdata.roomname,(err, res) =>{
@@ -44,35 +44,22 @@ export function setupSocketHandlers(io) {
 
             socket.join(roomdata.roomname);
             console.log(socket.data.current_party);
+
             if(socket.data.current_party) {
               removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
                 io.to(socket.data.current_party).emit('user-left',users);
                 socket.leave(socket.data.current_party);
                 updateHostClosestOrClose(socket.data.user,socket.data.current_party,(err,host) => {
                   if(host) {
-                    io.to(socket.data.current_party).emit('new-host',host);
+                    console.log('new host' + host + " in " + socket.data.current_party);
+                    io.to(socket.data.current_party).emit('host',host);
                   }
+                  leaveConnectedUsers(io,socket,roomdata);
                 });
               });
-              
-
+            } else {
+              leaveConnectedUsers(io,socket,roomdata);
             }
-            socket.data.current_party = roomdata.roomname;
-            
-            addConnectedUser(socket.data.user,roomdata.roomname, () => {
-              io.to(socket.data.current_party).emit('new-joiner',socket.data.user);
-              sendPrevPartyMessages(roomdata.roomname,(err,messages) => {
-                socket.emit('joined',messages);
-              });
-              console.log("here");
-              sendPartyInfo(roomdata.roomname,(err,data) => {
-                if(data)
-                  io.to(socket.data.current_party).emit('curr_users',data.connectedUsers);
-                  io.to(socket.data.current_party).emit('host',data.hostedBy);
-                  socket.emit('playlist-changed',{'playlist':data.ytLink,'current_vid':data.current_vid});
-                  socket.emit('update-progress',{ 'playedSeconds' :data.playedSeconds, 'video_is_playing':data.video_is_playing})
-              });
-            });
           }
           if(err) {
             socket.emit("password-missing");
@@ -148,3 +135,22 @@ export function setupSocketHandlers(io) {
     } ); 
   });
 }
+
+const leaveConnectedUsers = (io,socket, roomdata) => {
+  socket.data.current_party = roomdata.roomname;
+  addConnectedUser(socket.data.user,roomdata.roomname, () => {
+    io.to(roomdata.roomname).emit('new-joiner',socket.data.user);
+    sendPrevPartyMessages(roomdata.roomname,(err,messages) => {
+      socket.emit('joined',messages);
+    });
+    console.log("here");
+    sendPartyInfo(roomdata.roomname,(err,data) => {
+      if(data) {
+        io.to(roomdata.roomname).emit('curr_users',data.connectedUsers);
+        io.to(roomdata.roomname).emit('host',data.hostedBy);
+        socket.emit('playlist-changed',{'playlist':data.ytLink,'current_vid':data.current_vid});
+        socket.emit('update-progress',{ 'playedSeconds' :data.playedSeconds, 'video_is_playing':data.video_is_playing})
+      }
+    });
+  });  
+} 
