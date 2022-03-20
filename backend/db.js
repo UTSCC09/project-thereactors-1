@@ -7,8 +7,8 @@ import { messageSchema } from "./schemas/messageSchema";
 mongoose.connect(config.mongodbUrl);
 
 let db = mongoose.connection;
-db.on('error', () => {
-  console.error("Error while connecting to DB");
+db.on('error', (err) => {
+  console.error("Error while connecting to DB" + err);
 });
 
 export const User = mongoose.model("User", userSchema);

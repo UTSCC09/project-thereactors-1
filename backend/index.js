@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import config from './config.json';
 import cors from 'cors';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { body, validationResult } from 'express-validator';
 
 // GraphQL
@@ -65,18 +65,32 @@ async function startServer() {
           return res.status(400).json({ message: error });
         } else {
           // Hash the given password, create a user and sign a token
-          bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
-            if (err) return res.status(500).json({ message: err });
-            User.create({ username, email, password: hash }, (err, user) => {
+          bcrypt.genSalt(config.passwordSaltRounds, (err, salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
               if (err) return res.status(500).json({ message: err });
-              const token = signJwt({ username: user.username });
-              res.cookie('token', token, {
-                maxAge: config.cookieMaxAge,
-                httpOnly: true,
+              User.create({ username, email, password: hash }, (err, user) => {
+                if (err) return res.status(500).json({ message: err });
+                const token = signJwt({ username: user.username });
+                res.cookie('token', token, {
+                  maxAge: config.cookieMaxAge,
+                  httpOnly: true,
+                });
+                return res.json({ usenrame: user.username, token });
               });
-              return res.json({ usenrame: user.username, token });
             });
           });
+          // bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
+          //   if (err) return res.status(500).json({ message: err });
+          //   User.create({ username, email, password: hash }, (err, user) => {
+          //     if (err) return res.status(500).json({ message: err });
+          //     const token = signJwt({ username: user.username });
+          //     res.cookie('token', token, {
+          //       maxAge: config.cookieMaxAge,
+          //       httpOnly: true,
+          //     });
+          //     return res.json({ usenrame: user.username, token });
+          //   });
+          // });
         }
     });
   });

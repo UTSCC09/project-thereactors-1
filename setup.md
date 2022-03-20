@@ -38,3 +38,4 @@ $ npm install
 ```
 $ npm start
 ```
+  "mongodbUrl":"mongodb+srv://admin:TDIu5HUR126xwjIV@cluster0.xkzw0.mongodb.net/recipeCentral?retryWrites=true&w=majority&authSource=admin",
