@@ -1,3 +1,7 @@
+import axios from "axios";
+
+const API_KEY = "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw";
+
 export const getVideoId = (url) => {
     /**
      * Returns a valid video id from various youtube URLs for the same video
@@ -25,4 +29,16 @@ export const getValidLink = (url) => {
 
 export const isYtLink = (url) => {
     return url.includes('youtube.com') || url.includes('youtu.be');
+}
+
+export const getVideoTitle = async (url) => {
+    let id = getVideoId(url);
+
+    return await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+            part: 'snippet',
+            id: id,
+            key: API_KEY
+        }
+    }).then(res => res.data.items[0].snippet.title)
 }
