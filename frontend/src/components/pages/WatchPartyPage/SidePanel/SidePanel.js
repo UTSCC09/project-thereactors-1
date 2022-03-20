@@ -14,30 +14,36 @@ export default function SidePanel({playlistData, usersData}) {
     const sidePanel = document.getElementById('sidePanel');
     const openPlaylistBtn = document.getElementById("openPlaylistBtn");
     const openUsersBtn = document.getElementById("openUsersBtn");
+    const [closeIcon, setCloseIcon] = useState(null);
 
     const closePanel = () => {
         setPanelType(-1);
         sidePanel.style.width = 0;
+        setCloseIcon(null);
     }
     
     const openPanel = (type) => {
         setPanelType(type);
         sidePanel.style.width = "18%";
 
-        if (type === PLAYLIST_TYPE) {
-            document.onclick = (e) => {
-                if (!sidePanel.contains(e.target) && !openPlaylistBtn.contains(e.target)) {
+    }
+
+    useEffect(() => {
+        document.onclick = (e) => {
+            if (panelType === PLAYLIST_TYPE) {
+                if ((!sidePanel.contains(e.target) && !openPlaylistBtn.contains(e.target))
+                    || (closeIcon!==null && closeIcon.contains(e.target))) {
                     closePanel();
                 }
-            }
-        } else {
-            document.onclick = (e) => {
-                if (!sidePanel.contains(e.target) && !openUsersBtn.contains(e.target)) {
+            } 
+            else if (panelType === USERS_TYPE) {
+                if (!sidePanel.contains(e.target) && !openUsersBtn.contains(e.target)
+                    || (closeIcon!==null && closeIcon.contains(e.target))) {
                     closePanel();
                 }
             }
         }
-    }
+    }, [closeIcon])
     
     return (
         <>
@@ -49,10 +55,10 @@ export default function SidePanel({playlistData, usersData}) {
             </div>
             <div id="sidePanel" className="side-panel">
                 {panelType !== -1 && panelType === PLAYLIST_TYPE &&
-                    <PlaylistPanel playlistData={playlistData} />
+                    <PlaylistPanel playlistData={playlistData} setCloseIcon={setCloseIcon} />
                 }
                 {panelType !== -1 && panelType === USERS_TYPE &&
-                    <UsersPanel usersData={usersData} />
+                    <UsersPanel usersData={usersData} setCloseIcon={setCloseIcon} />
                 }
             </div>
         </>
