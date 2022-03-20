@@ -1,11 +1,13 @@
 @import 'src/global.scss';
 
 .playlist-panel {
-    padding: 20px 0;
+    padding: 0 0 10px;
 
     .header {
-        margin-bottom: 5px;
-        padding: 0 20px;
+        padding: 20px 20px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .playlist-item-wrapper {
@@ -15,15 +17,6 @@
         
         &:hover {
             background-color: rgba(0,0,0,.15);
-        }
-
-        &-current {
-            @extend .playlist-item-wrapper;
-            background-color: rgba(0,0,0,.35);
-
-            &:hover {
-                background-color: rgba(0,0,0,.35);
-            }
         }
 
         .item {
@@ -42,6 +35,32 @@
         .item-delete-btn {
             width: 12%;
             text-align: right;
+        }
+
+        &-current, &-current-guest {
+            @extend .playlist-item-wrapper;
+            background-color: rgba(0,0,0,.35);
+
+            &:hover {
+                background-color: rgba(0,0,0,.35);
+            }
+        }
+
+        &-current-guest {
+            .item:hover {
+                cursor: default;
+            }
+        }
+
+        &-guest {
+            @extend .playlist-item-wrapper;
+            &:hover {
+                background-color: white;
+            }
+
+            .item:hover {
+                cursor: default;
+            }
         }
     }
 }

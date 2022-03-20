@@ -22,3 +22,7 @@ export const getVideoThumbnail = (url) => {
 export const getValidLink = (url) => {
     return "https://www.youtube.com/watch?v=" + getVideoId(url);
 }
+
+export const isYtLink = (url) => {
+    return url.includes('youtube.com') || url.includes('youtu.be');
+}

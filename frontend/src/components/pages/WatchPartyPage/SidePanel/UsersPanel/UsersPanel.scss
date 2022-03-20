@@ -3,6 +3,13 @@
 .users-panel {
     padding: 20px;
 
+    .header {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
     .user-wrapper {
         display: flex;
         align-items: center;
