@@ -22,6 +22,7 @@ export function setupSocketHandlers(io) {
       console.log( socket.data.user+' disconnected');
       removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
         io.to(socket.data.current_party).emit('user-left',users);
+        console.log("removed connected user");
         updateHostClosestOrClose(socket.data.user,socket.data.current_party,(err,host) => {
           if(host) {
             io.to(socket.data.current_party).emit('new-host',host);
@@ -34,6 +35,7 @@ export function setupSocketHandlers(io) {
 
     socket.on('join-room',(roomdata)=> {
       console.log(socket.data.user + " attempts to join")
+      console.log(socket.data.current_party);
       // how to make sure that the user leaves other rooms 
       if(socket.data.user && roomdata.roomname) // do real sanitization on these fields
         checkUserInvited(socket.data.user,roomdata.roomname,(err, res) =>{
@@ -41,11 +43,19 @@ export function setupSocketHandlers(io) {
             console.log( socket.data.user+" joins room " + roomdata.roomname);
 
             socket.join(roomdata.roomname);
+            console.log(socket.data.current_party);
             if(socket.data.current_party) {
               removeConnectedUser(socket.data.user,socket.data.current_party, (users) => {
                 io.to(socket.data.current_party).emit('user-left',users);
+                socket.leave(socket.data.current_party);
+                updateHostClosestOrClose(socket.data.user,socket.data.current_party,(err,host) => {
+                  if(host) {
+                    io.to(socket.data.current_party).emit('new-host',host);
+                  }
+                });
               });
-              socket.leave(socket.data.current_party);
+              
+
             }
             socket.data.current_party = roomdata.roomname;
             
