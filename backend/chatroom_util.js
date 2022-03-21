@@ -25,14 +25,13 @@ export function getCookie(name,cookies) {
 export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
       if(doc && doc.hostedBy == user ) {
-        let indexChanged = true;
-        if(doc.current_vid < doc.ytLink.length)
-            indexChanged = doc.ytLink[doc.current_vid] != playlist[doc.current_vid];
+        let indexChanged = false;
         let newIndex = doc.current_vid;
-        if(indexChanged && playlist.includes(doc.ytLink[doc.current_vid])) {
-            newIndex = playlist.indexOf(doc.ytLink[doc.current_vid]);
-        }else if(indexChanged) {
-          newIndex= doc.current_vid;
+        if(doc.current_vid < doc.ytLink.length && doc.current_vid < playlist.length) {
+          indexChanged = doc.ytLink[doc.current_vid].link !== playlist[doc.current_vid].link;
+        }
+        if(indexChanged && playlist.some(x => x.link === doc.ytLink[doc.current_vid].link)) {
+          newIndex = playlist.findIndex(x => x.link === doc.ytLink[doc.current_vid].link);
         }
         doc.ytLink = playlist;
         doc.current_vid = newIndex;
