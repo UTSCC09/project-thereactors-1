@@ -42,5 +42,5 @@ export const getVideoTitle = async (url) => {
             id: id,
             key: API_KEY
         }
-    }).then(res => res.data.items[0].snippet.title)
+    }).then(res => res.data.items[0].snippet.title).catch((err)=>{console.log(err)});
 }
