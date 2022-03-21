@@ -4,5 +4,5 @@
   "jwtSecret": "bWNYDRHFFHrndh4qK7dgS7ky5DpX3EeC",
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
-  "frontend_url":"http://localhost:3000"
+  "frontend_url":"https://secure-sea-81692.herokuapp.com/"
 }
