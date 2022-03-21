@@ -26,7 +26,7 @@ export default function Router() {
                 <Route exact path="/sign-in" component={SignInPage} />
                 <Route exact path="/sign-up" component={SignUpPage} />
                 <PrivateRoute exact path="/join" component={JoinPartyPage} />
-                <PrivateRoute exact path="/schedule" component={SchedulePartyPage} />
+                {/* <PrivateRoute exact path="/schedule" component={SchedulePartyPage} /> */}
                 <PrivateRoute exact path="/party" component={WatchPartyPage} />
                 <PrivateRoute exact path="/create" component={CreatePartyPage}/>
                 <Route exact path="/*"><Redirect to="/" /></Route>
