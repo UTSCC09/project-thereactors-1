@@ -5,6 +5,7 @@ export const partySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   startedAt: { type: Date, default: Date.now },
   hostedBy: String,
+  originalHost: String,
   ytLink: { type: [{ title: String, link: String, thumbnail: String }], default: [] },
   connectedUsers: { type: [String], default: [] },
   authenticatedUsers: { type: [String], default: [] },

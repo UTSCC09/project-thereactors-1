@@ -50,6 +50,7 @@ export const partyMutationResolvers = {
     return new Promise((resolve, reject) => {
       const { username } = context.userData;
       party.hostedBy = username;
+      party.originalHost = username;
       party.authenticatedUsers = [username];
       // Create new party
       const newParty = new Party(party);

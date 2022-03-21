@@ -1,5 +1,5 @@
 import { saveMessage,createTempUser,getCookie,setPartyPlaylist,checkUserInvited,addConnectedUser,removeConnectedUser,sendPrevPartyMessages,sendPartyInfo 
-,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist,updateHost,updateHostClosestOrClose} from './chatroom_util.js';
+,pauseVideo,playVideo,updateVideoProgress,updateCurrentVid, loadPartyPlaylist,updateHost,updateHostClosestOrClose, retrieveRemote} from './chatroom_util.js';
 import { verifyJwt } from './utils.js';
 
 export function setupSocketHandlers(io) {
@@ -29,7 +29,16 @@ export function setupSocketHandlers(io) {
           }
         });
       });
-
+    });
+    socket.on("get-remote", () => {
+      if(socket.data.current_party && socket.data.user) {
+        retrieveRemote(socket.data.current_party, socket.data.user, (err, newhost)=> {
+          if(newhost) {
+            io.to(socket.data.current_party).emit('host',newhost);
+          }
+        });
+      }
+      
     });
 
 
@@ -151,6 +160,7 @@ const leaveConnectedUsers = (io,socket, roomdata) => {
         io.to(roomdata.roomname).emit('host',data.hostedBy);
         socket.emit('playlist-changed',{'playlist':data.ytLink,'current_vid':data.current_vid});
         socket.emit('update-progress',{ 'playedSeconds' :data.playedSeconds, 'video_is_playing':data.video_is_playing})
+        socket.emit('original-host',{'originalHost':data.originalHost});
       }
     });
   });  
