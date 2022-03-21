@@ -13,13 +13,26 @@
     .playlist-item-wrapper {
         display: flex;
         align-items: center;
-        padding: 8px 8px 0 20px;
+        padding: 8px 8px 0 0;
         
-        &:hover {
-            background-color: rgba(0,0,0,.1);
+        .drag-btn {
+            visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: 8px;
+            width: 20px;
         }
 
-        .clickable-row {
+        &:hover {
+            background-color: rgba(0,0,0,.1);
+
+            .drag-btn {
+                visibility: visible;
+            }    
+        }
+
+        .clickable-area {
             width: 90%;
             display: flex;
             align-items: center;
@@ -40,7 +53,7 @@
     
             .title {
                 width: 65%;
-                margin-bottom: 4px;
+                margin-bottom: 5px;
                 padding-left: 6px;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -70,8 +83,9 @@
 
         &-current-guest, &-guest {
             @extend .playlist-item-wrapper;
+            padding: 8px 8px 0 20px;
 
-            .clickable-row {
+            .clickable-area {
                 width: 100%;
                 padding-right: 12px;
 
