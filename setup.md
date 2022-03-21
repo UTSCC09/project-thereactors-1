@@ -39,3 +39,33 @@ $ npm install
 $ npm start
 ```
   "mongodbUrl":"mongodb+srv://admin:TDIu5HUR126xwjIV@cluster0.xkzw0.mongodb.net/recipeCentral?retryWrites=true&w=majority&authSource=admin",
+
+
+HOW TO DEPLOY
+
+set config vars
+
+frontend json
+export default {
+  backendUrl: "https://secure-sea-81692.herokuapp.com",
+  graphqlUrl: "https://secure-sea-81692.herokuapp.com/api/graphql",
+}
+
+backendjson
+"frontend_url":"https://secure-sea-81692.herokuapp.com/"
+
+next step for building react app
+cd frontend 
+npm run build
+copy build folder to backend folder
+
+frontend
+heroku container:push web -a powerful-sea-60968
+heroku container:release web -a powerful-sea-60968
+
+backend
+
+heroku container:push web -a secure-sea-81692
+heroku container:release web -a secure-sea-81692
+
+
