@@ -9,7 +9,7 @@ export function setupSocketHandlers(io) {
     socket.data.current_party  // is the party id in the db
     socket.data.userid // user id in the db
     */
-
+    console.log("connection");
     if(socket.handshake.headers.cookie) {
       let res = verifyJwt(getCookie('token',socket.handshake.headers.cookie));
       if(res.valid) {
@@ -37,7 +37,7 @@ export function setupSocketHandlers(io) {
       console.log(socket.data.user + " attempts to join " +roomdata.roomname );
       console.log("current party "+ socket.data.current_party);
       // how to make sure that the user leaves other rooms 
-      if(socket.data.user && roomdata.roomname) // do real sanitization on these fields
+      if(socket.data.user && roomdata.roomname) {// do real sanitization on these fields 
         checkUserInvited(socket.data.user,roomdata.roomname,(err, res) =>{
           if(res) {
             console.log( socket.data.user+" joins room " + roomdata.roomname);
@@ -65,6 +65,7 @@ export function setupSocketHandlers(io) {
             socket.emit("password-missing");
           }
         });
+      }
     });
 
     socket.on('send',(content)=> {

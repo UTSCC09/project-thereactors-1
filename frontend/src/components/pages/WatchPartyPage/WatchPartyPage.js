@@ -1,11 +1,6 @@
 import './WatchPartyPage.scss';
 import React, { useEffect, useRef, useState } from "react";
 import ReactPlayer from 'react-player';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
 import * as authAPI from 'auth/auth_utils.js';

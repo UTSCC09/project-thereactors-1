@@ -1,7 +1,9 @@
-FROM node:latest
+FROM node:16.14.0-alpine
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+
+RUN npm install -g npm@8.5.5
 
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 

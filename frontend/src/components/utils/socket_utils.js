@@ -9,7 +9,11 @@ export function connectToSocket() {
     if(!socket.connected){
         socket.connect();
     } 
-    
+}
+export function reconnectToSocket() {
+    console.log("reconnect")
+    socket.disconnect();
+    socket.connect();
 }
 
 export function getSocket() {
