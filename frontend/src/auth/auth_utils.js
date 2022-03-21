@@ -12,6 +12,7 @@ export function signIn(username) {
 export function signOut() {
     localStorage.setItem('signed-in','');
     localStorage.setItem('username','');
+    reconnectToSocket();
 }
 export function getUser() {
     return localStorage.getItem('username');
