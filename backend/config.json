@@ -5,5 +5,5 @@
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
   "API_KEY":"AIzaSyArMKJqLSxQaSjmUdRBvNA_gXhvQiQjoy0",
-  "frontend_url":"http://localhost:3000"
+  "frontend_url":"https://secure-sea-81692.herokuapp.com/"
 }

@@ -59,10 +59,6 @@ cd frontend
 npm run build
 copy build folder to backend folder
 
-frontend
-heroku container:push web -a powerful-sea-60968
-heroku container:release web -a powerful-sea-60968
-
 backend
 
 heroku container:push web -a secure-sea-81692
