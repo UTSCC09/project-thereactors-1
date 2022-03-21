@@ -1,6 +1,6 @@
 version: '3.5'
 services:
-  recipe-central-mongo:
+  mongo:
     image: mongo:4.2.7-bionic
     ports:
       - 27020:27017
@@ -11,5 +11,41 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
       MONGO_INITDB_DATABASE: admin
+    container_name: mongo
+    
+  ytwatchparty-server:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ytwatchparty-server
+    ports: 
+      - 3001:3001
+    expose: 
+      - 3001
+    volumes:
+      - './backend:/srv/app/ytparty-server'
+      # - '/srv/app/ytparty-server/node_modules/'
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    command: npm start
+
+  ytwatchparty-client:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ytwatchparty-client
+    ports: 
+      - 3000:3000
+    expose: 
+      - 3000
+    volumes:
+      - './frontend:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    links:
+      - ytwatchparty-server
+    command: npm start
+  
 volumes:
   recipe-central-mongo-volume:

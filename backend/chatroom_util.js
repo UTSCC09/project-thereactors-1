@@ -39,7 +39,6 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         doc.save().then( (res) => {callback(null, {playlist, "current_vid":newIndex} )});
       } 
     });
-  
   }
   export const loadPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
@@ -81,8 +80,8 @@ export const addConnectedUser = (username,roomid,callback) =>  {
       if(doc&& doc.connectedUsers) {
         doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
         let temp = doc.connectedUsers;
-        doc.save();
-        callback(temp);
+        doc.save().then(()=>{callback(temp)});
+        
       } else {
       }
     });
@@ -156,4 +155,38 @@ export  const updateCurrentVid = ( newIndex,roomid, username, callback) =>  {
         callback(err,null);
         }
     });
+}
+
+export  const updateHost = ( newuser,roomid, username, callback) =>  {
+  Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
+      if(doc && doc.connectedUsers.includes(newuser)) {
+          doc.hostedBy = newuser;
+          doc.save().then( (res) => {callback(null, newuser)});
+      } else {
+        callback(err,null);
+      }
+  });
+}
+export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
+  Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
+      if(doc ) {
+          console.log(doc.connectedUsers);
+          if(doc.connectedUsers.length > 0) {
+            console.log("update host");
+            doc.hostedBy = doc.connectedUsers[0];
+            doc.save().then((res) => {callback(null, res.hostedBy)});
+          } else {
+            // close room
+            console.log("remove room");
+            deleteRoom(roomid, ()=> {callback(null,null);});
+          }
+          
+      } else {
+        callback(err,null);
+      }
+  });
+}
+const deleteRoom = (roomid,callback) => {
+  Party.deleteOne({_id : roomid}).then(()=>{Message.deleteMany({party: roomid}).then(()=>callback(null,true))});
+  
 }

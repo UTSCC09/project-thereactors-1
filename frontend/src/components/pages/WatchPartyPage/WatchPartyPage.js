@@ -1,11 +1,6 @@
 import './WatchPartyPage.scss';
 import React, { useEffect, useRef, useState } from "react";
 import ReactPlayer from 'react-player';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
 import * as authAPI from 'auth/auth_utils.js';
@@ -23,6 +18,7 @@ import * as videoUtils from 'components/utils/video_utils';
 
 export default function WatchPartyPage() {
     // these are react-player states
+
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
     const [tempVideoId2, setTempVideoId2] = useState('');
@@ -87,6 +83,12 @@ export default function WatchPartyPage() {
         })
     }, []);
 
+    // useEffect(()=> {
+    //     // playlist and video updates handling 
+    //     getSocket().on('update-progress',(party_video_state)=> {
+    //         handleUpdateProgress(party_video_state);
+    //     });
+    // },[playerRefValid]);
     // handle video and playlist events
 
     const play = () => {
@@ -120,22 +122,18 @@ export default function WatchPartyPage() {
 
     const addToPlaylist = (url, type) => {
         if (host === authAPI.getUser()) {
-            
-            if(ReactPlayer.canPlay(url) && type === 'queue') {
-                setTempVideoId('');
-                setTempVideoId2('');
-                getSocket().emit('update-playlist',[...playlist,url])
-            } else if( ReactPlayer.canPlay(url) && type === 'load') {
-                addPlaylistAndLoad(url);
-            }
-        }
-    }
-    const addPlaylistAndLoad = (url) => {
-        if (host === authAPI.getUser()) {
-            if(ReactPlayer.canPlay(url)) {
-                setTempVideoId('');
-                setTempVideoId2('');
-                getSocket().emit('load-playlist',[...playlist,url])
+            setTempVideoId('');
+            setTempVideoId2('');
+            if (ReactPlayer.canPlay(url) && videoUtils.isYtLink(url)) {
+                let obj = {title: "", link: videoUtils.getValidLink(url), thumbnail: videoUtils.getVideoThumbnail(url)};
+                videoUtils.getVideoTitle(url).then(res => {
+                    obj.title = res;
+                    if (type === 'queue') {
+                        getSocket().emit('update-playlist',[...playlist,obj])
+                    } else {
+                        getSocket().emit('load-playlist',[...playlist,obj])
+                    }
+                })
             }
         }
     }
@@ -174,7 +172,7 @@ export default function WatchPartyPage() {
             // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
         }
-        setMuted(false);
+        // setMuted(false);
     }
 
     // handle socket events
@@ -187,7 +185,7 @@ export default function WatchPartyPage() {
         // console.log(playerRef.current );
         console.log(playerRefValid);
         if(playerRef.current ) {
-            // console.log("here1");
+            console.log("here1");
             setPlaying(new_party_video_state.video_is_playing);
             // console.log("here2.6");
             if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > .5) {
@@ -208,7 +206,7 @@ export default function WatchPartyPage() {
             setVideoId('');
         } else {
             if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
-                setVideoId(videoUtils.getValidLink(data.playlist[data.current_vid]));
+                setVideoId(data.playlist[data.current_vid].link);
         }
 
     }
@@ -222,7 +220,7 @@ export default function WatchPartyPage() {
         <div className="watch-party-page">
             <div className='col1'>
                 <SidePanel 
-                    playlistData={{list:playlist, currentIdx:playlist_index}}
+                    playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
                     usersData={{users:getUsersRightOrder(connectedUsers), host:host}}
                 />
             </div>
@@ -243,24 +241,26 @@ export default function WatchPartyPage() {
                             // onBufferEnd={handleOnBufferEnd}
                             onEnded={handleOnEnded}
                             muted={muted}
-                            volume={0.4}
+                            // volume={0.4}
                         />
                     }
-                    {videoId === '' &&
+                    {videoId === '' && 
                         <div className='add-video-wrapper' style={{height: videoHeight, width: videoWidth}}>
-                            <div className='inner-wrapper'>
-                            <TextField 
-                                label="Enter video url"
-                                size='small'
-                                style={{
-                                    marginRight: 5,
-                                    width: '100%'
-                                }}
-                                value={tempVideoId}
-                                onChange={(e)=>setTempVideoId(e.target.value)}
-                            />
-                            <Button type='submit' className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId, 'load')}>load</Button>
-                            </div>
+                            {authAPI.getUser() === host &&
+                                <div className='inner-wrapper'>
+                                <TextField 
+                                    label="Enter video url"
+                                    size='small'
+                                    style={{
+                                        marginRight: 5,
+                                        width: '100%'
+                                    }}
+                                    value={tempVideoId}
+                                    onChange={(e)=>setTempVideoId(e.target.value)}
+                                />
+                                <Button type='submit' className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId, 'load')}>load</Button>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -270,17 +270,19 @@ export default function WatchPartyPage() {
                         <Avatar  style={{marginRight: 4}} title={host} className='host-icon' />
                         <p >{host}</p>
                     </div>
-                    <div className='addToPlaylist-wrapper'>
-                        <TextField
-                            className='input-field'
-                            label='Enter video url'
-                            size='small'
-                            value={tempVideoId2}
-                            onChange={(e)=>setTempVideoId2(e.target.value)}
-                        />
-                        <Button className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'load')}>load</Button>
-                        <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'queue')}>queue</Button>
-                    </div>
+                    {authAPI.getUser() === host &&
+                        <div className='addToPlaylist-wrapper'>
+                            <TextField
+                                className='input-field'
+                                label='Enter video url'
+                                size='small'
+                                value={tempVideoId2}
+                                onChange={(e)=>setTempVideoId2(e.target.value)}
+                            />
+                            <Button className='load-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'load')}>load</Button>
+                            <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'queue')}>queue</Button>
+                        </div>
+                    }
                 </div>
                 <div className='video-queue-wrapper'></div>
             </div>

@@ -1,17 +1,49 @@
 @import 'src/global.scss';
 
 .users-panel {
-    padding: 20px;
+    padding: 20px 14px;
+
+    .header {
+        margin-bottom: 16px;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
     .user-wrapper {
         display: flex;
         align-items: center;
-        margin-top: 8px;
-        
-        .icon {
-            margin-right: 6px;
-            width: 35px;
-            height: 35px;
+        justify-content: space-between;
+        padding: 4px 6px;
+
+        &-col1 {
+            display: flex;
+            align-items: center;
+
+            .icon {
+                margin-right: 6px;
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        &-col2 {
+            .pass-remote-btn {
+                visibility: hidden;
+                box-shadow: none;
+                background-color: unset;
+                border: 1px solid #1976d2;
+                padding: 2px 4px;
+            }
+        }
+
+        &:hover {
+            background-color: rgba(0,0,0,.06);
+
+            .pass-remote-btn {
+                visibility: visible;
+            }
         }
     }
 }

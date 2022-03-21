@@ -5,9 +5,9 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import config from './config.json';
 import cors from 'cors';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { body, validationResult } from 'express-validator';
-
+import path from 'path';
 // GraphQL
 import { graphqlHTTP } from 'express-graphql';
 import { resolvers } from './resolvers';
@@ -26,7 +26,7 @@ async function startServer() {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(cookieParser());
-  app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+  app.use(cors({ credentials: true, origin: config.frontend_url }));
   app.use('/graphql', graphqlHTTP({ graphiql: true }));
   app.post("/api/signin", body("username").trim().escape(), (req, res) => {
     const validationErrors = validationResult(req);
@@ -65,16 +65,18 @@ async function startServer() {
           return res.status(400).json({ message: error });
         } else {
           // Hash the given password, create a user and sign a token
-          bcrypt.hash(password, config.passwordSaltRounds, (err, hash) => {
-            if (err) return res.status(500).json({ message: err });
-            User.create({ username, email, password: hash }, (err, user) => {
+          bcrypt.genSalt(config.passwordSaltRounds, (err, salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
               if (err) return res.status(500).json({ message: err });
-              const token = signJwt({ username: user.username });
-              res.cookie('token', token, {
-                maxAge: config.cookieMaxAge,
-                httpOnly: true,
+              User.create({ username, email, password: hash }, (err, user) => {
+                if (err) return res.status(500).json({ message: err });
+                const token = signJwt({ username: user.username });
+                res.cookie('token', token, {
+                  maxAge: config.cookieMaxAge,
+                  httpOnly: true,
+                });
+                return res.json({ usenrame: user.username, token });
               });
-              return res.json({ usenrame: user.username, token });
             });
           });
         }
@@ -99,8 +101,8 @@ async function startServer() {
   apollo.applyMiddleware({ app, path: '/api/graphql', cors: false });
 
   // SocketIO
-  const httpServer = app.listen(config.port, function() {
-    console.log(`Http serving at port ${config.port}`);
+  const httpServer = app.listen(process.env.PORT || 3001, function() {
+    console.log(`Http serving at port ${process.env.PORT || 3001}`);
   });
   const io = new Server(httpServer, {
     cors: {
@@ -110,5 +112,11 @@ async function startServer() {
     }
   });
   setupSocketHandlers(io);
+  // for serving the frontend statically
+  app.use(express.static(path.resolve(__dirname, './build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, './build', 'index.html'));
+  });
+  
 }
 startServer();

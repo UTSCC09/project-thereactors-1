@@ -29,7 +29,6 @@
           .message-text {
             border-radius: 4px;
             background-color: $primary-color;
-
             color: white;
             padding: 3px 7px;
             overflow-wrap: break-word;
@@ -53,6 +52,8 @@
         }
   
         .message-box {
+          margin-left: 40px;
+
           .message-text {
             background-color: rgb(16, 156, 255);
           }

@@ -1,11 +1,13 @@
 @import 'src/global.scss';
 
 .playlist-panel {
-    padding: 20px 0;
+    padding: 0 0 10px;
 
     .header {
-        margin-bottom: 5px;
-        padding: 0 20px;
+        padding: 20px 20px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .playlist-item-wrapper {
@@ -14,10 +16,50 @@
         padding: 8px 8px 0 20px;
         
         &:hover {
-            background-color: rgba(0,0,0,.15);
+            background-color: rgba(0,0,0,.1);
         }
 
-        &-current {
+        .clickable-row {
+            width: 90%;
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            .thumbnail-wrapper {
+                width: 35%;
+                
+                .thumbnail {
+                    width: 100%;
+                }
+                
+            }
+    
+            .title {
+                width: 65%;
+                margin-bottom: 4px;
+                padding-left: 6px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 3; /* number of lines to show */
+                        line-clamp: 3; 
+                -webkit-box-orient: vertical;
+            }
+        }
+
+        .item-delete-btn {
+            width: 10%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: 8px;
+        }
+
+        &-current, &-current-guest {
             @extend .playlist-item-wrapper;
             background-color: rgba(0,0,0,.35);
 
@@ -26,22 +68,31 @@
             }
         }
 
-        .item {
-            width: 88%;
-            margin-bottom: 3px;
+        &-current-guest, &-guest {
+            @extend .playlist-item-wrapper;
 
-            .thumbnail {
+            .clickable-row {
                 width: 100%;
+                padding-right: 12px;
+
+                &:hover {
+                    cursor: default;
+                }
             }
 
-            &:hover {
-                cursor: pointer;
+            .item-delete-btn {
+                display: none;
             }
         }
+        
+        &-guest {
+            &:hover {
+                background-color: white;
+            }
 
-        .item-delete-btn {
-            width: 12%;
-            text-align: right;
+            .item:hover {
+                cursor: default;
+            }
         }
     }
 }
