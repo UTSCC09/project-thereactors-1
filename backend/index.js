@@ -48,6 +48,10 @@ async function startServer() {
       }
     });
   });
+  app.post('/api/signout',(req,res)=> {
+    res.clearCookie('token');
+    return res.json({ "idk":"something"});
+  });
   app.post("/api/signup",
     body("email").isEmail().normalizeEmail(),
     body("username").trim().escape(),
@@ -74,8 +78,9 @@ async function startServer() {
                 res.cookie('token', token, {
                   maxAge: config.cookieMaxAge,
                   httpOnly: true,
+                  // sameSite:true, // only for prod
                 });
-                return res.json({ usenrame: user.username, token });
+                return res.json({ username: user.username, token });
               });
             });
           });

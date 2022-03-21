@@ -60,7 +60,7 @@ npm run build
 copy build folder to backend folder
 
 backend
-
+(need to login first seee online)
 heroku container:push web -a secure-sea-81692
 heroku container:release web -a secure-sea-81692
 
