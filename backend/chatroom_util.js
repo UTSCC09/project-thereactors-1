@@ -185,6 +185,17 @@ export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
       }
   });
 }
+export  const retrieveRemote = ( roomid, username, callback) =>  {
+  Party.where({_id : roomid, originalHost:username}).findOne((err,doc)=> {
+      if(doc ) {
+          doc.hostedBy = username;
+          doc.save().then( (res) => {callback(null, res.hostedBy)});
+      } else {
+        callback(err,null);
+      }
+  });
+}
+
 const deleteRoom = (roomid,callback) => {
   Party.deleteOne({_id : roomid}).then(()=>{Message.deleteMany({party: roomid}).then(()=>callback(null,true))});
   
