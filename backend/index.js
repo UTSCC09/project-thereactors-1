@@ -12,7 +12,7 @@ import path from 'path';
 import { graphqlHTTP } from 'express-graphql';
 import { resolvers } from './resolvers';
 import { typeDefs } from './schemas';
-const helmet = require('helmet')
+// const helmet = require('helmet')
 
 // SocketIO
 import { Server } from 'socket.io';
@@ -24,7 +24,7 @@ import { User } from './db';
 async function startServer() {
   // Express server
   const app = express();
-  app.use(helmet()) 
+  // app.use(helmet()) 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(cookieParser());
