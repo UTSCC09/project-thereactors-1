@@ -1,6 +1,8 @@
 import axios from "axios";
+import environments from "environments";
 
-const API_KEY = "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw";
+// const API_KEY = "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw";
+const API_KEY = environments.API_KEY;
 
 export const getVideoId = (url) => {
     /**
