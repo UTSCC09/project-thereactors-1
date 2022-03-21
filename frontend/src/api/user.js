@@ -85,3 +85,18 @@ export const signIn = (username, password, callback) => {
         callback(result.errors, result);
     });
 }
+export const signOut = (callback) => {
+    fetch(`${config.backendUrl}/api/signout`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ "nothing":"nothing"}),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(result.errors, result);
+    });
+}

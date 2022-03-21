@@ -12,6 +12,7 @@ import path from 'path';
 import { graphqlHTTP } from 'express-graphql';
 import { resolvers } from './resolvers';
 import { typeDefs } from './schemas';
+const helmet = require('helmet')
 
 // SocketIO
 import { Server } from 'socket.io';
@@ -23,6 +24,7 @@ import { User } from './db';
 async function startServer() {
   // Express server
   const app = express();
+  app.use(helmet()) 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(cookieParser());
@@ -47,6 +49,10 @@ async function startServer() {
         return res.status(401).json({ message: "Authentication failed" });
       }
     });
+  });
+  app.post('/api/signout',(req,res)=> {
+    res.clearCookie('token');
+    return res.json({ "idk":"something"});
   });
   app.post("/api/signup",
     body("email").isEmail().normalizeEmail(),
@@ -74,8 +80,9 @@ async function startServer() {
                 res.cookie('token', token, {
                   maxAge: config.cookieMaxAge,
                   httpOnly: true,
+                  // sameSite:true, // only for prod
                 });
-                return res.json({ usenrame: user.username, token });
+                return res.json({ username: user.username, token });
               });
             });
           });

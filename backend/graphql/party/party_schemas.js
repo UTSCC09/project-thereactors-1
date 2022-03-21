@@ -3,6 +3,7 @@ export const partySchema = `
     _id: ID
     password: String
     hostedBy: String
+    originalHost: String
     ytLink: [String]
     createdAt: DateTime
     startedAt: DateTime
@@ -18,6 +19,7 @@ export const partyInputSchema = `
   input CreatePartyInput {
     password: String
     hostedBy: String
+    originalHost: String
     ytLink: [String]
     startedAt: DateTime
     connectedUsers:[String]
