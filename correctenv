@@ -6,7 +6,7 @@ mongodbUrl="mongodb+srv://admin:TDIu5HUR126xwjIV@cluster0.xkzw0.mongodb.net/reci
 jwtSecret="bWNYDRHFFHrndh4qK7dgS7ky5DpX3EeC"
 passwordSaltRounds=10
 cookieMaxAge=604800000
-frontend_url="http://localhost:3000"
+frontend_url="http://localhost:3000/"
 
 
 PROD ENVIRONMENT
