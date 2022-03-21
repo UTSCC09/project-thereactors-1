@@ -5,5 +5,5 @@
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
   "API_KEY":"AIzaSyDFF4pfMtCwFrz_jGe2z73OWSH6ZK9KIVI",
-  "frontend_url":"https://secure-sea-81692.herokuapp.com/"
+  "frontend_url":"https://yt-watchparty.herokuapp.com/"
 }
