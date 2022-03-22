@@ -15,6 +15,10 @@ export default function UsersPanel({usersData, setCloseIcon}) {
         getSocket().emit('host-change', newUser);
     }
 
+    const getRemote = () => {
+        getSocket().emit('get-remote');
+    }
+
     return (
         <div className='users-panel'>
             <div className='header'>
@@ -29,7 +33,18 @@ export default function UsersPanel({usersData, setCloseIcon}) {
                             <div className='user-wrapper-col1'>
                             <Avatar className='icon' />
                             <div className='username'>{user} 
-                                {user === usersData.host && <span> (host)</span>}
+                                {user === usersData.host &&
+                                    user !== usersData.originalHost && 
+                                    <span> (host)</span>
+                                }
+                                {user !== usersData.host && 
+                                    user === usersData.originalHost &&
+                                    <span> (owner)</span>
+                                }
+                                {user === usersData.host && 
+                                    user === usersData.originalHost &&
+                                    <span> (owner, host)</span>
+                                }
                             </div>
                             </div>
                             {getUser() === usersData.host && user !== usersData.host && 
@@ -40,6 +55,18 @@ export default function UsersPanel({usersData, setCloseIcon}) {
                                         onClick={()=>passRemote(user)}
                                     >
                                         pass remote
+                                    </Button>
+                                </div>
+                            }
+                            {getUser() === usersData.originalHost && user === usersData.originalHost &&
+                                user !== usersData.host && 
+                                <div className='user-wrapper-col2'>
+                                    <Button 
+                                        size='small' 
+                                        className='pass-remote-btn'
+                                        onClick={()=>getRemote(user)}
+                                    >
+                                        get remote
                                     </Button>
                                 </div>
                             }

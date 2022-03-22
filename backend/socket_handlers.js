@@ -271,7 +271,7 @@ const leaveConnectedUsers = (io, socket, roomdata) => {
           playedSeconds: data.playedSeconds,
           video_is_playing: data.video_is_playing,
         });
-        socket.emit("original-host", { originalHost: data.originalHost });
+        socket.emit("original-host", data.originalHost);
       }
     });
   });

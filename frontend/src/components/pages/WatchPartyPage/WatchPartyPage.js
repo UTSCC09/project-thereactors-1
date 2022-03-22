@@ -37,6 +37,7 @@ export default function WatchPartyPage() {
     const [videoIsPlaying,setVideoIsPlaying] = useState(true); 
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
+    const [originalHost, setOriginalHost] = useState('');
     
     useEffect(() => {
         const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
@@ -64,6 +65,10 @@ export default function WatchPartyPage() {
         });
         getSocket().on('host',(host)=> {
             setHost(host);
+        });
+        
+        getSocket().on('original-host',(originalHost)=> {
+            setOriginalHost(originalHost);
         });
 
         getSocket().on('password-missing',()=> {
@@ -221,7 +226,7 @@ export default function WatchPartyPage() {
             <div className='col1'>
                 <SidePanel 
                     playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
-                    usersData={{users:getUsersRightOrder(connectedUsers), host:host}}
+                    usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                 />
             </div>
             <div className='col2'>
