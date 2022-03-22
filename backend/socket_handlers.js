@@ -160,7 +160,7 @@ const leaveConnectedUsers = (io,socket, roomdata) => {
         io.to(roomdata.roomname).emit('host',data.hostedBy);
         socket.emit('playlist-changed',{'playlist':data.ytLink,'current_vid':data.current_vid});
         socket.emit('update-progress',{ 'playedSeconds' :data.playedSeconds, 'video_is_playing':data.video_is_playing})
-        socket.emit('original-host',{'originalHost':data.originalHost});
+        socket.emit('original-host',data.originalHost);
       }
     });
   });  
