@@ -7,6 +7,7 @@ export default function ChatBox({socket, height}) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const curr_user ="victor";
+
     useEffect(() => {
         socket.on("test",()=>{
             console.log("here");

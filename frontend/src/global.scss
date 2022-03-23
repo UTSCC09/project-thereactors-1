@@ -9,6 +9,9 @@ $navbar-height: 12vh;
 $navbar-width: 92%;
 $main-component-height: 88vh;
 $box-shadow-common: rgba(0, 0, 0, 0.24) 0px 2px 8px;
+$navbar-color-dark: #2b2b2b; 
+$box-color-dark: #404040; 
+$main-color-dark: #333; 
 
 .MuiButton-root {
     font-family: $fontfamily-base;
@@ -48,9 +51,36 @@ svg:hover {
 .icon-btn {
     padding: 0;
     border: none;
-    background-color: white;
+    // background-color: white;
     
     &:hover {
         box-shadow: none;
+    }
+}
+
+.box-common-dark {
+    background-color: $box-color-dark;
+}
+
+.textfield-dark {
+    label {
+        color: white;
+    }
+    fieldset {
+        border-color: white;
+    }
+    input {
+        color: white;
+
+        &::placeholder {
+            color: white;
+        }
+    }
+    textarea {
+        color: white;
+
+        &::placeholder {
+            color: white;
+        }
     }
 }

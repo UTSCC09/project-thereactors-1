@@ -38,8 +38,16 @@ export default function WatchPartyPage() {
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
     const [originalHost, setOriginalHost] = useState('');
+    const [theme, setTheme] = useState('');
     
     useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+
         const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
         setVideoWidth(vidWrapperBox.width);
         setVideoHeight((vidWrapperBox.width / 16) * 9);
@@ -254,6 +262,7 @@ export default function WatchPartyPage() {
                             {authAPI.getUser() === host &&
                                 <div className='inner-wrapper'>
                                 <TextField 
+                                    className={theme === 'dark' ? 'textfield-dark' : ''}
                                     label="Enter video url"
                                     size='small'
                                     style={{
@@ -278,7 +287,7 @@ export default function WatchPartyPage() {
                     {authAPI.getUser() === host &&
                         <div className='addToPlaylist-wrapper'>
                             <TextField
-                                className='input-field'
+                                className={theme === 'dark' ? 'input-field textfield-dark' : 'input-field'}
                                 label='Enter video url'
                                 size='small'
                                 value={tempVideoId2}

@@ -6,8 +6,16 @@ import { getSocket } from 'components/utils/socket_utils';
 import { getUser } from 'auth/auth_utils';
 
 export default function UsersPanel({usersData, setCloseIcon}) {
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+
         setCloseIcon(document.getElementById('close-icon'));
     }, [])
 
