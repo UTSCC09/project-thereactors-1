@@ -131,20 +131,8 @@ export function setupSocketHandlers(io) {
     });
     // video socket handling
     socket.on("update-playlist", (playlist) => {
-      let safePlaylist = [];
-      if (playlist) {
-        playlist.forEach((item) => {
-          let copyPlaylist = {};
-          // Iterate through each fields of the playlist, make a deep copy
-          // and escape the string
-          for (let k in item) {
-            copyPlaylist[k] = validator.escape(item[k]);
-          }
-          safePlaylist.push(copyPlaylist);
-        });
-      }
       setPartyPlaylist(
-        safePlaylist,
+        playlist,
         socket.data.current_party,
         socket.data.user,
         (err, res) => {
@@ -159,20 +147,8 @@ export function setupSocketHandlers(io) {
     });
 
     socket.on("load-playlist", (playlist) => {
-      let safePlaylist = [];
-      if (playlist) {
-        playlist.forEach((item) => {
-          let copyPlaylist = {};
-          // Iterate through each fields of the playlist, make a deep copy
-          // and escape the string
-          for (let k in item) {
-            copyPlaylist[k] = validator.escape(item[k]);
-          }
-          safePlaylist.push(copyPlaylist);
-        });
-      }
       loadPartyPlaylist(
-        safePlaylist,
+        playlist,
         socket.data.current_party,
         socket.data.user,
         (err, res) => {
@@ -187,10 +163,6 @@ export function setupSocketHandlers(io) {
     });
 
     socket.on("pause-video", (playedSeconds) => {
-      // A warning here if playedSeconds is not a number
-      if (!validator.isNumeric(playedSeconds)) {
-        console.log(`[Socket] In pause-video handler, playedSeconds is ${playedSeconds}, expecting a number`);
-      }
       pauseVideo(
         playedSeconds,
         socket.data.current_party,
@@ -212,10 +184,6 @@ export function setupSocketHandlers(io) {
       });
     });
     socket.on("update-video-progress", (playedSeconds) => {
-      // A warning here if playedSeconds is not a number
-      if (!validator.isNumeric(playedSeconds)) {
-        console.log(`[Socket] In update-video-progress handler, playedSeconds is ${playedSeconds}, expecting a number`);
-      }
       updateVideoProgress(
         playedSeconds,
         socket.data.current_party,
@@ -229,10 +197,6 @@ export function setupSocketHandlers(io) {
       );
     });
     socket.on("update-index", (newIndex) => {
-      // A warning here if playedSeconds is not a number
-      if (!validator.isNumeric(newIndex)) {
-        console.log(`[Socket] In pause-video handler, newIndex is ${newIndex}, expecting a number`);
-      }
       updateCurrentVid(
         newIndex,
         socket.data.current_party,
