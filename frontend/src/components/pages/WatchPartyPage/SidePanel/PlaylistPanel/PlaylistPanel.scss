@@ -97,15 +97,15 @@
             .item-delete-btn {
                 display: none;
             }
+
+            .item:hover {
+                cursor: default;
+            }
         }
         
         &-guest {
             &:hover {
-                background-color: white;
-            }
-
-            .item:hover {
-                cursor: default;
+                background-color: inherit;
             }
         }
     }
