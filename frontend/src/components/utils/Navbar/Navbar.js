@@ -118,7 +118,7 @@ export default function Navbar() {
                                     placement === 'bottom-end' ? 'left top' : 'left bottom',
                             }}
                             >
-                            <Paper>
+                            <Paper className={theme === 'dark' ? 'user-menu-dark' : ''}>
                                 <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList
                                     autoFocusItem={open}
@@ -126,8 +126,8 @@ export default function Navbar() {
                                     aria-labelledby="composition-button"
                                     onKeyDown={handleListKeyDown}
                                 >
-                                    <MenuItem onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
-                                    <MenuItem onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
+                                    <MenuItem className='menu-item' onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
+                                    <MenuItem className='menu-item' onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
                                 </MenuList>
                                 </ClickAwayListener>
                             </Paper>
