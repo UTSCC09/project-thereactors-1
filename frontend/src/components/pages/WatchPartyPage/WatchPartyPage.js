@@ -218,10 +218,11 @@ export default function WatchPartyPage() {
         if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
             setVideoId('');
         } else {
-            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
+            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId) {
                 setVideoId(data.playlist[data.current_vid].link);
+                playerRef.current.seekTo(0);
+            }
         }
-
     }
 
     const getUsersRightOrder = (users) => {

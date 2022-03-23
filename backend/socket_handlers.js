@@ -18,6 +18,7 @@ import {
 } from "./chatroom_util.js";
 import { verifyJwt } from "./utils.js";
 import validator from "validator";
+import sanitize from 'mongo-sanitize';
 
 export function setupSocketHandlers(io) {
   io.on("connection", (socket) => {
@@ -117,7 +118,7 @@ export function setupSocketHandlers(io) {
     });
 
     socket.on("send", (content) => {
-      const safeContent = validator.escape(content);
+      const safeContent = sanitize(content);
       if (socket.data.current_party) {
         saveMessage(
           safeContent,
