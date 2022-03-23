@@ -134,7 +134,13 @@ export function setupSocketHandlers(io) {
       let safePlaylist = [];
       if (playlist) {
         playlist.forEach((item) => {
-          safePlaylist.push(validator.escape(item));
+          let copyPlaylist = {};
+          // Iterate through each fields of the playlist, make a deep copy
+          // and escape the string
+          for (let k in item) {
+            copyPlaylist[k] = validator.escape(item[k]);
+          }
+          safePlaylist.push(copyPlaylist);
         });
       }
       setPartyPlaylist(
@@ -156,7 +162,13 @@ export function setupSocketHandlers(io) {
       let safePlaylist = [];
       if (playlist) {
         playlist.forEach((item) => {
-          safePlaylist.push(validator.escape(item));
+          let copyPlaylist = {};
+          // Iterate through each fields of the playlist, make a deep copy
+          // and escape the string
+          for (let k in item) {
+            copyPlaylist[k] = validator.escape(item[k]);
+          }
+          safePlaylist.push(copyPlaylist);
         });
       }
       loadPartyPlaylist(
