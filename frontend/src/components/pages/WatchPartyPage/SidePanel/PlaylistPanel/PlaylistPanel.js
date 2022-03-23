@@ -1,4 +1,5 @@
 import './PlaylistPanel.scss';
+import 'global.scss';
 import React, { useEffect, useState } from "react";
 import { getSocket } from 'components/utils/socket_utils';
 import * as authAPI from 'auth/auth_utils.js';
@@ -11,6 +12,7 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
     const [playlist, setPlaylist] = useState(playlistData.playlist);
     const [currentIdx, setCurrentIdx] = useState(playlistData.currentIdx);
     const [orderChange, setOrderChange] = useState(false);
+    const [theme, setTheme] = useState('');
 
     const removeFromList = (index) => {
         let temp = [...playlist];
@@ -23,13 +25,21 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
     }
 
     const onDrop = (e) => {
-        document.querySelectorAll('.dragabble')[e.oldIndex].style.background = 'white';
+        document.querySelectorAll('.dragabble')[e.oldIndex].style.background = 
+            theme === 'dark' ? '#404040' : 'white';
         setOrderChange(true);
         getSocket().emit('update-playlist', playlist);
     }
 
     useEffect(() => {
         setCloseIcon(document.getElementById('close-icon'));
+
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, [])
     
     useEffect(() => {
@@ -39,12 +49,12 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
             const elems = document.querySelectorAll('.dragabble');
             elems.forEach((el, index) => {
                 if (index !== playlistData.currentIdx) {
-                    el.style.background = 'white';
+                    el.style.background = theme === 'dark' ? '#404040' : 'white';
                     el.onmouseover = () => {
-                        el.style.background = 'rgba(0,0,0,.1)';
+                        el.style.background = theme === 'dark' ? '#404040' : 'rgba(0,0,0,.1)';
                     }
                     el.onmouseout = () => {
-                        el.style.background = 'white';
+                        el.style.background = theme === 'dark' ? '#404040' : 'white';
                     }
                 } else {
                     el.style.background = 'rgba(0,0,0,.35)';

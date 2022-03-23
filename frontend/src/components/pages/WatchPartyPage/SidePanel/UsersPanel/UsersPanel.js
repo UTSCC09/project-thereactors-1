@@ -37,7 +37,7 @@ export default function UsersPanel({usersData, setCloseIcon}) {
             {usersData.users?.length > 0 &&
                 usersData.users.map((user, index) => {
                     return (
-                        <div key={index} className='user-wrapper'>
+                        <div key={index} className={theme === 'dark' ? 'user-wrapper user-wrapper-dark' : 'user-wrapper'}>
                             <div className='user-wrapper-col1'>
                             <Avatar className='icon' />
                             <div className='username'>{user} 
