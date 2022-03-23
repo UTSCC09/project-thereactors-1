@@ -15,6 +15,7 @@ body, html {
   .main-component {
     margin-top: $navbar-height;
     height: $main-component-height;
+    overflow: auto;
   }
 }
 
