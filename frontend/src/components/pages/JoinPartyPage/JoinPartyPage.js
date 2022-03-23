@@ -13,6 +13,7 @@ export default function JoinPartyPage() {
     const [alreadyHasId, setAlreadyHasId] = useState(false);
     const location = useLocation();
     const history = useHistory();
+    const [theme, setTheme] = useState('');
 
     const getParty = (id) => {
         // api call
@@ -42,11 +43,18 @@ export default function JoinPartyPage() {
         const search = location.search;
         const partyId = new URLSearchParams(search).get('id');
         getParty(partyId);
+
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, []);
 
     return (
         <div className='join-party-page'>
-            <div className='content-box'>
+            <div className={theme === 'dark' ? 'content-box box-common-dark' : 'content-box'}>
                 {alreadyHasId &&
                     <div className='header1'>Joining Party "{partyId}"</div>
                 }
@@ -57,7 +65,7 @@ export default function JoinPartyPage() {
                 <form id='party-form' onSubmit={(e)=>joinRoom(e, partyId, partyCode)}>
                 {!alreadyHasId &&
                     <TextField
-                        className='textfield'
+                        className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                         size='small'
                         label='Party ID'
                         value={partyId}
@@ -66,9 +74,9 @@ export default function JoinPartyPage() {
                     />
                 }
                 <TextField
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
-                    label='Party code'
+                    label='Party password'
                     value={partyCode}
                     onChange={(e)=>setPartyCode(e.target.value)}
                     required

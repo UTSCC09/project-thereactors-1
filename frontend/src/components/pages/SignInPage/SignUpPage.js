@@ -22,9 +22,15 @@ export default function SignUpPage() {
     const history = useHistory();
     const [newUser, setNewUser] = useState(defaultUser);
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
-
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, []);
 
     const toSignIn = () => {
@@ -85,7 +91,7 @@ export default function SignUpPage() {
 
     return (
         <div className="sign-in-page">
-            <div className='sign-in-box'>
+            <div className={theme === 'dark' ? 'sign-in-box box-common-dark' : 'sign-in-box'}>
                 <div className='header1'>
                     Sign Up
                 </div>
@@ -114,7 +120,7 @@ export default function SignUpPage() {
                     </label>
                 </div> */}
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Username'
                     value={newUser.username}
@@ -122,7 +128,7 @@ export default function SignUpPage() {
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Email address'
                     value={newUser.email}
@@ -131,7 +137,7 @@ export default function SignUpPage() {
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Password'
                     value={newUser.password}
@@ -140,7 +146,7 @@ export default function SignUpPage() {
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Confirm Password'
                     value={confirmPassword}

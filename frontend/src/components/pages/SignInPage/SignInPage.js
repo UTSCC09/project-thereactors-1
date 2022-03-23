@@ -12,9 +12,15 @@ export default function SignInPage() {
     const history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
-
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, []);
 
     const signIn = (e) => {
@@ -45,13 +51,13 @@ export default function SignInPage() {
 
     return (
         <div className="sign-in-page">
-            <div className='sign-in-box'>
+            <div className={theme === 'dark' ? 'sign-in-box box-common-dark' : 'sign-in-box'}>
                 <div className='header1'>
                     Sign In
                 </div>
                 <form id='form' onSubmit={(e)=>signIn(e)}>
                 <TextField
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Username'
                     value={username}
@@ -59,7 +65,7 @@ export default function SignInPage() {
                     required
                 />
                 <TextField
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Password'
                     value={password}

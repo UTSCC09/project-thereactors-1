@@ -18,6 +18,12 @@ body, html {
   }
 }
 
+.App-dark {
+  @extend .App;
+  background-color: $main-color-dark !important;
+  color: white !important;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

@@ -12,11 +12,12 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { useLocation } from "react-router-dom";
 import * as authAPI from 'auth/auth_utils.js';
-
+import DarkModeToggle from './DarkModeToggle/DarkModeToggle';
 
 export default function Navbar() {
     const history = useHistory();
     const [signedIn, setSignedIn] = useState(true);
+    const [theme, setTheme] = useState('');
 
     const redirectTo = (page) => {
         history.push(page);
@@ -65,19 +66,29 @@ export default function Navbar() {
         setSignedIn(authAPI.signedIn());
     }, [useLocation()]);
 
+    useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+    }, []);
+
     return (
-        <div className='navbar'>
+        <div className={theme === 'dark' ? 'navbar-dark' : 'navbar'}>
             <div className='col1'>
                 <div className='title-header' onClick={()=>redirectTo('/')}>YTWatchParty</div>
             </div>
             <div className='col2'>
+                <div className='nav-item'><DarkModeToggle /></div>
                 {!signedIn &&
                     <div className='post-btn-wrapper nav-item'>
                         <Button className='theme-btn' onClick={()=>redirectTo('/sign-in')} size='small'>sign in</Button>
                     </div>
                 }
                 {signedIn &&
-                    <div className='user-wrapper nav-item'>  
+                    <div className='user-wrapper nav-item'>
                         <div className='username'>{authAPI.getUser()}</div>              
                         <Button
                         className='user-btn'
@@ -87,6 +98,7 @@ export default function Navbar() {
                         aria-expanded={open ? 'true' : undefined}
                         aria-haspopup="true"
                         onClick={handleToggle}
+                        style={{backgroundColor: theme === 'dark' ? '#2b2b2b' : 'white'}}
                         >
                         <Avatar className='user-icon' alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
                         </Button>
