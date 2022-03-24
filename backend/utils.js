@@ -34,18 +34,18 @@ export function authUser(username, password, callback) {
 export function isUniqueUser(username, email, callback) {
   User.findOne({ username }, (err, user) => {
     if (err) {
-      callback(false, "Server error");
+      callback(false, "SERVER_ERROR");
     }
     else if (user) {
-      callback(false, "Username already exists");
+      callback(false, "DUPLICATE_USER");
     }
     else {
       User.findOne({ email }, (err, user) => {
         if (err) {
-          callback(false, "Server error");
+          callback(false, "SERVER_ERROR");
         }
         else if (user) {
-          callback(false, "Email already exists");
+          callback(false, "DUPLICATE_EMAIL");
         }
         else {
           callback(true, "");
