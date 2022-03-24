@@ -10,11 +10,11 @@ const USERS_TYPE = 1;
 
 export default function SidePanel({playlistData, usersData}) {
     const [panelType, setPanelType] = useState(-1);
-
     const sidePanel = document.getElementById('sidePanel');
     const openPlaylistBtn = document.getElementById("openPlaylistBtn");
     const openUsersBtn = document.getElementById("openUsersBtn");
     const [closeIcon, setCloseIcon] = useState(null);
+    const [theme, setTheme] = useState('');
 
     const closePanel = () => {
         setPanelType(-1);
@@ -44,6 +44,15 @@ export default function SidePanel({playlistData, usersData}) {
             }
         }
     }, [closeIcon])
+
+    useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+    }, []);
     
     return (
         <>
@@ -53,7 +62,7 @@ export default function SidePanel({playlistData, usersData}) {
             <div id='openUsersBtn' className='users-icon icon-btn' onClick={()=>openPanel(USERS_TYPE)}>
                 <GroupIcon />
             </div>
-            <div id="sidePanel" className="side-panel">
+            <div id="sidePanel" className={theme === 'dark' ? "side-panel-dark" : "side-panel"}>
                 {panelType !== -1 && panelType === PLAYLIST_TYPE &&
                     <PlaylistPanel playlistData={playlistData} setCloseIcon={setCloseIcon} />
                 }

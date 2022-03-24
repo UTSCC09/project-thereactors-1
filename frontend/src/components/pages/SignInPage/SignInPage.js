@@ -12,24 +12,33 @@ export default function SignInPage() {
     const history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
-
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, []);
 
     const signIn = (e) => {
         e.preventDefault();
         UserAPI.signIn(username, password, (err, res) => {
-            if (err) console.log(err[0]);
-            else {
+            if (err && err.message === 'Authentication failed') {
+                document.getElementById('invalid-cred-warning').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('invalid-cred-warning').style.display = 'none';
+                }, 5000);
+            }
+            if (!err) {
                 if (!res.token) {
                     document.getElementById('invalid-cred-warning').style.display = 'block';
                     setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
                     }, 5000);
-                    console.log("didnt work");
                 } else {
-                    console.log(res);
                     setUsername('');
                     setPassword('');
                     authAPI.signIn(res.username);
@@ -45,13 +54,13 @@ export default function SignInPage() {
 
     return (
         <div className="sign-in-page">
-            <div className='sign-in-box'>
+            <div className={theme === 'dark' ? 'sign-in-box box-common-dark' : 'sign-in-box'}>
                 <div className='header1'>
                     Sign In
                 </div>
                 <form id='form' onSubmit={(e)=>signIn(e)}>
                 <TextField
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Username'
                     value={username}
@@ -59,11 +68,12 @@ export default function SignInPage() {
                     required
                 />
                 <TextField
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Password'
                     value={password}
                     type='password'
+                    inputProps={{ minLength: 8 }}
                     onChange={(e)=>setPassword(e.target.value)}
                     required
                 />

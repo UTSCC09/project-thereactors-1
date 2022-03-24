@@ -22,9 +22,15 @@ export default function SignUpPage() {
     const history = useHistory();
     const [newUser, setNewUser] = useState(defaultUser);
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
-
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
     }, []);
 
     const toSignIn = () => {
@@ -57,16 +63,14 @@ export default function SignUpPage() {
         }
         else {
             UserAPI.addUser(newUser, (err, res) => {
-                if (err) {
-                    if (err[0].extensions.exception.code === 11000) {
-                        document.getElementById('warning').style.display = 'block';
-                        document.getElementById('warning').innerHTML = "User already exists!";
-                        setTimeout(() => {
-                            document.getElementById('warning').style.display = 'none';
-                        }, 5000)
-                    }
-                } else {
-                    console.log(res);
+                if (err && (err.message === 'DUPLICATE_USER' || err.message === 'DUPLICATE_EMAIL')) {
+                    document.getElementById('warning').style.display = 'block';
+                    document.getElementById('warning').innerHTML = "User already exists!";
+                    setTimeout(() => {
+                        document.getElementById('warning').style.display = 'none';
+                    }, 5000)
+                }
+                if (!err) {
                     toSignIn();
                 }
             })
@@ -85,7 +89,7 @@ export default function SignUpPage() {
 
     return (
         <div className="sign-in-page">
-            <div className='sign-in-box'>
+            <div className={theme === 'dark' ? 'sign-in-box box-common-dark' : 'sign-in-box'}>
                 <div className='header1'>
                     Sign Up
                 </div>
@@ -114,7 +118,7 @@ export default function SignUpPage() {
                     </label>
                 </div> */}
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Username'
                     value={newUser.username}
@@ -122,7 +126,7 @@ export default function SignUpPage() {
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Email address'
                     value={newUser.email}
@@ -131,20 +135,22 @@ export default function SignUpPage() {
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Password'
                     value={newUser.password}
                     type='password'
+                    inputProps={{ minLength: 8 }}
                     onChange={(e)=>changeField(e, 'password')}
                     required
                 />
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Confirm Password'
                     value={confirmPassword}
                     type='password'
+                    inputProps={{ minLength: 8 }}
                     onChange={(e)=>setConfirmPassword(e.target.value)}
                     required
                 />

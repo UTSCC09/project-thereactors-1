@@ -1,0 +1,54 @@
+.dark-theme-toggle {
+  .checkbox {
+    opacity: 0;
+    position: absolute;
+  }
+
+  .label {
+    width: 42px;
+    height: 17px;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    border-radius: 50px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    position: relative;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .ball {
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      position: absolute;
+      top: 13.35%;
+      left: 8%;
+      border-radius: 50%;
+      transition: transform 0.2s linear;
+    }
+
+    .dark-icon {
+      width: 16px;
+      height: 16px;
+      margin-left: 2px;
+    }
+  
+    .light-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 2px;
+    }
+  }
+
+  /* target the element after the label */
+  .checkbox:checked + .label .ball {
+    transform: translateX(118%);
+  }
+
+  .checkbox:checked + .label {
+    background-color: rgba(25, 118, 210, 0.5);
+  }
+}

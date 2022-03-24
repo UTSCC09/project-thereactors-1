@@ -22,11 +22,13 @@
     "graphql-iso-date": "^3.6.1",
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
+    "mongo-sanitize": "^1.1.0",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.4",
     "nodemon": "^2.0.15",
     "path": "^0.12.7",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",

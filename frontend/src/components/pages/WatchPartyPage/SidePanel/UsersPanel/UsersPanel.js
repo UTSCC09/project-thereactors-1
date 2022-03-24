@@ -6,13 +6,25 @@ import { getSocket } from 'components/utils/socket_utils';
 import { getUser } from 'auth/auth_utils';
 
 export default function UsersPanel({usersData, setCloseIcon}) {
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+
         setCloseIcon(document.getElementById('close-icon'));
     }, [])
 
     const passRemote = (newUser) => {
         getSocket().emit('host-change', newUser);
+    }
+
+    const getRemote = () => {
+        getSocket().emit('get-remote');
     }
 
     return (
@@ -25,11 +37,22 @@ export default function UsersPanel({usersData, setCloseIcon}) {
             {usersData.users?.length > 0 &&
                 usersData.users.map((user, index) => {
                     return (
-                        <div key={index} className='user-wrapper'>
+                        <div key={index} className={theme === 'dark' ? 'user-wrapper user-wrapper-dark' : 'user-wrapper'}>
                             <div className='user-wrapper-col1'>
                             <Avatar className='icon' />
                             <div className='username'>{user} 
-                                {user === usersData.host && <span> (host)</span>}
+                                {user === usersData.host &&
+                                    user !== usersData.originalHost && 
+                                    <span> (host)</span>
+                                }
+                                {user !== usersData.host && 
+                                    user === usersData.originalHost &&
+                                    <span> (owner)</span>
+                                }
+                                {user === usersData.host && 
+                                    user === usersData.originalHost &&
+                                    <span> (owner, host)</span>
+                                }
                             </div>
                             </div>
                             {getUser() === usersData.host && user !== usersData.host && 
@@ -40,6 +63,18 @@ export default function UsersPanel({usersData, setCloseIcon}) {
                                         onClick={()=>passRemote(user)}
                                     >
                                         pass remote
+                                    </Button>
+                                </div>
+                            }
+                            {getUser() === usersData.originalHost && user === usersData.originalHost &&
+                                user !== usersData.host && 
+                                <div className='user-wrapper-col2'>
+                                    <Button 
+                                        size='small' 
+                                        className='pass-remote-btn'
+                                        onClick={()=>getRemote(user)}
+                                    >
+                                        get remote
                                     </Button>
                                 </div>
                             }

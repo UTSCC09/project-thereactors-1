@@ -15,7 +15,14 @@ body, html {
   .main-component {
     margin-top: $navbar-height;
     height: $main-component-height;
+    overflow: auto;
   }
+}
+
+.App-dark {
+  @extend .App;
+  background-color: $main-color-dark !important;
+  color: white !important;
 }
 
 .App-logo {

@@ -11,6 +11,7 @@ export default function CreatePartyPage() {
     const [partyCode, setPartyCode] = useState('');
     // const [partyUsername, setPartyUsername] = useState('');
     const history = useHistory();
+    const [theme, setTheme] = useState('');
 
     const createRoom = (e, password) => {
         e.preventDefault();
@@ -28,15 +29,24 @@ export default function CreatePartyPage() {
         
     }
 
+    useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+    }, [])
+
     return (
         <div className='create-party-page'>
-            <div className='content-box'>
+            <div className={theme === 'dark' ? 'content-box box-common-dark' : 'content-box'}>
                 <div className='header1'>Create Party</div>
                 <div className='inputs-btn-box'>
                 <form id='party-form' onSubmit={(e)=>createRoom(e, partyCode)}>
                 <div className='inputs-box'>
                 <TextField 
-                    className='textfield'
+                    className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Set party password'
                     value={partyCode}

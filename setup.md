@@ -47,12 +47,12 @@ set config vars
 
 frontend json
 export default {
-  backendUrl: "https://secure-sea-81692.herokuapp.com",
-  graphqlUrl: "https://secure-sea-81692.herokuapp.com/api/graphql",
+  backendUrl: "https://yt-watchparty.herokuapp.com",
+  graphqlUrl: "https://yt-watchparty.herokuapp.com/api/graphql",
 }
 
 backendjson
-"frontend_url":"https://secure-sea-81692.herokuapp.com/"
+"frontend_url":"https://yt-watchparty.herokuapp.com/"
 
 next step for building react app
 cd frontend 
@@ -61,7 +61,7 @@ copy build folder to backend folder
 
 backend
 (need to login first seee online)
-heroku container:push web -a secure-sea-81692
-heroku container:release web -a secure-sea-81692
+heroku container:push web -a yt-watchparty
+heroku container:release web -a yt-watchparty
 
 

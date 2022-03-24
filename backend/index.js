@@ -52,7 +52,7 @@ async function startServer() {
   });
   app.post('/api/signout',(req,res)=> {
     res.clearCookie('token');
-    return res.json({ "idk":"something"});
+    return res.json("logout");
   });
   app.post("/api/signup",
     body("email").isEmail().normalizeEmail(),

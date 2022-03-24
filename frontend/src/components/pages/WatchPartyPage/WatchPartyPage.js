@@ -37,8 +37,17 @@ export default function WatchPartyPage() {
     const [videoIsPlaying,setVideoIsPlaying] = useState(true); 
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
+    const [originalHost, setOriginalHost] = useState('');
+    const [theme, setTheme] = useState('');
     
     useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+
         const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
         setVideoWidth(vidWrapperBox.width);
         setVideoHeight((vidWrapperBox.width / 16) * 9);
@@ -64,6 +73,10 @@ export default function WatchPartyPage() {
         });
         getSocket().on('host',(host)=> {
             setHost(host);
+        });
+        
+        getSocket().on('original-host',(originalHost)=> {
+            setOriginalHost(originalHost);
         });
 
         getSocket().on('password-missing',()=> {
@@ -205,10 +218,11 @@ export default function WatchPartyPage() {
         if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
             setVideoId('');
         } else {
-            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId)
+            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId) {
                 setVideoId(data.playlist[data.current_vid].link);
+                playerRef.current.seekTo(0);
+            }
         }
-
     }
 
     const getUsersRightOrder = (users) => {
@@ -221,7 +235,7 @@ export default function WatchPartyPage() {
             <div className='col1'>
                 <SidePanel 
                     playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
-                    usersData={{users:getUsersRightOrder(connectedUsers), host:host}}
+                    usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                 />
             </div>
             <div className='col2'>
@@ -249,6 +263,7 @@ export default function WatchPartyPage() {
                             {authAPI.getUser() === host &&
                                 <div className='inner-wrapper'>
                                 <TextField 
+                                    className={theme === 'dark' ? 'textfield-dark' : ''}
                                     label="Enter video url"
                                     size='small'
                                     style={{
@@ -273,7 +288,7 @@ export default function WatchPartyPage() {
                     {authAPI.getUser() === host &&
                         <div className='addToPlaylist-wrapper'>
                             <TextField
-                                className='input-field'
+                                className={theme === 'dark' ? 'input-field textfield-dark' : 'input-field'}
                                 label='Enter video url'
                                 size='small'
                                 value={tempVideoId2}
