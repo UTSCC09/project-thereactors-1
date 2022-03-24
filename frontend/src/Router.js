@@ -14,11 +14,12 @@ import CreatePartyPage from "./components/pages/CreatePartyPage/CreatePartyPage"
 import WatchPartyPage from "./components/pages/WatchPartyPage/WatchPartyPage";
 import Navbar from "./components/utils/Navbar/Navbar";
 import { PrivateRoute } from "components/utils/PrivateRoute";
+import { reconnectToSocket } from "components/utils/socket_utils";
 
 export default function Router() {
     return (
         <div style={{height: '100vh'}}>
-        <BrowserRouter>
+        <BrowserRouter >
             <Navbar />
             <div className="main-component">
             <Switch>
@@ -27,7 +28,7 @@ export default function Router() {
                 <Route exact path="/sign-up" component={SignUpPage} />
                 <PrivateRoute exact path="/join" component={JoinPartyPage} />
                 {/* <PrivateRoute exact path="/schedule" component={SchedulePartyPage} /> */}
-                <PrivateRoute exact path="/party" component={WatchPartyPage} />
+                <PrivateRoute exact path="/party" component={WatchPartyPage}  />
                 <PrivateRoute exact path="/create" component={CreatePartyPage}/>
                 <Route exact path="/*"><Redirect to="/" /></Route>
             </Switch>

@@ -1,5 +1,5 @@
 export default {
-  backendUrl: "https://yt-watchparty.herokuapp.com",
-  graphqlUrl: "https://yt-watchparty.herokuapp.com/api/graphql",
+  backendUrl: "http://localhost:3001",
+  graphqlUrl: "http://localhost:3001/api/graphql",
   API_KEY: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw"
 }

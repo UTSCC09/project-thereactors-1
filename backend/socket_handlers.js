@@ -224,7 +224,12 @@ export function setupSocketHandlers(io) {
         }
       );
     });
+    // voice call functionality
+    socket.on('voice', (data)=> {
+
+    } );
   });
+
 }
 
 const leaveConnectedUsers = (io, socket, roomdata) => {
@@ -252,4 +257,6 @@ const leaveConnectedUsers = (io, socket, roomdata) => {
       }
     });
   });
+
+
 };
