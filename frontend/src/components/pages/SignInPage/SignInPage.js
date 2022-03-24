@@ -26,16 +26,19 @@ export default function SignInPage() {
     const signIn = (e) => {
         e.preventDefault();
         UserAPI.signIn(username, password, (err, res) => {
-            if (err) console.log(err[0]);
-            else {
+            if (err && err.message === 'Authentication failed') {
+                document.getElementById('invalid-cred-warning').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('invalid-cred-warning').style.display = 'none';
+                }, 5000);
+            }
+            if (!err) {
                 if (!res.token) {
                     document.getElementById('invalid-cred-warning').style.display = 'block';
                     setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
                     }, 5000);
-                    console.log("didnt work");
                 } else {
-                    console.log(res);
                     setUsername('');
                     setPassword('');
                     authAPI.signIn(res.username);
@@ -70,6 +73,7 @@ export default function SignInPage() {
                     label='Password'
                     value={password}
                     type='password'
+                    inputProps={{ minLength: 8 }}
                     onChange={(e)=>setPassword(e.target.value)}
                     required
                 />
