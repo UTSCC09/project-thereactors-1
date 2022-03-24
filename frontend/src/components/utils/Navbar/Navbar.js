@@ -36,7 +36,7 @@ export default function Navbar() {
         }
         
         if (page === 'logout') {
-            authAPI.signOut('');
+            authAPI.signOut();
             redirectTo('/');
         } else {
             redirectTo(page);

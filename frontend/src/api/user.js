@@ -1,4 +1,5 @@
 import config from 'environments';
+import axios from 'axios';
 
 export const getUsers = (callback) => {
     const query = `
@@ -55,48 +56,35 @@ export const getUser = (id, callback) => {
 }
 
 export const addUser = (user, callback) => {
-    fetch(`${config.backendUrl}/api/signup`, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(user),
+    axios.post(`${config.backendUrl}/api/signup`, user)
+    .then((res) => {
+        callback(null, res.data);
     })
-    .then((response) => response.json())
-    .then((result) => {
-        callback(result.errors, result);
-    });
+    .catch((err) => {
+        callback(err.response.data, null)
+    })
 }
 
 export const signIn = (username, password, callback) => {
-    fetch(`${config.backendUrl}/api/signin`, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            
-        },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
+    axios.post(`${config.backendUrl}/api/signin`, {username, password}, {
+        credentials: 'include'
     })
-    .then((response) => response.json())
-    .then((result) => {
-        callback(result.errors, result);
-    });
+    .then((res) => {
+        callback(null, res.data);
+    })
+    .catch((err) => {
+        callback(err.response.data, null)
+    })
 }
+
 export const signOut = (callback) => {
-    fetch(`${config.backendUrl}/api/signout`, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ "nothing":"nothing"}),
+    axios.post(`${config.backendUrl}/api/signout`, null, {
+        credentials: 'include'
     })
-    .then((response) => response.json())
-    .then((result) => {
-        callback(result.errors, result);
-    });
+    .then((res) => {
+        callback(null, res.data);
+    })
+    .catch((err) => {
+        callback(err.response.data, null)
+    })
 }
