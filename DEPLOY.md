@@ -26,11 +26,11 @@ $ cd ytwatchparty
 ```
 4. Pull the latest version of the application image using Docker
 ```
-$ docker-compose pull
+$ docker compose pull
 ```
 5. Restart the application
 ```
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 # Nginx Config
@@ -70,7 +70,7 @@ server {
     return 404; # managed by Certbot
 ```
 
-# Production docker-compose
+# Production Docker Compose
 ```yml
 version: "3.5"
 services:
@@ -90,7 +90,8 @@ services:
   app:
     image: ghcr.io/utscc09/ytwatchparty:latest
     container_name: ytwatchparty-app
-    ports: 3001:3001
+    ports:
+      - 3001:3001
     depends_on:
       - mongo
 

@@ -1,9 +1,9 @@
-const dbsToCreate = ['recipeCentral'];
+const dbsToCreate = ['ytwatchparty'];
 
 db.createUser(
   {
-    user: 'recipe',
-    pwd: 'recipe',
+    user: 'ytwatchparty',
+    pwd: 'ytwatchparty',
     roles: dbsToCreate.map(dbName => {
       return {
         role: 'readWrite',
