@@ -67,7 +67,8 @@ export const addUser = (user, callback) => {
 
 export const signIn = (username, password, callback) => {
     axios.post(`${config.backendUrl}/api/signin`, {username, password}, {
-        credentials: 'include'
+        credentials: 'include',
+        withCredentials: true
     })
     .then((res) => {
         callback(null, res.data);
@@ -79,7 +80,8 @@ export const signIn = (username, password, callback) => {
 
 export const signOut = (callback) => {
     axios.post(`${config.backendUrl}/api/signout`, null, {
-        credentials: 'include'
+        credentials: 'include',
+        withCredentials: true
     })
     .then((res) => {
         callback(null, res.data);
