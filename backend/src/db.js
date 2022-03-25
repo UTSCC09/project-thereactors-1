@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import config from './config.json';
+import { getConfig } from './config';
 import { userSchema } from './schemas/user';
 import { partySchema } from './schemas/party';
 import { messageSchema } from "./schemas/messageSchema";
 
-mongoose.connect(config.mongodbUrl);
+mongoose.connect(getConfig("mongodbUrl"));
 
 let db = mongoose.connection;
 db.on('error', (err) => {
