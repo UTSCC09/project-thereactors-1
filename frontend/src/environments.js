@@ -1,6 +1,6 @@
 export const production = {
-  backendUrl: "https://yt-watchparty.herokuapp.com",
-  graphqlUrl: "https://yt-watchparty.herokuapp.com/api/graphql",
+  backendUrl: "https://ytwatch.party",
+  graphqlUrl: "https://ytwatch.party/api/graphql",
   googleApiKey: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw"
 }
 
