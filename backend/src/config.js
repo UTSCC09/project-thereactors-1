@@ -10,7 +10,7 @@ export const development = {
 
 export const production = {
   "port": 3001,
-  "mongodbUrl": "mongodb://admin:ytwatchparty@mongo:27020/ytwatchparty?authSource=admin",
+  "mongodbUrl": "mongodb://admin:ytwatchparty@mongo:27017/ytwatchparty?authSource=admin",
   "jwtSecret": "bWNYDRHFFHrndh4qK7dgS7ky5DpX3EeC",
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,

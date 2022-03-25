@@ -78,7 +78,7 @@ services:
     image: mongo:4.2.7-bionic
     container_name: ytwatchparty-mongo
     ports:
-      - 27020:27017
+      - 27017:27017
     volumes:
       - ytwatchparty-mongo-volume:/data/db/
       - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
