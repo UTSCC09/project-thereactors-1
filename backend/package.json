@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js --exec babel-node -e js"
+    "start": "nodemon ./src/index.js --exec babel-node -e js",
+    "build": "babel -d ./build ./src -s",
+    "start:prod": "NODE_ENV=production node ./build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,7 @@
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.7",
     "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11"
   }
 }

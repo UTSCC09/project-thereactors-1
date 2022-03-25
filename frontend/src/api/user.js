@@ -1,5 +1,8 @@
-import config from 'environments';
+import { getConfig } from 'environments';
 import axios from 'axios';
+
+const backendUrl = getConfig("backendUrl");
+const graphqlUrl = getConfig("graphqlUrl");
 
 export const getUsers = (callback) => {
     const query = `
@@ -12,7 +15,7 @@ export const getUsers = (callback) => {
             }
         }
     `;
-    fetch(config.graphqlUrl, {
+    fetch(graphqlUrl, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -41,7 +44,7 @@ export const getUser = (id, callback) => {
     const variables = {
         id
     }
-    fetch(config.graphqlUrl, {
+    fetch(graphqlUrl, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -56,7 +59,7 @@ export const getUser = (id, callback) => {
 }
 
 export const addUser = (user, callback) => {
-    axios.post(`${config.backendUrl}/api/signup`, user)
+    axios.post(`${backendUrl}/api/signup`, user)
     .then((res) => {
         callback(null, res.data);
     })
@@ -66,7 +69,7 @@ export const addUser = (user, callback) => {
 }
 
 export const signIn = (username, password, callback) => {
-    axios.post(`${config.backendUrl}/api/signin`, {username, password}, {
+    axios.post(`${backendUrl}/api/signin`, {username, password}, {
         credentials: 'include',
         withCredentials: true
     })
@@ -79,7 +82,7 @@ export const signIn = (username, password, callback) => {
 }
 
 export const signOut = (callback) => {
-    axios.post(`${config.backendUrl}/api/signout`, null, {
+    axios.post(`${backendUrl}/api/signout`, null, {
         credentials: 'include',
         withCredentials: true
     })

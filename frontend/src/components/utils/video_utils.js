@@ -1,8 +1,8 @@
 import axios from "axios";
-import environments from "environments";
+import { getConfig } from "environments";
 
-// const API_KEY = "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw";
-const API_KEY = environments.API_KEY;
+// const googleApiKey = "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw";
+const googleApiKey = getConfig("googleApiKey");
 
 export const getVideoId = (url) => {
     /**
@@ -40,7 +40,7 @@ export const getVideoTitle = async (url) => {
         params: {
             part: 'snippet',
             id: id,
-            key: API_KEY
+            key: googleApiKey,
         }
     }).then(res => res.data.items[0].snippet.title).catch((err)=>{console.log(err)});
 }

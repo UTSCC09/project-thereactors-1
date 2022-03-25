@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import config from './config.json';
+import { getConfig } from './config';
 import { User } from './db';
 
 /**
@@ -56,12 +56,12 @@ export function isUniqueUser(username, email, callback) {
 }
 
 export function signJwt(payload) {
-  return jwt.sign(payload, config.jwtSecret);
+  return jwt.sign(payload, getConfig("jwtSecret"));
 }
 
 export function verifyJwt(token) {
   try {
-    return { valid: true, decoded: jwt.verify(token, config.jwtSecret) };
+    return { valid: true, decoded: jwt.verify(token, getConfig("jwtSecret")) };
   } catch (err) {
     return { valid: false };
   }
