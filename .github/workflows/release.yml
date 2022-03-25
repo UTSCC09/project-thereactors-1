@@ -2,8 +2,7 @@ name: Publish ytwatchparty to GHCR
 on:
   push:
     branches:
-      - master
-      - deployment-v2
+      - main
 
 env:
   IMAGE_NAME: ytwatchparty
@@ -39,7 +38,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
