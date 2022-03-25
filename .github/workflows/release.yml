@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - deployment-v2
 
 env:
   IMAGE_NAME: ytwatchparty
