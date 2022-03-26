@@ -27,6 +27,13 @@ export default function UsersPanel({usersData, setCloseIcon}) {
         getSocket().emit('get-remote');
     }
 
+    const getClass = () => {
+        if (getUser() === usersData.host || getUser() === usersData.originalHost) {
+            return theme === 'dark' ? 'user-wrapper-host user-wrapper-host-dark' : 'user-wrapper-host';
+        }
+        return 'user-wrapper';
+    }
+
     return (
         <div className='users-panel'>
             <div className='header'>
@@ -37,7 +44,7 @@ export default function UsersPanel({usersData, setCloseIcon}) {
             {usersData.users?.length > 0 &&
                 usersData.users.map((user, index) => {
                     return (
-                        <div key={index} className={theme === 'dark' ? 'user-wrapper user-wrapper-dark' : 'user-wrapper'}>
+                        <div key={index} className={getClass()}>
                             <div className='user-wrapper-col1'>
                             <Avatar className='icon' />
                             <div className='username'>{user} 
