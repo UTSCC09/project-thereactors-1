@@ -6,9 +6,16 @@ import { Input } from "./Input";
 export default function ChatBox({socket, height}) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const curr_user ="victor";
+    const [theme, setTheme] = useState('');
 
     useEffect(() => {
+        if (localStorage.getItem('theme')) {
+            setTheme(localStorage.getItem('theme'));
+        }
+        document.addEventListener('themeChange', () => {
+            setTheme(localStorage.getItem('theme'));
+        });
+
         socket.on("test",()=>{
             console.log("here");
         });
@@ -30,11 +37,11 @@ export default function ChatBox({socket, height}) {
 
     return (
         <div className='chatbox-wrapper'>
-            <div className="header-wrapper">
+            <div className={theme === 'dark' ? 'header-wrapper-dark' : 'header-wrapper'}>
                 <div className="header">Chat</div>
             </div>
             <div className="chatbox" style={{height: height - 40}}>
-                <MessagesContainer messages={messages} curr_user={curr_user} />
+                <MessagesContainer messages={messages} />
                 <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
             </div>
         </div>
