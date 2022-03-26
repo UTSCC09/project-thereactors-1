@@ -23,10 +23,10 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
     }
 
     const onDrop = (e) => {
-        if (e.newIndex === currentIdx) {
+        if (e.newIndex === currentIdx && e.oldIndex !== currentIdx) {
             let className = 'playlist-item-wrapper-dark dragabble';
             document.querySelectorAll('.dragabble')[e.newIndex].setAttribute('class', className);
-        } else {
+        } else if (e.newIndex !== currentIdx && e.oldIndex === currentIdx) {
             let className = theme === 'dark' ? 'playlist-item-wrapper-dark dragabble' : 'playlist-item-wrapper dragabble';
             document.querySelectorAll('.dragabble')[e.oldIndex].setAttribute('class', className);
         }
