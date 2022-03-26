@@ -103,7 +103,7 @@ export default function Navbar() {
                         aria-expanded={open ? 'true' : undefined}
                         aria-haspopup="true"
                         onClick={handleToggle}
-                        style={{backgroundColor: theme === 'dark' ? '#2b2b2b' : 'white'}}
+                        style={{backgroundColor: theme === 'dark' ? 'rgba(33, 33, 33, 0.98)' : 'white'}}
                         >
                         <Avatar className='user-icon' alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
                         </Button>

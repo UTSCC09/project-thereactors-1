@@ -26,7 +26,7 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
 
     const onDrop = (e) => {
         document.querySelectorAll('.dragabble')[e.oldIndex].style.background = 
-            theme === 'dark' ? '#404040' : 'white';
+            theme === 'dark' ? '#282828' : 'white';
         setOrderChange(true);
         getSocket().emit('update-playlist', playlist);
     }
@@ -49,12 +49,12 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
             const elems = document.querySelectorAll('.dragabble');
             elems.forEach((el, index) => {
                 if (index !== playlistData.currentIdx) {
-                    el.style.background = theme === 'dark' ? '#404040' : 'white';
+                    el.style.background = theme === 'dark' ? '#282828' : 'white';
                     el.onmouseover = () => {
-                        el.style.background = theme === 'dark' ? '#404040' : 'rgba(0,0,0,.1)';
+                        el.style.background = theme === 'dark' ? 'rgba(0,0,0,.12)' : 'rgba(0,0,0,.1)';
                     }
                     el.onmouseout = () => {
-                        el.style.background = theme === 'dark' ? '#404040' : 'white';
+                        el.style.background = theme === 'dark' ? '#282828' : 'white';
                     }
                 } else {
                     el.style.background = 'rgba(0,0,0,.35)';
@@ -68,6 +68,13 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
             })
         }
     }, [playlistData])
+
+    const getClass = (index) => {
+        if (theme === 'dark') {
+            return currentIdx === index ? 'playlist-item-wrapper-current dragabble' : 'playlist-item-wrapper-dark dragabble';
+        }
+        return currentIdx === index ? 'playlist-item-wrapper-current dragabble' : 'playlist-item-wrapper dragabble';
+    }
     
     return (
         <div className='playlist-panel'>
@@ -89,7 +96,7 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
                 {playlist?.length > 0 &&
                     playlist.map((item, index) => {
                         return (
-                        <div key={item.link} className={currentIdx === index ? 'playlist-item-wrapper-current dragabble' : 'playlist-item-wrapper dragabble'}>
+                        <div key={item.link} className={getClass(index)}>
                             <div className='drag-btn'>
                                 <DragIndicatorIcon />
                             </div>

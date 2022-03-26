@@ -38,16 +38,19 @@
             }
         }
 
-        &:hover {
-            background-color: rgba(0,0,0,.06);
+        &-host {
+            @extend .user-wrapper;
+            &:hover {
+                background-color: rgba(0,0,0,.06);
+    
+                .pass-remote-btn {
+                    visibility: visible;
+                }
+            }
 
-            .pass-remote-btn {
-                visibility: visible;
+            &-dark:hover {
+                background-color: rgba(0,0,0,.15);
             }
         }
-    }
-
-    .user-wrapper-dark:hover {
-        background-color: rgba(0,0,0,.1);
     }
 }
