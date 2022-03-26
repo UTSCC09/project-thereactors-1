@@ -1,10 +1,17 @@
 @import "src/global.scss";
 
+$chatbox-secondary-light: rgba(0,0,0,.06);
+
 .chatbox-wrapper {
   .header-wrapper {
     border-bottom: 1px solid grey;
     border-radius: 10px 10px 0 0;
-    background-color: $box-color-dark;
+    background-color: $chatbox-secondary-light;
+
+    &-dark {
+      @extend .header-wrapper;
+      background-color: $box-color-dark;
+    }
 
     .header {
       display: flex;
@@ -82,8 +89,13 @@
       align-items: center;
       padding: 8px;
       border-top: 1px solid grey;
-      background-color: $box-color-dark;
       border-radius: 0 0 10px 10px;
+      background-color: $chatbox-secondary-light;
+
+      &-dark {
+        @extend .chat-form;
+        background-color: $box-color-dark;
+      }
 
       .send-button {
         margin-left: 6px;

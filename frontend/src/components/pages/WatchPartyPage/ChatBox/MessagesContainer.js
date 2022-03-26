@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Message } from "./Message";
 
-export const MessagesContainer = ({ messages, curr_user }) => {
+export const MessagesContainer = ({ messages }) => {
     return (
         <div className="messages">
             <div>
