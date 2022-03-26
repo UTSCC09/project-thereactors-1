@@ -29,7 +29,14 @@
 
             .drag-btn {
                 visibility: visible;
-            }    
+            }
+        }
+
+        &-dark {
+            @extend .playlist-item-wrapper;
+            &:hover {
+                background-color: rgba(0,0,0,.12);
+            }
         }
 
         .clickable-area {

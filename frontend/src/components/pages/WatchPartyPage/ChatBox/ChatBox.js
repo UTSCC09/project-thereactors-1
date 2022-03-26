@@ -29,9 +29,14 @@ export default function ChatBox({socket, height}) {
     }
 
     return (
-        <div className="chatbox" style={{height: height - 16}}>
-            <MessagesContainer messages={messages} curr_user={curr_user} />
-            <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+        <div className='chatbox-wrapper'>
+            <div className="header-wrapper">
+                <div className="header">Chat</div>
+            </div>
+            <div className="chatbox" style={{height: height - 40}}>
+                <MessagesContainer messages={messages} curr_user={curr_user} />
+                <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+            </div>
         </div>
     )
 }
