@@ -20,6 +20,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.0",
     "react-sortablejs": "^6.1.1",
+    "react-uuid": "^1.0.2",
     "sass": "^1.49.9",
     "socket.io-client": "^4.4.1",
     "sortablejs": "^1.15.0",

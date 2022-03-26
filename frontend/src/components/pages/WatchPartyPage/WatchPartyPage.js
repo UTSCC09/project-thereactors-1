@@ -7,6 +7,7 @@ import * as authAPI from 'auth/auth_utils.js';
 import { getSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
+import uuid from 'react-uuid'
 
 /*
     party_video_state 
@@ -39,13 +40,12 @@ export default function WatchPartyPage() {
     const [playlist_index, setPlaylistIndex] = useState(0);
     const [originalHost, setOriginalHost] = useState('');
     const [theme, setTheme] = useState('');
-    const [emote, setEmote] = useState(null);
     const emoteSize = 60;
-    const [emoteList, setEmoteList] = useState([
+    const emoteList = [
         '1f643',
         '1f609',
         '1f618'
-    ]);
+    ];
     
     useEffect(() => {
         if (localStorage.getItem('theme')) {
@@ -103,18 +103,9 @@ export default function WatchPartyPage() {
         })
 
         getSocket().on('emote', (data) => {
-            setEmote({id: data.emote_code, x: data.x, y: data.y});
-            displayEmote({id: data.emote_code, x: data.x, y: data.y});
+            displayEmote({dispId:uuid(), id: data.emote_code, x: data.x, y: data.y})
         })
     }, []);
-
-    // useEffect(()=> {
-    //     // playlist and video updates handling 
-    //     getSocket().on('update-progress',(party_video_state)=> {
-    //         handleUpdateProgress(party_video_state);
-    //     });
-    // },[playerRefValid]);
-    // handle video and playlist events
 
     const play = () => {
         if(playerRefValid) {
@@ -242,32 +233,36 @@ export default function WatchPartyPage() {
         return [host].concat(temp);
     }
 
-    let emoteTimeout = null;
     const displayEmote = (emote) => {
-        const reactEl = document.querySelector('.emote');
         let padding = 20;
         let vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
         let video_X = vidWrapperBox.width;
         let video_Y = (vidWrapperBox.width / 16) * 9;
         let max_X = video_X - (emoteSize + padding);
         let max_Y = video_Y - (emoteSize + padding);
-        // Math.random() returns a floating point number between 0 and 1
         let emote_X = emote.x * max_X;
         let emote_Y = emote.y * max_Y;
         emote_X = emote_X < padding ? padding : emote_X;
         emote_Y = emote_Y < padding ? padding : emote_Y;
-        console.log('emoteLoc', emote_X, emote_Y);
-        if (emoteTimeout) {
-            console.log('clear')
-            clearTimeout(emoteTimeout);
-        } else {
-            console.log('not clear')
-        }
-        reactEl.style.opacity = '1';
-        reactEl.style.margin = `${emote_Y}px 0 0 ${emote_X}px`;
-        emoteTimeout = setTimeout(() => {
-            reactEl.style.opacity = '0';
-        }, 3000);
+        let emotesEl = document.getElementById('emotes');
+        let div = document.createElement('div');
+        div.setAttribute('id', `emote-${emote.dispId}`);
+        div.setAttribute('class', 'emote');
+        div.style.transition = 'opacity .3s';
+        div.style.opacity = '1';
+        div.style.margin = `${emote_Y}px 0 0 ${emote_X}px`;
+        let img = document.createElement('img');
+        img.setAttribute('src', `https://emojiapi.dev/api/v1/${emote.id}/${emoteSize}.png`);
+        div.append(img);
+        emotesEl.prepend(div);
+        setTimeout(() => {
+            let emoteEl = document.getElementById(`emote-${emote.dispId}`);
+            emoteEl.style.transition = 'opacity 2.5s';
+            emoteEl.style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('emotes').removeChild(emoteEl);
+            }, 2600);
+        }, 700);
     }
 
     const sendEmote = (id) => {
@@ -282,12 +277,7 @@ export default function WatchPartyPage() {
                     usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                 />
             </div>
-            <div className='col2'>
-                <div className='emote'>
-                    {emote &&
-                        <img src={`https://emojiapi.dev/api/v1/${emote.id}/${emoteSize}.png`} />
-                    }
-                </div>
+            <div className='col2' id='emotes'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
                     {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
                         <ReactPlayer 
@@ -355,15 +345,13 @@ export default function WatchPartyPage() {
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
                 <div className='emote-list-wrapper'>
-                    {emoteList?.length > 0 &&
-                        emoteList.map((id, index) => {
-                            return (
-                                <Button key={index} onClick={()=>sendEmote(id)}>
-                                    <img src={`https://emojiapi.dev/api/v1/${id}/${emoteSize}.png`} style={{width:'40px',height:'40px'}} />
-                                </Button>
-                            )
-                        })
-                    }
+                    {emoteList.map((id, index) => {
+                        return (
+                            <Button key={index} onClick={()=>sendEmote(id)}>
+                                <img src={`https://emojiapi.dev/api/v1/${id}/${emoteSize}.png`} style={{width:'40px',height:'40px'}} />
+                            </Button>
+                        )
+                    })}
                 </div>
             </div>
         </div>
