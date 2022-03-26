@@ -16,6 +16,7 @@ import DarkModeToggle from './DarkModeToggle/DarkModeToggle';
 
 export default function Navbar() {
     const history = useHistory();
+    const location = useLocation();
     const [signedIn, setSignedIn] = useState(true);
     const [theme, setTheme] = useState('');
 
@@ -38,8 +39,12 @@ export default function Navbar() {
         if (page === 'logout') {
             authAPI.signOut();
             redirectTo('/');
-        } else {
-            redirectTo(page);
+        } else if (page === 'settings') {
+            if (location.pathname.includes('party')) {
+                window.open('settings', '_blank');
+            } else {
+                redirectTo('settings');
+            }
         }
         setOpen(false);
     };
@@ -64,7 +69,7 @@ export default function Navbar() {
 
     useEffect(() => {
         setSignedIn(authAPI.signedIn());
-    }, [useLocation()]);
+    }, [location]);
 
     useEffect(() => {
         if (localStorage.getItem('theme')) {
