@@ -1,5 +1,4 @@
 import './PlaylistPanel.scss';
-import 'global.scss';
 import React, { useEffect, useState } from "react";
 import { getSocket } from 'components/utils/socket_utils';
 import * as authAPI from 'auth/auth_utils.js';
@@ -11,7 +10,6 @@ import { ReactSortable } from "react-sortablejs";
 export default function PlaylistPanel({playlistData, setCloseIcon}) {
     const [playlist, setPlaylist] = useState(playlistData.playlist);
     const [currentIdx, setCurrentIdx] = useState(playlistData.currentIdx);
-    const [orderChange, setOrderChange] = useState(false);
     const [theme, setTheme] = useState('');
 
     const removeFromList = (index) => {
@@ -25,9 +23,13 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
     }
 
     const onDrop = (e) => {
-        document.querySelectorAll('.dragabble')[e.oldIndex].style.background = 
-            theme === 'dark' ? '#282828' : 'white';
-        setOrderChange(true);
+        if (e.newIndex === currentIdx) {
+            let className = 'playlist-item-wrapper-dark dragabble';
+            document.querySelectorAll('.dragabble')[e.newIndex].setAttribute('class', className);
+        } else {
+            let className = theme === 'dark' ? 'playlist-item-wrapper-dark dragabble' : 'playlist-item-wrapper dragabble';
+            document.querySelectorAll('.dragabble')[e.oldIndex].setAttribute('class', className);
+        }
         getSocket().emit('update-playlist', playlist);
     }
 
@@ -45,28 +47,6 @@ export default function PlaylistPanel({playlistData, setCloseIcon}) {
     useEffect(() => {
         setPlaylist(playlistData.playlist);
         setCurrentIdx(playlistData.currentIdx);
-        if (authAPI.getUser() === playlistData.host && orderChange) {
-            const elems = document.querySelectorAll('.dragabble');
-            elems.forEach((el, index) => {
-                if (index !== playlistData.currentIdx) {
-                    el.style.background = theme === 'dark' ? '#282828' : 'white';
-                    el.onmouseover = () => {
-                        el.style.background = theme === 'dark' ? 'rgba(0,0,0,.12)' : 'rgba(0,0,0,.1)';
-                    }
-                    el.onmouseout = () => {
-                        el.style.background = theme === 'dark' ? '#282828' : 'white';
-                    }
-                } else {
-                    el.style.background = 'rgba(0,0,0,.35)';
-                    el.onmouseover = () => {
-                        el.style.background = 'rgba(0,0,0,.35)';
-                    }
-                    el.onmouseout = () => {
-                        el.style.background = 'rgba(0,0,0,.35)';
-                    }
-                }
-            })
-        }
     }, [playlistData])
 
     const getClass = (index) => {
