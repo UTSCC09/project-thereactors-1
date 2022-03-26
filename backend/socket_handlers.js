@@ -69,6 +69,38 @@ export function setupSocketHandlers(io) {
         );
       }
     });
+    socket.on("join-call", () => {
+      checkUserInvited(socket.data.user, socket.data.current_party, (err, res) => {
+        if (res) {
+          socket.join(socket.data.current_party+"call");
+          socket.data.voice_party = socket.data.current_party+"call";
+          if (!io.sockets.adapter.rooms[socket.data.current_party+"call"]) {
+            socket.emit('room-created');
+          } else {
+            socket.emit('room-joined');
+          }
+        }
+      });
+    });
+    socket.on('start-call',() => {
+      if(socket.data.voice_party){
+        io.to(socket.data.voice_party).emit('start-call');
+      }
+    });
+    socket.on('webrtc-offer', (event) => {
+      if (socket.data.voice_party) {
+        io.to(socket.data.voice_party).emit('webrtc-offer', event.sdp)
+      }
+    })
+    socket.on('webrtc-answer', (event) => {
+      if (socket.data.voice_party)
+        io.to(socket.data.voice_party).emit('webrtc-answer', event.sdp)
+    })
+    socket.on('webrtc_ice_candidate', (event) => {
+      if (socket.data.voice_party)
+        io.to(socket.data.voice_party).emit('webrtc_ice_candidate', event)
+    })
+
 
     socket.on("join-room", (roomdata) => {
       const roomName = validator.escape(roomdata.roomname);
@@ -224,10 +256,6 @@ export function setupSocketHandlers(io) {
         }
       );
     });
-    // voice call functionality
-    socket.on('voice', (data)=> {
-
-    } );
   });
 
 }

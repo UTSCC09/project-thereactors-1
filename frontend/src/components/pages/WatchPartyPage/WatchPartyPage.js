@@ -8,12 +8,11 @@ import { getSocket, reconnectToSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
 import { useHistory } from 'react-router-dom'
-
+import VoiceCall from './VoiceCall/VoiceCall';
 /*
     party_video_state 
         playedSeconds
         video_is_playing
-
 
 */
 
@@ -311,6 +310,9 @@ export default function WatchPartyPage() {
                 <div className='chat-box-wrapper'>
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
+            </div>
+            <div className='col4'>
+                <VoiceCall />
             </div>
         </div>
     )
