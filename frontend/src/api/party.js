@@ -1,5 +1,7 @@
-import config from 'environments';
+import config, { getConfig } from 'environments';
 import * as authAPI from 'auth/auth_utils.js';
+
+const graphqlUrl = getConfig("graphqlUrl");
 
 export const addParty = (password, callback) => {
     let party = {password};
@@ -13,7 +15,7 @@ export const addParty = (password, callback) => {
     const variables = {
         party
     }
-    fetch(config.graphqlUrl, {
+    fetch(graphqlUrl, {
         method: "POST",
         credentials: 'include',
         headers: {
@@ -40,7 +42,7 @@ export const joinParty = (id, password, callback) => {
         id,
         password
     }
-    fetch(config.graphqlUrl, {
+    fetch(graphqlUrl, {
         method: "POST",
         credentials: "include",
         headers: {

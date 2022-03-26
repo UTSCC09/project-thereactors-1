@@ -1,0 +1,25 @@
+# Because both the frontend and the backend are under the same environment
+# We can simply use one node environment to build the production :D
+FROM node:16.14.0-alpine
+
+RUN mkdir -p /usr/src/app
+RUN npm install -g npm@8.5.5
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
+
+# Frontend build
+WORKDIR /usr/src/app
+COPY frontend /usr/src/app/frontend
+WORKDIR /usr/src/app/frontend
+RUN npm install
+RUN npm run build
+
+# Backend serving
+WORKDIR /usr/src/app
+COPY backend /usr/src/app/backend
+WORKDIR /usr/src/app/backend
+RUN npm install
+RUN npm run build
+
+# Run the app
+WORKDIR /usr/src/app/backend
+CMD ["npm", "run", "start:prod"]
