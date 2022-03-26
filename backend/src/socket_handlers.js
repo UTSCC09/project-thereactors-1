@@ -224,6 +224,16 @@ export function setupSocketHandlers(io) {
         }
       );
     });
+    socket.on("emote", (emote_string) => {
+      if(socket.data.current_party) {
+        // generate random 
+        let rand_x = Math.random();
+        let rand_y = Math.random();
+        io.to(socket.data.current_party).emit("emote", {"emote_code":emote_string, "x":rand_x, "y": rand_y});
+      }
+    });
+
+
   });
 }
 

@@ -43,6 +43,18 @@
         }
       }
     }
+      
+    .emote {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      opacity: 0;
+      z-index: 2;
+
+      img {
+        width: 100%;
+      }
+    }
 
     .video-player-wrapper {
       .add-video-wrapper {
