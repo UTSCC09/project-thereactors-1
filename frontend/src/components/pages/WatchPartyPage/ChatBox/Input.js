@@ -14,7 +14,7 @@ export const Input = ({ message, setMessage, sendMessage }) => {
     })
 
     return (
-        <form onSubmit={(e)=>sendMessage(e)} className="chat-form">
+        <form onSubmit={(e)=>sendMessage(e)} className={theme === "dark" ? "chat-form-dark" : "chat-form"}>
             <TextField
                 size='small'
                 className={theme === 'dark' ? "message-input textfield-dark" : "message-input"}
