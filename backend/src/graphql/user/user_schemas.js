@@ -6,7 +6,6 @@ export const userSchema = `
     email: String
     username: String
     nickname: String
-    profileLink: String
     createdAt: DateTime
   }
 `;
