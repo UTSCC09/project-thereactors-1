@@ -14,11 +14,14 @@ import { useLocation } from "react-router-dom";
 import * as authAPI from 'auth/auth_utils.js';
 import DarkModeToggle from './DarkModeToggle/DarkModeToggle';
 
+import * as UserAPI from 'api/user';
+
 export default function Navbar() {
     const history = useHistory();
     const location = useLocation();
     const [signedIn, setSignedIn] = useState(true);
     const [theme, setTheme] = useState('');
+    const [avatar, setAvatar] = useState('https://180dc.org/wp-content/uploads/2016/08/default-profile.png');
 
     const redirectTo = (page) => {
         history.push(page);
@@ -35,7 +38,7 @@ export default function Navbar() {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
             return;
         }
-        
+
         if (page === 'logout') {
             authAPI.signOut();
             redirectTo('/');
@@ -80,6 +83,12 @@ export default function Navbar() {
         });
     }, []);
 
+    useEffect(() => {
+        UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
+            setAvatar(avatar);
+        });
+    }, []);
+
     return (
         <div className={theme === 'dark' ? 'navbar-dark' : 'navbar'}>
             <div className='col1'>
@@ -94,7 +103,7 @@ export default function Navbar() {
                 }
                 {signedIn &&
                     <div className='user-wrapper nav-item'>
-                        <div className='username'>{authAPI.getUser()}</div>              
+                        <div className='username'>{authAPI.getUser()}</div>
                         <Button
                         className='user-btn'
                         ref={anchorRef}
@@ -105,7 +114,7 @@ export default function Navbar() {
                         onClick={handleToggle}
                         style={{backgroundColor: theme === 'dark' ? 'rgba(33, 33, 33, 0.98)' : 'white'}}
                         >
-                        <Avatar className='user-icon' alt='user' src='https://180dc.org/wp-content/uploads/2016/08/default-profile.png' />
+                        <Avatar className='user-icon' alt='user' src={avatar} />
                         </Button>
                         <Popper
                         open={open}
