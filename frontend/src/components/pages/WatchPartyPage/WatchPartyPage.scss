@@ -139,7 +139,12 @@
         align-items: center;
         padding: 0;
         border-radius: 10px 0px 0px 10px;
-        background-color: $main-color-dark;
+        background-color: white;
+
+        &-dark {
+          @extend .emote-toggle;
+          background-color: $main-color-dark;
+        }
 
         .left-arrow {
           display: flex;
@@ -158,6 +163,11 @@
     width: 4.5%;
     height: 83vh;
     z-index: 1;
-    background-color: $main-color-dark;
+    background-color: white;
+
+    &-dark {
+      @extend .padding-col;
+      background-color: $main-color-dark;
+    }
   }
 }
