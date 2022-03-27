@@ -13,6 +13,39 @@
     width: 66.5%;
     margin-right: 1.5%;
 
+    .video-player-wrapper {
+      .emote {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        opacity: 0;
+        z-index: 2;
+  
+        img {
+          width: 100%;
+        }
+      }
+
+      .add-video-wrapper {
+        border: 1px solid grey;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .inner-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          width: 60%;
+
+          .load-btn {
+            padding: 6.5px 12px;
+          }
+        }
+      }
+    }
+
     .desc-row {
       display: flex;
       justify-content: space-between;
@@ -43,71 +76,40 @@
         }
       }
     }
-      
-    .emote {
-      position: fixed;
-      width: 60px;
-      height: 60px;
-      opacity: 0;
-      z-index: 2;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .video-player-wrapper {
-      .add-video-wrapper {
-        border: 1px solid grey;
-        border-radius: 10px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-
-        .inner-wrapper {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          width: 60%;
-
-          .load-btn {
-            padding: 6.5px 12px;
-          }
-        }
-      }
-    }
   }
 
   .col3 {
     width: 28%;
 
-    .connected-users-wrapper {
-      .header {
-        line-height: 16px;
-      }
-
-      .Accordion {
-        min-height: 45px;
-        margin-bottom: 12px;
-
-        .AccordionSummary {
-          min-height: 0;
-
-          div {
-            margin: 12px 0;
-          }
-        }
-
-        .user {
-          margin-top: 2px;
-        }
-      }
-    }
-
     .chat-box-wrapper {
-      // margin-top: 12px;
       border: 1px solid grey;
       border-radius: 10px;
+    }
+    
+    .emote-list-wrapper {
+      overflow: hidden;
+      margin-top: 10px;
+      height: 42px;
+      border: 1px solid grey;
+      border-radius: 10px;
+      
+      .emote-list-inner-wrapper {
+        display: flex;
+        overflow: auto;
+        padding: 0 22px;
+        margin: 0 -18px;
+
+        .emote-btn {
+          padding: 0;
+          margin: 4px;
+          min-width: auto;
+
+          .emote-img {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
     }
   }
 }
