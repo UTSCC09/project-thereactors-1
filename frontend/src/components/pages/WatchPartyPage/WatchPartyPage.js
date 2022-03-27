@@ -281,7 +281,7 @@ export default function WatchPartyPage() {
     const [emotesHidden, setEmotesHidden] = useState(true);
     const slideEmotes = () => {
         const emoteListEl = document.querySelector('.emote-list-wrapper');
-        const toggleEl = document.querySelector('.emote-toggle');
+        const toggleEl = document.querySelector('#emote-toggle');
         const arrowEl = document.querySelector('.left-arrow-icon');
         if (emotesHidden) {
             setEmotesHidden(false);
@@ -385,13 +385,13 @@ export default function WatchPartyPage() {
                     })}
                     </div>
                 </div>
-                <Button variant='outlined' className='emote-toggle' onClick={()=>slideEmotes()}>
+                <Button variant='outlined' id='emote-toggle' className={theme === 'dark' ? 'emote-toggle-dark' : 'emote-toggle'} onClick={()=>slideEmotes()}>
                     <div className='left-arrow'><ArrowLeftIcon className='left-arrow-icon' /></div>
                     <div className='emote-text'>emote</div>
                 </Button>
                 </div>
             </div>
-            <div className='padding-col'></div>
+            <div className={theme === 'dark' ? 'padding-col-dark' : 'padding-col'}></div>
         </div>
     )
 }
