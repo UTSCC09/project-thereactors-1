@@ -7,7 +7,7 @@ import * as authAPI from 'auth/auth_utils.js';
 import { getSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
-import uuid from 'react-uuid'
+import uuid from 'react-uuid';
 
 /*
     party_video_state 
@@ -42,9 +42,10 @@ export default function WatchPartyPage() {
     const [theme, setTheme] = useState('');
     const emoteSize = 60;
     const emoteList = [
-        '1f643',
-        '1f609',
-        '1f618'
+        '1f970','1f60d','263a','1f92d','1f604','1f633','1f97a','1f972','1f637',
+        '1f628','1f618','1f630','1f4a9','1f649','1f643','1f636','1f97a','1f602',
+        '1f631','1f4a9','1f494','2764','2763','1f31a','1f608','1f624','2697',
+        '2734','1f4a3'
     ];
     
     useEffect(() => {
@@ -244,7 +245,7 @@ export default function WatchPartyPage() {
         let emote_Y = emote.y * max_Y;
         emote_X = emote_X < padding ? padding : emote_X;
         emote_Y = emote_Y < padding ? padding : emote_Y;
-        let emotesEl = document.getElementById('emotes');
+        let emotesEl = document.getElementById('video-player-wrapper');
         let div = document.createElement('div');
         div.setAttribute('id', `emote-${emote.dispId}`);
         div.setAttribute('class', 'emote');
@@ -277,7 +278,7 @@ export default function WatchPartyPage() {
                     usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                 />
             </div>
-            <div className='col2' id='emotes'>
+            <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
                     {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
                         <ReactPlayer 
@@ -345,13 +346,15 @@ export default function WatchPartyPage() {
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
                 <div className='emote-list-wrapper'>
+                    <div className='emote-list-inner-wrapper'>
                     {emoteList.map((id, index) => {
                         return (
-                            <Button key={index} onClick={()=>sendEmote(id)}>
-                                <img src={`https://emojiapi.dev/api/v1/${id}/${emoteSize}.png`} style={{width:'40px',height:'40px'}} />
+                            <Button key={index} className='emote-btn' onClick={()=>sendEmote(id)}>
+                                <img className='emote-img' src={`https://emojiapi.dev/api/v1/${id}/${emoteSize}.png`}/>
                             </Button>
                         )
                     })}
+                    </div>
                 </div>
             </div>
         </div>
