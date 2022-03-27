@@ -2,8 +2,9 @@
 
 .watch-party-page {
   display: flex;
-  padding: 1.5% 4% 6px;
+  padding: 1.5% 0 6px 4%;
   text-align: left;
+  overflow-x: hidden;
 
   .col1 {
     width: 4%;
@@ -86,44 +87,77 @@
       border-radius: 10px;
     }
     
-    .emote-list-wrapper {
-      overflow: hidden;
+    .emote-list-toggle-wrapper {
       margin-top: 10px;
-      height: 38px;
-      border: 1px solid grey;
-      border-radius: 10px;
+      display: flex;
 
-      .emote-list-inner-wrapper {
-        width: 42.50px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        transform: rotate(-90deg) translateY(-58px);
-        transform-origin: right top;
-        padding-top: 4px;
-        padding-right: 16px;
-        margin-top: -20px;
+      .emote-list-wrapper {
+        width: 80%;
+        overflow: hidden;
+        height: 38px;
+        border: 1px solid grey;
+        border-right: 0px;
+        border-radius: 10px 0 0 10px;
+        transition: .5s;
+        transform: translateX(101%);
 
-        
-        .emote-btn {
-          padding: 0;
-          margin: 4px;
-          min-width: auto;
-          transform: rotate(90deg);
-
-          &:first-child { 
-            margin-top: 5px;
-          }
+        .emote-list-inner-wrapper {
+          width: 42.50px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          transform: rotate(-90deg) translateY(-58px);
+          transform-origin: right top;
+          padding-top: 4px;
+          padding-right: 16px;
+          margin-top: -20px;
           
-          &:last-child {
-            margin-bottom: 5px;
-          }
-          
-          .emote-img {
-            width: 30px;
-            height: 30px;
+          .emote-btn {
+            padding: 0;
+            margin: 4px;
+            min-width: auto;
+            transform: rotate(90deg);
+
+            &:first-child { 
+              margin-top: 6px;
+            }
+            
+            &:last-child {
+              margin-bottom: 13px;
+            }
+            
+            .emote-img {
+              width: 30px;
+              height: 30px;
+            }
           }
         }
       }
+
+      .emote-toggle {
+        width: 20%;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        border-radius: 10px 0px 0px 10px;
+        background-color: $main-color-dark;
+
+        .left-arrow {
+          display: flex;
+          align-items: center;
+          padding-bottom: 3px;
+        }
+
+        .emote-text {
+          margin-right: 8px;
+        }
+      }
     }
+  }
+
+  .padding-col {
+    width: 4.5%;
+    height: 83vh;
+    z-index: 1;
+    background-color: $main-color-dark;
   }
 }

@@ -8,6 +8,7 @@ import { getSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
 import uuid from 'react-uuid';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 /*
     party_video_state 
@@ -62,7 +63,7 @@ export default function WatchPartyPage() {
         setVideoHeight((vidWrapperBox.width / 16) * 9);
 
         const emoteListEl = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
-        setEmoteListInnerHeight(emoteListEl.width - 7.5);
+        setEmoteListInnerHeight(emoteListEl.width);
 
         window.onresize = () => {
             const vidWrapperBox1 = document.getElementById('video-player-wrapper').getBoundingClientRect();
@@ -70,7 +71,7 @@ export default function WatchPartyPage() {
             setVideoHeight((vidWrapperBox1.width / 16) * 9);
 
             const emoteListEl1 = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
-            setEmoteListInnerHeight(emoteListEl1.width - 7.5);
+            setEmoteListInnerHeight(emoteListEl1.width);
         }
 
         if (new URLSearchParams(window.location.search).get("id")) {
@@ -277,6 +278,26 @@ export default function WatchPartyPage() {
         getSocket().emit('emote', id);
     }
 
+    const [emotesHidden, setEmotesHidden] = useState(true);
+    const slideEmotes = () => {
+        const emoteListEl = document.querySelector('.emote-list-wrapper');
+        const toggleEl = document.querySelector('.emote-toggle');
+        const arrowEl = document.querySelector('.left-arrow-icon');
+        if (emotesHidden) {
+            setEmotesHidden(false);
+            emoteListEl.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                toggleEl.style.borderRadius = '0px 10px 10px 0px';
+                arrowEl.style.transform = 'rotate(180deg)';
+            }, 300);
+        } else {
+            setEmotesHidden(true);
+            emoteListEl.style.transform = 'translateX(101%)';
+            toggleEl.style.borderRadius = '10px 0px 0px 10px';
+            arrowEl.style.transform = 'rotate(360deg)';
+        }
+    }
+
     return (
         <div className="watch-party-page">
             <div className='col1'>
@@ -352,6 +373,7 @@ export default function WatchPartyPage() {
                 <div className='chat-box-wrapper'>
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
+                <div className='emote-list-toggle-wrapper'>
                 <div className='emote-list-wrapper'>
                     <div className='emote-list-inner-wrapper' style={{height: emoteListInnerHeight}}>
                     {emoteList.map((id, index) => {
@@ -363,7 +385,13 @@ export default function WatchPartyPage() {
                     })}
                     </div>
                 </div>
+                <Button variant='outlined' className='emote-toggle' onClick={()=>slideEmotes()}>
+                    <div className='left-arrow'><ArrowLeftIcon className='left-arrow-icon' /></div>
+                    <div className='emote-text'>emote</div>
+                </Button>
+                </div>
             </div>
+            <div className='padding-col'></div>
         </div>
     )
 }
