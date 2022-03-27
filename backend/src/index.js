@@ -10,6 +10,7 @@ import { body, validationResult } from 'express-validator';
 import multer from 'multer';
 import validator from "validator";
 import path from 'path';
+import fs from 'fs';
 
 // GraphQL
 import { graphqlHTTP } from 'express-graphql';
@@ -114,6 +115,32 @@ async function startServer() {
       res.setHeader('Content-Type', avatar.mimetype);
       res.sendFile(path.resolve(__dirname, '..', avatar.path));
     });
+  });
+  app.post("/api/avatar", upload.single('avatar'), (req, res) => {
+    const token = req.cookies['token'] || '';
+    const avatar = req.file;
+    const { valid, decoded } = verifyJwt(token);
+    if (valid) {
+      if (!avatar) return res.status(400).json({ message: 'No avatar given' });
+      User.findOne({ username: decoded.username }, (err, user) => {
+        if (err) return res.status(500).json({ message: err });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        // If old avatar exists, delete it then save the new one, otherwise, just save the new one
+        const oldAvatar = user.avatar;
+        if (oldAvatar) {
+          fs.unlink(path.resolve(__dirname, '..', oldAvatar.path), (err) => {
+            if (err) return res.status(500).json({ message: err });
+            user.avatar = avatar;
+            user.save();
+          });
+        } else {
+          user.avatar = avatar;
+          user.save();
+        }
+      });
+    } else {
+      return res.status(401).json({ message: 'Access denied' });
+    }
   });
 
   // Apollo Server
