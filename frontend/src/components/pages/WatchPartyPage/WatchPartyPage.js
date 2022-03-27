@@ -47,6 +47,7 @@ export default function WatchPartyPage() {
         '1f631','1f4a9','1f494','2764','2763','1f31a','1f608','1f624','2697',
         '2734','1f4a3'
     ];
+    const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
     
     useEffect(() => {
         if (localStorage.getItem('theme')) {
@@ -60,18 +61,24 @@ export default function WatchPartyPage() {
         setVideoWidth(vidWrapperBox.width);
         setVideoHeight((vidWrapperBox.width / 16) * 9);
 
+        const emoteListEl = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
+        setEmoteListInnerHeight(emoteListEl.width - 7.5);
+
         window.onresize = () => {
             const vidWrapperBox1 = document.getElementById('video-player-wrapper').getBoundingClientRect();
             setVideoWidth(vidWrapperBox1.width);
             setVideoHeight((vidWrapperBox1.width / 16) * 9);
+
+            const emoteListEl1 = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
+            setEmoteListInnerHeight(emoteListEl1.width - 7.5);
         }
 
-        if(new URLSearchParams(window.location.search).get("id")){
+        if (new URLSearchParams(window.location.search).get("id")) {
             if (authAPI.signedIn())
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
             else 
                 window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
-        } else{
+        } else {
             window.location.href = '/join';
         }
             
@@ -280,7 +287,7 @@ export default function WatchPartyPage() {
             </div>
             <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
-                    {videoId !== '' && videoWidth !== '' && videoHeight !== '' &&
+                    {videoId !== '' && videoWidth !== 0 && videoHeight !== 0 &&
                         <ReactPlayer 
                             ref ={(player)=> {playerRef.current = player}}
                             url={videoId}
@@ -346,7 +353,7 @@ export default function WatchPartyPage() {
                     <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
                 </div>
                 <div className='emote-list-wrapper'>
-                    <div className='emote-list-inner-wrapper'>
+                    <div className='emote-list-inner-wrapper' style={{height: emoteListInnerHeight}}>
                     {emoteList.map((id, index) => {
                         return (
                             <Button key={index} className='emote-btn' onClick={()=>sendEmote(id)}>
