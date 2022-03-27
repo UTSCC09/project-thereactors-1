@@ -5,13 +5,14 @@ $fontsize-header1: $fontsize-base + 6;
 $fontsize-header2: $fontsize-base + 2;
 $primary-color: #ff6969;
 $page-padding: 4% 4%;
-$navbar-height: 12vh;
+$navbar-height: 11vh;
 $navbar-width: 92%;
-$main-component-height: 88vh;
+$main-component-height: 89vh;
 $box-shadow-common: rgba(0, 0, 0, 0.24) 0px 2px 8px;
-$navbar-color-dark: rgba(33, 33, 33, 0.98);
+$navbar-color-dark: #252525;
 $box-color-dark: #282828;
-$main-color-dark: #181818;
+$main-color-dark: #1d1d1d;
+$side-panel-dark: #2e2e2e;
 
 .MuiButton-root {
     font-family: $fontfamily-base;

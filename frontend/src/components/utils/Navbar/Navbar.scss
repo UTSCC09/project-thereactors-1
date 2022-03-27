@@ -70,6 +70,6 @@
     &-dark {
         @extend .navbar;
         background-color: $navbar-color-dark;
-        box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 8px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 4px;
     }
 }

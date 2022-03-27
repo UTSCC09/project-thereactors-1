@@ -112,7 +112,7 @@ export default function Navbar() {
                         aria-expanded={open ? 'true' : undefined}
                         aria-haspopup="true"
                         onClick={handleToggle}
-                        style={{backgroundColor: theme === 'dark' ? 'rgba(33, 33, 33, 0.98)' : 'white'}}
+                        style={{backgroundColor: theme === 'dark' ? '#252525' : 'white'}}
                         >
                         <Avatar className='user-icon' alt='user' src={avatar} />
                         </Button>
