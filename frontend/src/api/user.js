@@ -140,3 +140,29 @@ export const getAvatar = (username, callback) => {
             }
         });
 }
+
+export const updateUser = (username, user, callback) => {
+    const query = `
+        mutation($username: String, $user: UserUpdateInput) {
+            updateUser(username: $username, user: $user) {
+                _id
+                firstName
+                lastName
+                email
+            }
+        }
+    `;
+    const variables = { username, user };
+    fetch(graphqlUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(result.errors, result.data.updateUser);
+    });
+}
