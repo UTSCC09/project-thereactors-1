@@ -2,8 +2,9 @@
 
 .watch-party-page {
   display: flex;
-  padding: 1.5% 4% 6px;
+  padding: 1.5% 0 6px 4%;
   text-align: left;
+  overflow-x: hidden;
 
   .col1 {
     width: 4%;
@@ -12,6 +13,39 @@
   .col2 {
     width: 66.5%;
     margin-right: 1.5%;
+
+    .video-player-wrapper {
+      .emote {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        opacity: 0;
+        z-index: 2;
+  
+        img {
+          width: 100%;
+        }
+      }
+
+      .add-video-wrapper {
+        border: 1px solid grey;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .inner-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          width: 60%;
+
+          .load-btn {
+            padding: 6.5px 12px;
+          }
+        }
+      }
+    }
 
     .desc-row {
       display: flex;
@@ -43,71 +77,97 @@
         }
       }
     }
-      
-    .emote {
-      position: fixed;
-      width: 60px;
-      height: 60px;
-      opacity: 0;
-      z-index: 2;
-
-      img {
-        width: 100%;
-      }
-    }
-
-    .video-player-wrapper {
-      .add-video-wrapper {
-        border: 1px solid grey;
-        border-radius: 10px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-
-        .inner-wrapper {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          width: 60%;
-
-          .load-btn {
-            padding: 6.5px 12px;
-          }
-        }
-      }
-    }
   }
 
   .col3 {
     width: 28%;
 
-    .connected-users-wrapper {
-      .header {
-        line-height: 16px;
-      }
+    .chat-box-wrapper {
+      border: 1px solid grey;
+      border-radius: 10px;
+    }
+    
+    .emote-list-toggle-wrapper {
+      margin-top: 10px;
+      display: flex;
 
-      .Accordion {
-        min-height: 45px;
-        margin-bottom: 12px;
+      .emote-list-wrapper {
+        width: 80%;
+        overflow: hidden;
+        height: 38px;
+        border: 1px solid grey;
+        border-right: 0px;
+        border-radius: 10px 0 0 10px;
+        transition: .5s;
+        transform: translateX(101%);
 
-        .AccordionSummary {
-          min-height: 0;
+        .emote-list-inner-wrapper {
+          width: 42.50px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          transform: rotate(-90deg) translateY(-58px);
+          transform-origin: right top;
+          padding-top: 4px;
+          padding-right: 16px;
+          margin-top: -20px;
+          
+          .emote-btn {
+            padding: 0;
+            margin: 4px;
+            min-width: auto;
+            transform: rotate(90deg);
 
-          div {
-            margin: 12px 0;
+            &:first-child { 
+              margin-top: 6px;
+            }
+            
+            &:last-child {
+              margin-bottom: 13px;
+            }
+            
+            .emote-img {
+              width: 30px;
+              height: 30px;
+            }
           }
         }
+      }
 
-        .user {
-          margin-top: 2px;
+      .emote-toggle {
+        width: 20%;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        border-radius: 10px 0px 0px 10px;
+        background-color: white;
+
+        &-dark {
+          @extend .emote-toggle;
+          background-color: $main-color-dark;
+        }
+
+        .left-arrow {
+          display: flex;
+          align-items: center;
+          padding-bottom: 2px;
+        }
+
+        .emote-text {
+          margin-right: 8px;
         }
       }
     }
+  }
 
-    .chat-box-wrapper {
-      // margin-top: 12px;
-      border: 1px solid grey;
-      border-radius: 10px;
+  .padding-col {
+    width: 4.5%;
+    height: 83vh;
+    z-index: 1;
+    background-color: white;
+
+    &-dark {
+      @extend .padding-col;
+      background-color: $main-color-dark;
     }
   }
 }

@@ -1,6 +1,6 @@
 import './SignInPage.scss';
 import React, { useEffect, useState } from "react";
-import { 
+import {
     Button,
     TextField,
     Avatar,
@@ -15,7 +15,7 @@ const defaultUser = {
     username: "",
     email: "",
     password: "",
-    profileLink: "https://180dc.org/wp-content/uploads/2016/08/default-profile.png"
+    // profileLink: "https://180dc.org/wp-content/uploads/2016/08/default-profile.png"
 }
 
 export default function SignUpPage() {
@@ -23,6 +23,8 @@ export default function SignUpPage() {
     const [newUser, setNewUser] = useState(defaultUser);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [theme, setTheme] = useState('');
+    const [avatarPreview, setAvatarPreview] = useState("");
+    const [avatar, setAvatar] = useState(null);
 
     useEffect(() => {
         if (localStorage.getItem('theme')) {
@@ -62,7 +64,7 @@ export default function SignUpPage() {
             }, 5000)
         }
         else {
-            UserAPI.addUser(newUser, (err, res) => {
+            UserAPI.addUser(newUser, avatar, (err, res) => {
                 if (err && (err.message === 'DUPLICATE_USER' || err.message === 'DUPLICATE_EMAIL')) {
                     document.getElementById('warning').style.display = 'block';
                     document.getElementById('warning').innerHTML = "User already exists!";
@@ -79,12 +81,19 @@ export default function SignUpPage() {
 
     const changeField = (e, field) => {
         let temp  = cloneDeep(newUser);
-        if (field === "picture") {
-            temp.profileLink = e.target.files[0];
-        } else {
-            temp[field] = e.target.value;
-        }
+        temp[field] = e.target.value;
         setNewUser(temp);
+    }
+
+    const onAvatarChange = (e) => {
+        const avatar = e.target.files[0];
+        setAvatar(avatar);
+        console.log(avatar);
+        const reader = new FileReader();
+        reader.readAsDataURL(avatar);
+        reader.onloadend = () => {
+            setAvatarPreview(reader.result);
+        };
     }
 
     return (
@@ -94,18 +103,18 @@ export default function SignUpPage() {
                     Sign Up
                 </div>
                 <form onSubmit={(e)=>signUp(e)}>
-                {/* <div className='profilePic-box'>
+                <div className='profilePic-box'>
                     <input
                         id="contained-button-file"
                         type="file"
                         accept="image/*"
                         style={{display:'none'}}
-                        onChange={()=>{}}
+                        onChange={onAvatarChange}
                     />
                     <label htmlFor="contained-button-file">
                         <IconButton component='span' className='pic-container' style={{padding:0}}>
-                        <Avatar 
-                            src="" 
+                        <Avatar
+                            src={avatarPreview}
                             style={{
                                 width: "70px",
                                 height: "70px",
@@ -116,8 +125,8 @@ export default function SignUpPage() {
                         </div>
                         </IconButton>
                     </label>
-                </div> */}
-                <TextField 
+                </div>
+                <TextField
                     className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Username'
@@ -125,7 +134,7 @@ export default function SignUpPage() {
                     onChange={(e)=>changeField(e, 'username')}
                     required
                 />
-                <TextField 
+                <TextField
                     className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Email address'
@@ -134,7 +143,7 @@ export default function SignUpPage() {
                     onChange={(e)=>changeField(e, 'email')}
                     required
                 />
-                <TextField 
+                <TextField
                     className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Password'
@@ -144,7 +153,7 @@ export default function SignUpPage() {
                     onChange={(e)=>changeField(e, 'password')}
                     required
                 />
-                <TextField 
+                <TextField
                     className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                     size='small'
                     label='Confirm Password'
@@ -155,11 +164,11 @@ export default function SignUpPage() {
                     required
                 />
                 <div className='sign-up-message'>
-                    <span>Already have an account? </span> 
+                    <span>Already have an account? </span>
                     <span className='sign-up-btn' onClick={()=>toSignIn()}>Sign in</span>
                 </div>
-                <div 
-                    id='warning' 
+                <div
+                    id='warning'
                     style={{display:'none', color:'red'}}
                 >
                 </div>

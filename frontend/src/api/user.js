@@ -11,7 +11,6 @@ export const getUsers = (callback) => {
                 _id
                 username
                 email
-                profileLink
             }
         }
     `;
@@ -37,7 +36,6 @@ export const getUser = (id, callback) => {
                 _id
                 username
                 email
-                profileLink
             }
         }
     `;
@@ -58,14 +56,23 @@ export const getUser = (id, callback) => {
     });
 }
 
-export const addUser = (user, callback) => {
-    axios.post(`${backendUrl}/api/signup`, user)
-    .then((res) => {
-        callback(null, res.data);
-    })
-    .catch((err) => {
-        callback(err.response.data, null)
-    })
+export const addUser = (user, avatar, callback) => {
+    // Copy the fields into form data
+    const formData = new FormData();
+    for (let name in user) {
+        formData.append(name, user[name])
+    }
+    // Add avatar
+    if (avatar) {
+        formData.append('avatar', avatar, avatar.name);
+    }
+    axios.post(`${backendUrl}/api/signup`, formData)
+        .then((res) => {
+            callback(null, res.data);
+        })
+        .catch((err) => {
+            callback(err.response.data, null)
+        })
 }
 
 export const signIn = (username, password, callback) => {
@@ -92,4 +99,19 @@ export const signOut = (callback) => {
     .catch((err) => {
         callback(err.response.data, null)
     })
+}
+
+export const getAvatar = (username, callback) => {
+    axios.get(`${backendUrl}/api/${username}/avatar`, { responseType:"blob" })
+        .then((res) => {
+            if (res.status === 404) {
+                callback("https://180dc.org/wp-content/uploads/2016/08/default-profile.png");
+            } else {
+                const reader = new FileReader();
+                reader.readAsDataURL(res.data);
+                reader.onloadend = () => {
+                    callback(reader.result);
+                };
+            }
+        });
 }

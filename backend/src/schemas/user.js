@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export const userSchema = new mongoose.Schema({
   firstName: String,
@@ -7,6 +7,6 @@ export const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   username: { type: String, unique: true },
   password: String,
-  profileLink: String,
+  avatar: Schema.Types.Mixed,
   createdAt: { type: Date, default: Date.now },
 });

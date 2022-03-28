@@ -7,7 +7,10 @@ import { getConfig } from './config';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { body, validationResult } from 'express-validator';
+import multer from 'multer';
+import validator from "validator";
 import path from 'path';
+
 // GraphQL
 import { graphqlHTTP } from 'express-graphql';
 import { resolvers } from './resolvers';
@@ -24,6 +27,7 @@ import { User } from './db';
 async function startServer() {
   // Express server
   const app = express();
+  const upload = multer({ dest: 'uploads/' });
   // app.use(helmet())
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
@@ -55,18 +59,31 @@ async function startServer() {
     return res.json("logout");
   });
   app.post("/api/signup",
-    body("email").isEmail().normalizeEmail(),
-    body("username").trim().escape(),
-    body("password").isLength({ min: 8 }),
+    upload.single('avatar'),
     (req, res) => {
+      let username = req.body.username;
+      let email = req.body.email;
+      let password = req.body.password;
+      const avatar = req.file;
+      // validate email and normalize it
+      if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: "Invalid input", error: "Invalid email" });
+      } else {
+        email = validator.normalizeEmail(email);
+      }
+      // trim and escape username
+      username = validator.trim(username);
+      username = validator.escape(username);
+      // validate password length
+      if (!validator.isLength(password, { min: 8 })) {
+        return res.status(400).json({ message: "Invalid input", error: "Invalid password" });
+      }
+      // validate
       const validationErrors = validationResult(req);
       if (!validationErrors.isEmpty()) {
         return res.status(400).json({ message: "Invalid input", errors: validationErrors });
       }
-      const username = req.body.username;
-      const email = req.body.email;
-      const password = req.body.password;
-      isUniqueUser(req.body.username, req.body.email, (isUnique, error) => {
+      isUniqueUser(username, email, (isUnique, error) => {
         if (!isUnique) {
           return res.status(400).json({ message: error });
         } else {
@@ -74,7 +91,7 @@ async function startServer() {
           bcrypt.genSalt(getConfig("passwordSaltRounds"), (err, salt) => {
             bcrypt.hash(password, salt, (err, hash) => {
               if (err) return res.status(500).json({ message: err });
-              User.create({ username, email, password: hash }, (err, user) => {
+              User.create({ username, email, avatar, password: hash }, (err, user) => {
                 if (err) return res.status(500).json({ message: err });
                 const token = signJwt({ username: user.username });
                 res.cookie('token', token, {
@@ -87,6 +104,15 @@ async function startServer() {
             });
           });
         }
+    });
+  });
+  app.get("/api/:username/avatar", (req, res) => {
+    User.findOne({ username: req.params.username }, (err, user) => {
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      const avatar = user.avatar;
+      if (!avatar) return res.status(404).json({ error: 'Avatar not set' });
+      res.setHeader('Content-Type', avatar.mimetype);
+      res.sendFile(path.resolve(__dirname, '..', avatar.path));
     });
   });
 
