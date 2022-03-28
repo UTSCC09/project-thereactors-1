@@ -21,7 +21,7 @@ export default function Navbar() {
     const location = useLocation();
     const [signedIn, setSignedIn] = useState(true);
     const [theme, setTheme] = useState('');
-    const [avatar, setAvatar] = useState('https://180dc.org/wp-content/uploads/2016/08/default-profile.png');
+    const [avatar, setAvatar] = useState('');
 
     const redirectTo = (page) => {
         history.push(page);
@@ -42,11 +42,11 @@ export default function Navbar() {
         if (page === 'logout') {
             authAPI.signOut();
             redirectTo('/');
-        } else if (page === 'settings') {
+        } else if (page === 'profile') {
             if (location.pathname.includes('party')) {
-                window.open('settings', '_blank');
+                window.open('profile', '_blank');
             } else {
-                redirectTo('settings');
+                redirectTo('profile');
             }
         }
         setOpen(false);
@@ -85,6 +85,7 @@ export default function Navbar() {
 
     useEffect(() => {
         UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
+            // console.log(avatar)
             setAvatar(avatar);
         });
     }, []);
@@ -140,7 +141,7 @@ export default function Navbar() {
                                     aria-labelledby="composition-button"
                                     onKeyDown={handleListKeyDown}
                                 >
-                                    <MenuItem className='menu-item' onClick={(e)=>handleClose(e, 'settings')}>Settings</MenuItem>
+                                    <MenuItem className='menu-item' onClick={(e)=>handleClose(e, 'profile')}>Profile</MenuItem>
                                     <MenuItem className='menu-item' onClick={(e)=>handleClose(e, 'logout')}>Logout</MenuItem>
                                 </MenuList>
                                 </ClickAwayListener>

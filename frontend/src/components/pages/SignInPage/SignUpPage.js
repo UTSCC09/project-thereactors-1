@@ -10,12 +10,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useHistory } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
 import * as UserAPI from 'api/user';
+import defaultProfileImg from 'api/assets/default-profile.png';
 
 const defaultUser = {
     username: "",
     email: "",
     password: "",
-    // profileLink: "https://180dc.org/wp-content/uploads/2016/08/default-profile.png"
 }
 
 export default function SignUpPage() {
@@ -33,6 +33,8 @@ export default function SignUpPage() {
         document.addEventListener('themeChange', () => {
             setTheme(localStorage.getItem('theme'));
         });
+
+        setAvatarPreview(defaultProfileImg);
     }, []);
 
     const toSignIn = () => {
@@ -88,7 +90,6 @@ export default function SignUpPage() {
     const onAvatarChange = (e) => {
         const avatar = e.target.files[0];
         setAvatar(avatar);
-        console.log(avatar);
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
         reader.onloadend = () => {
