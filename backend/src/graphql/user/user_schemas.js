@@ -13,7 +13,7 @@ export const userSchema = `
 export const userInputSchema = ``;
 
 export const userQuerySchemas = `
-  getUsers(id: ID): [User]
+  getUsers(id: ID, username: String): [User]
 `;
 
 export const userMutationSchemas = ``;

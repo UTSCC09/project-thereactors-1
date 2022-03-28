@@ -10,6 +10,13 @@ export const userQueryResolvers = {
           else resolve([user]);
         });
       }
+      // Find by username
+      else if (args.username) {
+        User.findOne({ username }, (err, user) => {
+          if(err) reject(err);
+          else resolve([user]);
+        });
+      }
       // Find all
       else {
         User.find({}, (err, users) => {
