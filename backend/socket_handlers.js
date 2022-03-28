@@ -72,33 +72,46 @@ export function setupSocketHandlers(io) {
     socket.on("join-call", () => {
       checkUserInvited(socket.data.user, socket.data.current_party, (err, res) => {
         if (res) {
+          console.log(socket.data.user + " joins call")
           socket.join(socket.data.current_party+"call");
           socket.data.voice_party = socket.data.current_party+"call";
           if (!io.sockets.adapter.rooms[socket.data.current_party+"call"]) {
+            io.sockets.adapter.rooms[socket.data.current_party+"call"] = 1;
+            console.log("room created")
             socket.emit('room-created');
           } else {
             socket.emit('room-joined');
+            console.log("room joined")
           }
         }
       });
     });
     socket.on('start-call',() => {
       if(socket.data.voice_party){
+        console.log("start call " + socket.data.voice_party)
         io.to(socket.data.voice_party).emit('start-call');
       }
     });
     socket.on('webrtc-offer', (event) => {
       if (socket.data.voice_party) {
+        console.log("webrtc offer "+ socket.data.user)
         io.to(socket.data.voice_party).emit('webrtc-offer', event.sdp)
       }
     })
     socket.on('webrtc-answer', (event) => {
-      if (socket.data.voice_party)
+      if (socket.data.voice_party) {
+        console.log("webrtc answer " + socket.data.user)
+        // console.log(event.sdp)
         io.to(socket.data.voice_party).emit('webrtc-answer', event.sdp)
+
+      }
     })
     socket.on('webrtc_ice_candidate', (event) => {
-      if (socket.data.voice_party)
+      if (socket.data.voice_party) {
+        console.log("webrtc_ice_candidate " + socket.data.user)
+        // console.log(event.sdp)
         io.to(socket.data.voice_party).emit('webrtc_ice_candidate', event)
+      }
     })
 
 
