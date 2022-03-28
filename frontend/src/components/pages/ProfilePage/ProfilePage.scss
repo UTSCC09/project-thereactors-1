@@ -1,9 +1,9 @@
 @import 'src/global.scss';
 
-.sign-in-page {
+.profile-page {
     padding: $page-padding;
 
-    .sign-in-box {
+    .user-info-box {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -14,14 +14,37 @@
 
         .header1 {
             margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+
+            .text {
+                margin-right: 10px;
+            }
         }
 
         .profilePic-box {
             margin-top: 10px;
 
             .pic-container {
+                padding: 0;
+
                 &:hover .edit-overlay {
                     opacity: .5;
+                }
+
+                .avatar {
+                    width: 70px;
+                    height: 70px;
+
+                    &:hover {
+                        cursor: default;
+                    }
+                    &-edit {
+                        @extend .avatar;
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
                 }
 
                 .edit-overlay {
@@ -47,10 +70,40 @@
             }
         }
 
-        .textfield {
+        .change-pw-btn {
             margin-top: 10px;
-            width: 60%;
+            text-decoration: underline;
+
+            &:hover {
+                color: grey;
+                cursor: pointer;
+            }
         }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+
+            .text {
+                width: 25%;
+                margin-right: 2%;
+                text-align: right;
+            }
+
+            .textfield {
+                width: 73%;
+            }
+    
+            .Mui-disabled {
+                -webkit-text-fill-color: white;
+    
+                .MuiOutlinedInput-notchedOutline {
+                    border-color: grey;
+                }
+            }
+        }
+
 
         .sign-up-message {
             margin-top: 10px;
