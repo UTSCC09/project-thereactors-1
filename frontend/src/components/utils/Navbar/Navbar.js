@@ -72,6 +72,9 @@ export default function Navbar() {
 
     useEffect(() => {
         setSignedIn(authAPI.signedIn());
+        UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
+            setAvatar(avatar);
+        });
     }, [location]);
 
     useEffect(() => {
@@ -80,13 +83,6 @@ export default function Navbar() {
         }
         document.addEventListener('themeChange', () => {
             setTheme(localStorage.getItem('theme'));
-        });
-    }, []);
-
-    useEffect(() => {
-        UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
-            // console.log(avatar)
-            setAvatar(avatar);
         });
     }, []);
 
