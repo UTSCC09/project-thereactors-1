@@ -48,6 +48,7 @@ export const getUser = (id, callback) => {
     }
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -168,6 +169,7 @@ export const updateUser = (username, user, callback) => {
     const variables = { username, user };
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

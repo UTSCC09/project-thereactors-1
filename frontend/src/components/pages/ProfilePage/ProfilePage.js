@@ -11,16 +11,10 @@ import { cloneDeep } from 'lodash';
 import * as UserAPI from 'api/user';
 import * as AuthAPI from 'auth/auth_utils.js';
 
-const defaultUser = {
-    username: "test",
-    email: "test@mail.com",
-    password: "",
-}
-
 export default function ProfilePage() {
     const [theme, setTheme] = useState('');
     const [user, setUser] = useState({});
-    const [newUser, setNewUser] = useState(defaultUser);
+    const [newUser, setNewUser] = useState({});
     const [avatar, setAvatar] = useState(null);
     const [newAvatar, setNewAvatar] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,13 +31,12 @@ export default function ProfilePage() {
 
         // API call to get user data
         UserAPI.getUserByUsername(AuthAPI.getUser(), (err, res) => {
-            if (err) {
-                console.log('err', err)
-            }
+            if (err) { console.log(err) }
             if (!err) {
-                console.log(res);
-                setUser(defaultUser); // replace defaultUser with api data
-                setNewUser(defaultUser); // replace defaultUser with api data
+                let temp = res[0];
+                temp.password = "";
+                setUser(temp);
+                setNewUser(temp);
             }
         })
 
@@ -85,7 +78,7 @@ export default function ProfilePage() {
                 document.getElementById('warning').style.display = 'none';
             }, 5000)
         }
-        else if (newUser.password !== confirmPassword) {
+        else if (isChangePassword && newUser.password !== confirmPassword) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Password doesn't match!";
             setTimeout(() => {
@@ -94,12 +87,14 @@ export default function ProfilePage() {
         }
         else {
             // API call to update user data
-
-            setUser(newUser);
-            setAvatar(newAvatar);
-            setIsEdit(false);
-            setIsChangePassword(false);
-            setConfirmPassword('');
+            console.log(newUser)
+            let reqBody = {email: newUser.email, password: newUser.password};
+            UserAPI.updateUser(newUser.username, reqBody, (err, res) => {
+                if (err) { console.log(err) }
+                if (!err) {
+                    window.location.reload(false);
+                }
+            })
         }
     }
 
@@ -150,7 +145,7 @@ export default function ProfilePage() {
                     size='small'
                     value={newUser.username}
                     onChange={(e)=>changeField(e, 'username')}
-                    disabled={!isEdit}
+                    disabled={true}
                     required
                 />
                 </div>
