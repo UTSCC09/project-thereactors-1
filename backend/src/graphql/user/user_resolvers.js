@@ -49,10 +49,10 @@ export const userMutationResolvers = {
         // If user is updating their password, hash it
         if (userInput.password) {
           bcrypt.genSalt(getConfig("passwordSaltRounds"), (err, salt) => {
-            bcrypt.hash(password, salt, (err, hash) => {
+            bcrypt.hash(userInput.password, salt, (err, hash) => {
               if (err) return res.status(500).json({ message: err });
               userInput.password = hash;
-              User.updateOne(query, userInput, (err, user) => {
+              User.findOneAndUpdate(query, userInput, { new: true }, (err, user) => {
                 if (err) return reject(err);
                 resolve(user);
               });
@@ -60,7 +60,7 @@ export const userMutationResolvers = {
           });
         }
         else {
-          User.updateOne(query, userInput, (err, user) => {
+          User.findOneAndUpdate(query, userInput, { new: true }, (err, user) => {
             if (err) return reject(err);
             resolve(user);
           });
