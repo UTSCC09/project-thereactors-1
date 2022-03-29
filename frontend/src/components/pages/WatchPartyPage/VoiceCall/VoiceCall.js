@@ -2,9 +2,9 @@ import './VoiceCall.scss';
 import React, { useEffect, useState } from "react";
 import { Button } from '@mui/material';
 import { getSocket } from 'components/utils/socket_utils';
+import { handleBreakpoints } from '@mui/system';
 import Peer from 'peerjs';
-
-
+import { Socket } from 'socket.io-client';
 const mediaConstraints = {audio: true, video: false }
 
 const iceServers = {
@@ -16,162 +16,120 @@ const iceServers = {
       { urls: 'stun:stun4.l.google.com:19302' },
     ],
   }
-let peer
-let localStream
-let remoteStream
-let isRoomCreator
-let rtcPeerConnection // Connection between the local device and the remote peer.
-
+let localStream;
+let peer;
 export default function VoiceCall() {
-  function getPeer() {
-    if(!peer) {
-      peer = new Peer({config: iceServers});
-    }
-    return peer;
-  }
-    function getRemoteStream() {
-      return remoteStream;
-    }
-    function getLocalStream() {
-      return localStream;
-    }
-    function getisRoomCreator() {
-      return isRoomCreator;
-    }
-    function setisRoomCreator(val) {
-      isRoomCreator = val;
-    }
-    function getrtcPeerConnection() {
-      return rtcPeerConnection;
-    }
-    function setrtcPeerConnection(val) {
-      rtcPeerConnection = val;
-    }    
-    async function joinRoom() {
-      await setLocalStream(mediaConstraints)
-      getSocket().emit('join-call');
-    }
-
-    function addLocalTracks(rtcPeerConnection) {
-      getLocalStream().getTracks().forEach((track) => {
-        rtcPeerConnection.addTrack(track, getLocalStream())
-      })
-    }
-    
-    async function createOffer(rtcPeerConnection) {
-      let sessionDescription
-      try {
-        sessionDescription = await rtcPeerConnection.createOffer()
-        rtcPeerConnection.setLocalDescription(sessionDescription)
-      } catch (error) {
-        console.error(error)
-      }
-    
-      getSocket().emit('webrtc-offer', {
-        type: 'webrtc_offer',
-        sdp: sessionDescription
-      })
-    }
-    
-    async function createAnswer(rtcPeerConnection) {
-      let sessionDescription
-      try {
-        sessionDescription = await rtcPeerConnection.createAnswer()
-        rtcPeerConnection.setLocalDescription(sessionDescription)
-      } catch (error) {
-        console.error(error)
-      }
-    
-      getSocket().emit('webrtc-answer', {
-        type: 'webrtc_answer',
-        sdp: sessionDescription,
-      })
-    }
-    
-    function setRemoteStream(event) {
-      remoteStream = event.stream
-      document.getElementById('audio').srcObject = remoteStream;
-    }
-    
-    function sendIceCandidate(event) {
-      if (event.candidate) {
-        getSocket().emit('webrtc-ice-candidate', {
-          label: event.candidate.sdpMLineIndex,
-          candidate: event.candidate.candidate,
-        })
-      }
-    }
-    async function setLocalStream(mediaConstraints) {
-      let stream;
-      let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      try {
-        stream = await getUserMedia(mediaConstraints)
-      } catch (error) {
-        console.error('Could not get user media', error)
-      }
-      localStream = stream
-    }
-    
-  useEffect(() => {          
-        getSocket().on('room-created', async () => {            
-          await setLocalStream(mediaConstraints)
-          setisRoomCreator(true);
-          });
-        getSocket().on('room-joined', async () => {          
-          await setLocalStream(mediaConstraints)
-          getSocket().emit('start-call')
+    const [userlist,setuserlist] = useState([]);
+    const [useridlist, setuseridlist] = useState([]);
+    const [isDisconnected,setIsDisconnected] = useState(true);
+    const [isInCall,setIsInCall] = useState(false);
+    const [isMuted,setIsMuted] = useState(false);
+    function getPeer() {
+      if(!peer || isDisconnected) {
+        // can add options here
+        peer = new Peer(undefined, {
+          path: '/peerjs',
+          host: 'localhost',
+          port: '3001',
+          config: iceServers,
         });
+        setIsDisconnected(false);
+        console.log("new peer")
+      }
+      return peer;
+    }
+    function handleNewJoiner(userid) {
+      connectToNewUser(userid,localStream );
+    }
 
-        getSocket().on('start-call', async () => {
-          if (getisRoomCreator()) {
-            console.log('Socket event callback: start_call')
-            setrtcPeerConnection(new RTCPeerConnection(iceServers))
+    function joinRoom() {
+      console.log("join-call")
+      getSocket().emit('join-call');
+      setIsInCall(true);
+      navigator.mediaDevices.getUserMedia(mediaConstraints).then((stream)=> {
+        localStream = stream;
+        answerCalls();
+      });
+    }
+    const answerCalls = () => {
+      // set up to handle webrtc call requests
+      getPeer().on('call',(call) => {
+        call.answer(localStream);
+        const audio = document.createElement('audio');
+        audio.id = call.peer;
+        // answer incoming stream
+        call.on('stream',(stream) => {
+          addAudioStream(audio, stream);
+        });
+      });
+      // set up to handle new user events
+      getSocket().on('voice-joiner',(userid) => {
+        handleNewJoiner(userid);
+      });
+    }
 
-            addLocalTracks(getrtcPeerConnection())
-            getrtcPeerConnection().ontrack = setRemoteStream
-            getrtcPeerConnection().onicecandidate = sendIceCandidate
-            await createOffer(getrtcPeerConnection())
-          }
-        })
-        
-        getSocket().on('webrtc-offer', async (event) => {          
-          
-          if (!getisRoomCreator()) {
-            console.log(!getisRoomCreator())
-            console.log('Socket event callback: webrtc_offer')
-            setrtcPeerConnection(new RTCPeerConnection(iceServers))
-            addLocalTracks(getrtcPeerConnection())
-            getrtcPeerConnection().ontrack = setRemoteStream
-            getrtcPeerConnection().onicecandidate = sendIceCandidate
-            getrtcPeerConnection().setRemoteDescription(new RTCSessionDescription(event))
-            await createAnswer(getrtcPeerConnection())
-          }
-        })
-        
-        getSocket().on('webrtc-answer', (event) => {          
-          console.log('Socket event callback: webrtc_answer')
-          getrtcPeerConnection().setRemoteDescription(new RTCSessionDescription(event)).catch((err) => {
-            console.log(err)
-          })
-        })
-        
-        getSocket().on('webrtc-ice-candidate', (event) => {
-          console.log('Socket event callback: webrtc_offer')
-          // ICE candidate configuration.
-          var candidate = new RTCIceCandidate({
-            sdpMLineIndex: event.label,
-            candidate: event.candidate,
-          })
-          getrtcPeerConnection().addIceCandidate(candidate)
-        })
+    const addAudioStream = (audio, stream) => {
+      audio.srcObject = stream;
+      audio.controls = 'controls';
+      audio.addEventListener("loadedmetadata",() => {
+        audio.play();
+        document.querySelector("#audiolists").append(audio);
+      });
+    }
 
-  }, []);
-  
-  return (
-      <div>
-          <audio id="audio" controls autoPlay></audio>
-          <Button onClick={joinRoom}>Join Call</Button>
+    // this function is called when there is a socket event to add a new user to the call
+    const connectToNewUser =  (userId) => {
+      // the client will call the new client 
+      const call =  getPeer().call(userId, localStream);
+      console.log("connecting to new user " + userId);
+      const audio = document.createElement('audio');
+      audio.id= userId;
+      call.on('stream', (stream) => {
+          addAudioStream(audio, stream);
+      });
+    };
+    // handle client side disconnects
+    const handleDisconnect = () => {
+      getPeer().on('disconnected', () => {
+        // disconnect and call join call
+      });
+    }
 
-      </div>
-  )
+    const muteAudio = () => {
+      setIsMuted(true);
+      localStream.getAudioTracks()[0].enabled = false;
+    }
+    const unmuteAudio = () => {
+      setIsMuted(false);
+      localStream.getAudioTracks()[0].enabled = true;
+    }
+    // 
+    const disconnectCall = () => {
+      setIsDisconnected(true);
+      setIsInCall(false);
+      getSocket().emit("leave-call");
+      getPeer().destroy();
+      // TODO remove current audio streams that are playing
+      setuserlist([]);
+      setuseridlist([]);
+    }
+    getPeer().on('open', (id)=> {
+      getSocket().emit("set-id",id);
+    })
+
+    getSocket().on('voice-userlist', (data) => {
+
+    });
+
+    return (
+        <div id="voicecall">
+            {!isInCall && <Button onClick={joinRoom}>Join Call</Button>}
+            {!isMuted && isInCall&& <Button onClick={muteAudio}>Mute microphone</Button>}
+            {isMuted &&isInCall && <Button onClick={unmuteAudio}>Unmute microphone</Button>}
+            {isInCall && <Button onClick={disconnectCall}>Leave Call</Button>}
+            <div id="audiolists">
+              {userlist.map((user)=> {<audio id={user} controls autoPlay></audio>})}
+            </div>  
+        </div>
+    )
 }

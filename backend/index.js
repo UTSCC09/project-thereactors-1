@@ -18,6 +18,8 @@ import { typeDefs } from './schemas';
 import { Server } from 'socket.io';
 import { setupSocketHandlers } from './socket_handlers';
 
+import {ExpressPeerServer, expressPeerServer} from 'peer';
+
 import { authUser, signJwt, verifyJwt, isUniqueUser } from './utils';
 import { User } from './db';
 
@@ -118,6 +120,8 @@ async function startServer() {
       methods: ["GET", "POST"]
     }
   });
+  const peerServer = ExpressPeerServer(httpServer);
+  app.use('/peerjs',peerServer);
   setupSocketHandlers(io);
   // for serving the frontend statically
   app.use(express.static(path.resolve(__dirname, './build')));

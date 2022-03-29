@@ -35,7 +35,13 @@ export function setupSocketHandlers(io) {
         console.log(socket.data.user + " signed in");
       }
     }
-
+    // set the peerjs id of the user
+    socket.on('set-id',(id)=> {
+        if (socket.data.user) {
+          socket.data.voiceid = id;
+          // console.log(socket.data.user + "'s id is " + socket.data.voiceid)
+        }
+    });
     socket.on("disconnecting", () => {
       console.log(socket.data.user + " disconnected");
       removeConnectedUser(
@@ -73,48 +79,17 @@ export function setupSocketHandlers(io) {
       checkUserInvited(socket.data.user, socket.data.current_party, (err, res) => {
         if (res) {
           console.log(socket.data.user + " joins call")
-          socket.join(socket.data.current_party+"call");
           socket.data.voice_party = socket.data.current_party+"call";
-          if (!io.sockets.adapter.rooms[socket.data.current_party+"call"]) {
-            io.sockets.adapter.rooms[socket.data.current_party+"call"] = 1;
-            console.log("room created")
-            socket.emit('room-created');
-          } else {
-            socket.emit('room-joined');
-            console.log("room joined")
-          }
+          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid)
+          socket.join(socket.data.current_party+"call");
+          console.log(socket.data.user + " joining with id " + socket.data.voiceid )
         }
       });
     });
-    socket.on('start-call',() => {
-      if(socket.data.voice_party){
-        console.log("start call " + socket.data.voice_party)
-        io.to(socket.data.voice_party).emit('start-call');
-      }
-    });
-    socket.on('webrtc-offer', (event) => {
-      if (socket.data.voice_party) {
-        console.log("webrtc offer "+ socket.data.user)
-        io.to(socket.data.voice_party).emit('webrtc-offer', event.sdp)
-      }
-    })
-    socket.on('webrtc-answer', (event) => {
-      if (socket.data.voice_party) {
-        console.log("webrtc answer " + socket.data.user)
-        // console.log(event.sdp)
-        io.to(socket.data.voice_party).emit('webrtc-answer', event.sdp)
-
-      }
-    })
-    socket.on('webrtc_ice_candidate', (event) => {
-      if (socket.data.voice_party) {
-        console.log("webrtc_ice_candidate " + socket.data.user)
-        // console.log(event.sdp)
-        io.to(socket.data.voice_party).emit('webrtc_ice_candidate', event)
-      }
-    })
-
-
+    socket.on("leave-call",() => {
+      socket.leave(socket.data.voice_party);
+      socket.data.voice_party = null;
+    } );
     socket.on("join-room", (roomdata) => {
       const roomName = validator.escape(roomdata.roomname);
       console.log(socket.data.user + " attempts to join " + roomName);
