@@ -141,7 +141,6 @@ export const signOut = (callback) => {
 export const getAvatar = (username, callback) => {
     axios.get(`${backendUrl}/api/${username}/avatar`, { responseType:"blob" })
         .then((res) => {
-            console.log(res);
             const reader = new FileReader();
             reader.readAsDataURL(res.data);
             reader.onloadend = () => {

@@ -9,6 +9,7 @@ import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
 import uuid from 'react-uuid';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import * as UserAPI from 'api/user';
 
 /*
     party_video_state 
@@ -84,9 +85,19 @@ export default function WatchPartyPage() {
         }
             
         getSocket().on('curr_users',(usernames)=> {
-            console.log(usernames);
-            setConnectedUsers(usernames);
+            let tempUsers = [];
+            usernames.forEach((name, index) => {
+                let temp = {username: name};
+                UserAPI.getAvatar(name, (avatar) => {
+                    temp.avatar = avatar;
+                    tempUsers.push(temp);
+                    if (index === usernames.length - 1) {
+                        setConnectedUsers(tempUsers);
+                    }
+                });
+            });       
         });
+
         getSocket().on('host',(host)=> {
             setHost(host);
         });
@@ -107,8 +118,18 @@ export default function WatchPartyPage() {
             handlePlayListChange(data);
         })
 
-        getSocket().on('user-left', (users) => {
-            setConnectedUsers(users);
+        getSocket().on('user-left', (usernames) => {
+            let tempUsers = [];
+            usernames.forEach((name, index) => {
+                let temp = {username: name};
+                UserAPI.getAvatar(name, (avatar) => {
+                    temp.avatar = avatar;
+                    tempUsers.push(temp);
+                    if (index === usernames.length - 1) {
+                        setConnectedUsers(tempUsers);
+                    }
+                });
+            });
         })
 
         getSocket().on('emote', (data) => {
@@ -243,8 +264,9 @@ export default function WatchPartyPage() {
     }
 
     const getUsersRightOrder = (users) => {
-        let temp = users.filter(user => user !== host);
-        return [host].concat(temp);
+        let rest = users.filter(user => user.username !== host);
+        let tempHost = {username: host, avatar: users[users.findIndex(user => user.username === host)].avatar};
+        return [tempHost].concat(rest);
     }
 
     const displayEmote = (emote) => {
@@ -274,8 +296,8 @@ export default function WatchPartyPage() {
             emoteEl.style.transition = 'opacity 2.5s';
             emoteEl.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('emotes').removeChild(emoteEl);
-            }, 2600);
+                document.getElementById('video-player-wrapper').removeChild(emoteEl);
+            }, 2500);
         }, 700);
     }
 
@@ -303,13 +325,19 @@ export default function WatchPartyPage() {
         }
     }
 
+    const getAvatar = (username) => {
+        return connectedUsers[connectedUsers.findIndex(user => user.username === username)].avatar;
+    }
+
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                <SidePanel 
-                    playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
-                    usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
-                />
+                {connectedUsers?.length > 0 &&
+                    <SidePanel 
+                        playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
+                        usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
+                    />
+                }
             </div>
             <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
@@ -355,8 +383,12 @@ export default function WatchPartyPage() {
                 <div className='desc-row'>
                     <div className='host'>
                         <span style={{marginRight: 4}}>Host:</span>
-                        <Avatar  style={{marginRight: 4}} title={host} className='host-icon' />
-                        <p >{host}</p>
+                        {connectedUsers?.length > 0 &&
+                            <>
+                            <Avatar src={getAvatar(host)} style={{marginRight: 4}} title={host} className='host-icon' />
+                            <p>{host}</p>
+                            </>
+                        }
                     </div>
                     {authAPI.getUser() === host &&
                         <div className='addToPlaylist-wrapper'>
@@ -376,7 +408,9 @@ export default function WatchPartyPage() {
             </div>
             <div className='col3'>
                 <div className='chat-box-wrapper'>
-                    <ChatBox socket={getSocket()} height={videoHeight}></ChatBox>
+                    {connectedUsers?.length > 0 &&
+                        <ChatBox socket={getSocket()} height={videoHeight} users={connectedUsers}></ChatBox>
+                    }
                 </div>
                 <div className='emote-list-toggle-wrapper'>
                 <div className='emote-list-wrapper'>
