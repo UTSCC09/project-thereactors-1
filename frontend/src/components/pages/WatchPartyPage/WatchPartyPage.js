@@ -227,12 +227,14 @@ export default function WatchPartyPage() {
         setPlaylist(data.playlist);
         setPlaylistIndex(data.current_vid);
 
-        if(data.current_vid < 0 || data.current_vid >= data.playlist.length) {
+        if (data.current_vid < 0 || data.current_vid >= data.playlist.length) {
             setVideoId('');
         } else {
-            if( videoId === ''  ||data.playlist[data.current_vid] !== videoId) {
+            if (videoId === ''  || data.playlist[data.current_vid].link !== videoId) {
                 setVideoId(data.playlist[data.current_vid].link);
-                playerRef.current.seekTo(0);
+                if (playerRefValid) {
+                    playerRef.current.seekTo(0);
+                }
             }
         }
     }
