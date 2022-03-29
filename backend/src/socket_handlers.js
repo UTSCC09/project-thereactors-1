@@ -71,6 +71,7 @@ export function setupSocketHandlers(io) {
     });
 
     socket.on("join-room", (roomdata) => {
+      try {
       const roomName = validator.escape(roomdata.roomname);
       console.log(socket.data.user + " attempts to join " + roomName);
       console.log("current party " + socket.data.current_party);
@@ -115,6 +116,9 @@ export function setupSocketHandlers(io) {
           }
         });
       }
+    }catch(err) {
+      console.log(err);
+    }
     });
 
     socket.on("send", (content) => {
@@ -233,6 +237,29 @@ export function setupSocketHandlers(io) {
       }
     });
 
+    // VOICE CALL FUNCTIONALITY
+    // set the peerjs id of the user
+    socket.on('set-id',(id)=> {
+      if (socket.data.user) {
+        socket.data.voiceid = id;
+        // console.log(socket.data.user + "'s id is " + socket.data.voiceid)
+      }
+    });
+    socket.on("join-call", () => {
+      checkUserInvited(socket.data.user, socket.data.current_party, (err, res) => {
+        if (res) {
+          console.log(socket.data.user + " joins call")
+          socket.data.voice_party = socket.data.current_party+"call";
+          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid)
+          socket.join(socket.data.current_party+"call");
+          console.log(socket.data.user + " joining with id " + socket.data.voiceid )
+        }
+      });
+    });
+    socket.on("leave-call",() => {
+      socket.leave(socket.data.voice_party);
+      socket.data.voice_party = null;
+    } );
 
   });
 }

@@ -1,5 +1,6 @@
 import { getConfig } from 'environments';
 import axios from 'axios';
+import defaultProfileImg from './assets/default-profile.png';
 
 const backendUrl = getConfig("backendUrl");
 const graphqlUrl = getConfig("graphqlUrl");
@@ -25,8 +26,12 @@ export const getUsers = (callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.getUsers);
-    });
+        callback(null, result.data.getUsers);
+    })
+    .catch((err) => {
+        console.log(err)
+        callback(err, null);
+    })
 }
 
 export const getUser = (id, callback) => {
@@ -42,6 +47,35 @@ export const getUser = (id, callback) => {
     const variables = {
         id
     }
+    fetch(graphqlUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(null, result.data.getUsers);
+    })
+    .catch((err) => {
+        console.log(err)
+        callback(err, null);
+    })
+}
+
+export const getUserByUsername = (username,callback) => {
+    const query = `
+        query($username: String) {
+            getUsers(username: $username) {
+                _id
+                username
+                email
+            }
+        }
+    `;
+    const variables = { username };
     fetch(graphqlUrl, {
         method: "POST",
         headers: {
@@ -104,14 +138,42 @@ export const signOut = (callback) => {
 export const getAvatar = (username, callback) => {
     axios.get(`${backendUrl}/api/${username}/avatar`, { responseType:"blob" })
         .then((res) => {
-            if (res.status === 404) {
-                callback("https://180dc.org/wp-content/uploads/2016/08/default-profile.png");
-            } else {
-                const reader = new FileReader();
-                reader.readAsDataURL(res.data);
-                reader.onloadend = () => {
-                    callback(reader.result);
-                };
+            console.log(res);
+            const reader = new FileReader();
+            reader.readAsDataURL(res.data);
+            reader.onloadend = () => {
+                callback(reader.result);
+            };
+        })
+        .catch((err) => {
+            if (err.response.status === 404) {
+                callback(defaultProfileImg);
             }
-        });
+        })
+}
+
+export const updateUser = (username, user, callback) => {
+    const query = `
+        mutation($username: String, $user: UserUpdateInput) {
+            updateUser(username: $username, user: $user) {
+                _id
+                firstName
+                lastName
+                email
+            }
+        }
+    `;
+    const variables = { username, user };
+    fetch(graphqlUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(result.errors, result.data.updateUser);
+    });
 }
