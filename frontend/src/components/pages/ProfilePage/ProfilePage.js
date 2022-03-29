@@ -11,18 +11,14 @@ import { cloneDeep } from 'lodash';
 import * as UserAPI from 'api/user';
 import * as AuthAPI from 'auth/auth_utils.js';
 
-const defaultUser = {
-    username: "test",
-    email: "test@mail.com",
-    password: "",
-}
-
 export default function ProfilePage() {
     const [theme, setTheme] = useState('');
     const [user, setUser] = useState({});
-    const [newUser, setNewUser] = useState(defaultUser);
+    const [newUser, setNewUser] = useState({});
+    const [originalAvatar, setOriginalAvatar] = useState(null);
     const [avatar, setAvatar] = useState(null);
-    const [newAvatar, setNewAvatar] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState("");
+    const [avatarChanged, setAvatarChanged] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangePassword, setIsChangePassword] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -36,13 +32,19 @@ export default function ProfilePage() {
         });
 
         // API call to get user data
-
-        setUser(defaultUser); // replace defaultUser with api data
-        setNewUser(defaultUser); // replace defaultUser with api data
+        UserAPI.getUserByUsername(AuthAPI.getUser(), (err, res) => {
+            if (err) { console.log(err) }
+            if (!err) {
+                let temp = res[0];
+                temp.password = "";
+                setUser(temp);
+                setNewUser(temp);
+            }
+        })
 
         UserAPI.getAvatar(AuthAPI.getUser(), (avatar) => {
-            setAvatar(avatar);
-            setNewAvatar(avatar);
+            setAvatarPreview(avatar);
+            setOriginalAvatar(avatar);
         })
     }, []);
 
@@ -62,10 +64,12 @@ export default function ProfilePage() {
 
     const onAvatarChange = (e) => {
         const avatar = e.target.files[0];
+        setAvatar(avatar);
+        setAvatarChanged(true);
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
         reader.onloadend = () => {
-            setNewAvatar(reader.result);
+            setAvatarPreview(reader.result);
         };
     }
 
@@ -78,7 +82,7 @@ export default function ProfilePage() {
                 document.getElementById('warning').style.display = 'none';
             }, 5000)
         }
-        else if (newUser.password !== confirmPassword) {
+        else if (isChangePassword && newUser.password !== confirmPassword) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Password doesn't match!";
             setTimeout(() => {
@@ -86,19 +90,30 @@ export default function ProfilePage() {
             }, 5000)
         }
         else {
-            // API call to replace curr user data with the new data
-
-            setUser(newUser);
-            setAvatar(newAvatar);
-            setIsEdit(false);
-            setIsChangePassword(false);
-            setConfirmPassword('');
+            // API call to update user data
+            console.log(newUser)
+            let reqBody = {email: newUser.email, password: newUser.password};
+            UserAPI.updateUser(newUser.username, reqBody, (err, res) => {
+                if (err) {
+                    console.log(err)
+                }
+                else if (avatarChanged) {
+                    console.log(avatar);
+                    UserAPI.updateAvatar(avatar, (err, res) => {
+                        if (err) console.log(err);
+                        else window.location.reload(false);
+                    });
+                }
+                else {
+                    window.location.reload(false);
+                }
+            });
         }
     }
 
     const handleCancel = () => {
         setNewUser(user);
-        setNewAvatar(avatar);
+        setAvatarPreview(originalAvatar);
         setIsEdit(false);
         setIsChangePassword(false);
         setConfirmPassword('');
@@ -125,7 +140,7 @@ export default function ProfilePage() {
                     <label htmlFor="contained-button-file">
                         <IconButton component='span' className='pic-container'>
                         <Avatar
-                            src={newAvatar}
+                            src={avatarPreview}
                             className={isEdit ? 'avatar-edit' : 'avatar' }
                         />
                         {isEdit &&
@@ -143,7 +158,7 @@ export default function ProfilePage() {
                     size='small'
                     value={newUser.username}
                     onChange={(e)=>changeField(e, 'username')}
-                    disabled={!isEdit}
+                    disabled={true}
                     required
                 />
                 </div>
@@ -197,7 +212,7 @@ export default function ProfilePage() {
                 </div>
                 {isEdit &&
                 <>
-                <Button type='submit' className='btn' variant='outlined' size='small' 
+                <Button type='submit' className='btn' variant='outlined' size='small'
                     style={{marginRight: 10}}>Save</Button>
                 <Button className='btn' variant='outlined' size='small'
                     onClick={()=>handleCancel()}>Cancel</Button>

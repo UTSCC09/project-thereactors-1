@@ -29,7 +29,6 @@ export const getUsers = (callback) => {
         callback(null, result.data.getUsers);
     })
     .catch((err) => {
-        console.log(err)
         callback(err, null);
     })
 }
@@ -49,6 +48,7 @@ export const getUser = (id, callback) => {
     }
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -60,12 +60,11 @@ export const getUser = (id, callback) => {
         callback(null, result.data.getUsers);
     })
     .catch((err) => {
-        console.log(err)
         callback(err, null);
     })
 }
 
-export const getUserByUsername = (username,callback) => {
+export const getUserByUsername = (username, callback) => {
     const query = `
         query($username: String) {
             getUsers(username: $username) {
@@ -78,6 +77,7 @@ export const getUserByUsername = (username,callback) => {
     const variables = { username };
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -86,8 +86,11 @@ export const getUserByUsername = (username,callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.getUsers);
-    });
+        callback(null, result.data.getUsers);
+    })
+    .catch((err) => {
+        callback(err, null);
+    })
 }
 
 export const addUser = (user, avatar, callback) => {
@@ -138,7 +141,6 @@ export const signOut = (callback) => {
 export const getAvatar = (username, callback) => {
     axios.get(`${backendUrl}/api/${username}/avatar`, { responseType:"blob" })
         .then((res) => {
-            console.log(res);
             const reader = new FileReader();
             reader.readAsDataURL(res.data);
             reader.onloadend = () => {
@@ -166,6 +168,7 @@ export const updateUser = (username, user, callback) => {
     const variables = { username, user };
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -174,6 +177,22 @@ export const updateUser = (username, user, callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.updateUser);
-    });
+        callback(null, result.data.updateUser);
+    })
+    .catch((err) => {
+        callback(err, null);
+    })
+}
+
+export const updateAvatar = (avatar, callback) => {
+    // Add avatar
+    const formData = new FormData();
+    formData.append('avatar', avatar, avatar.name);
+    axios.post(`${backendUrl}/api/avatar`, formData, { withCredentials: true })
+        .then((res) => {
+            callback(null, res.data);
+        })
+        .catch((err) => {
+            callback(err.response.data, null)
+        });
 }

@@ -15,7 +15,7 @@ export const userQueryResolvers = {
       }
       // Find by username
       else if (args.username) {
-        User.findOne({ username }, (err, user) => {
+        User.findOne({ username: args.username }, (err, user) => {
           if(err) reject(err);
           else resolve([user]);
         });
