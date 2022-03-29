@@ -132,10 +132,12 @@ async function startServer() {
             if (err) return res.status(500).json({ message: err });
             user.avatar = avatar;
             user.save();
+            return res.json({ success: true });
           });
         } else {
           user.avatar = avatar;
           user.save();
+          return res.json({ success: true })
         }
       });
     } else {
@@ -148,7 +150,7 @@ async function startServer() {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      const token = req.cookies['token'] || ''
+      const token = req.cookies['token'] || '';
       const { valid, decoded } = verifyJwt(token);
       if (valid) {
         return { userData: decoded };
