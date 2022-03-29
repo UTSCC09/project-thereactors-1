@@ -15,8 +15,10 @@ export default function ProfilePage() {
     const [theme, setTheme] = useState('');
     const [user, setUser] = useState({});
     const [newUser, setNewUser] = useState({});
+    const [originalAvatar, setOriginalAvatar] = useState(null);
     const [avatar, setAvatar] = useState(null);
-    const [newAvatar, setNewAvatar] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState("");
+    const [avatarChanged, setAvatarChanged] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangePassword, setIsChangePassword] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -41,8 +43,8 @@ export default function ProfilePage() {
         })
 
         UserAPI.getAvatar(AuthAPI.getUser(), (avatar) => {
-            setAvatar(avatar);
-            setNewAvatar(avatar);
+            setAvatarPreview(avatar);
+            setOriginalAvatar(avatar);
         })
     }, []);
 
@@ -62,10 +64,12 @@ export default function ProfilePage() {
 
     const onAvatarChange = (e) => {
         const avatar = e.target.files[0];
+        setAvatar(avatar);
+        setAvatarChanged(true);
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
         reader.onloadend = () => {
-            setNewAvatar(reader.result);
+            setAvatarPreview(reader.result);
         };
     }
 
@@ -90,17 +94,26 @@ export default function ProfilePage() {
             console.log(newUser)
             let reqBody = {email: newUser.email, password: newUser.password};
             UserAPI.updateUser(newUser.username, reqBody, (err, res) => {
-                if (err) { console.log(err) }
-                if (!err) {
+                if (err) {
+                    console.log(err)
+                }
+                else if (avatarChanged) {
+                    console.log(avatar);
+                    UserAPI.updateAvatar(avatar, (err, res) => {
+                        if (err) console.log(err);
+                        else window.location.reload(false);
+                    });
+                }
+                else {
                     window.location.reload(false);
                 }
-            })
+            });
         }
     }
 
     const handleCancel = () => {
         setNewUser(user);
-        setNewAvatar(avatar);
+        setOriginalAvatar(avatar);
         setIsEdit(false);
         setIsChangePassword(false);
         setConfirmPassword('');
@@ -127,7 +140,7 @@ export default function ProfilePage() {
                     <label htmlFor="contained-button-file">
                         <IconButton component='span' className='pic-container'>
                         <Avatar
-                            src={newAvatar}
+                            src={avatarPreview}
                             className={isEdit ? 'avatar-edit' : 'avatar' }
                         />
                         {isEdit &&
@@ -199,7 +212,7 @@ export default function ProfilePage() {
                 </div>
                 {isEdit &&
                 <>
-                <Button type='submit' className='btn' variant='outlined' size='small' 
+                <Button type='submit' className='btn' variant='outlined' size='small'
                     style={{marginRight: 10}}>Save</Button>
                 <Button className='btn' variant='outlined' size='small'
                     onClick={()=>handleCancel()}>Cancel</Button>

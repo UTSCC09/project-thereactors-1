@@ -184,3 +184,16 @@ export const updateUser = (username, user, callback) => {
         callback(err, null);
     })
 }
+
+export const updateAvatar = (avatar, callback) => {
+    // Add avatar
+    const formData = new FormData();
+    formData.append('avatar', avatar, avatar.name);
+    axios.post(`${backendUrl}/api/avatar`, formData, { withCredentials: true })
+        .then((res) => {
+            callback(null, res.data);
+        })
+        .catch((err) => {
+            callback(err.response.data, null)
+        });
+}
