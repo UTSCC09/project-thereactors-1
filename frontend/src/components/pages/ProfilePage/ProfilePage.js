@@ -113,7 +113,7 @@ export default function ProfilePage() {
 
     const handleCancel = () => {
         setNewUser(user);
-        setOriginalAvatar(avatar);
+        setAvatarPreview(originalAvatar);
         setIsEdit(false);
         setIsChangePassword(false);
         setConfirmPassword('');
