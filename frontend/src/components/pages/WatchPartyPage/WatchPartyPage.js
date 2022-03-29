@@ -163,11 +163,17 @@ export default function WatchPartyPage() {
         }
     }
 
+    const [firstLoad, setFirstLoad] = useState(true);
     const handleOnReady = () => {
         console.log("ready");
         setPlayerRefValid(true);
         setVideoReady(true);
         console.log(playerRefValid);
+        if (firstLoad) {
+            setFirstLoad(false);
+        } else {
+            playerRef.current.seekTo(0);
+        }
         // setPlaying(party_video_state.video_is_playing);
         // playerRef.current.seekTo(party_video_state.playedSeconds);
         console.log("ready done");
@@ -232,9 +238,6 @@ export default function WatchPartyPage() {
         } else {
             if (videoId === ''  || data.playlist[data.current_vid].link !== videoId) {
                 setVideoId(data.playlist[data.current_vid].link);
-                if (playerRefValid) {
-                    playerRef.current.seekTo(0);
-                }
             }
         }
     }
