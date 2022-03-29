@@ -76,6 +76,7 @@ export const getUserByUsername = (username, callback) => {
     const variables = { username };
     fetch(graphqlUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
