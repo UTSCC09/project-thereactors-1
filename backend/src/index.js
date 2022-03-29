@@ -22,6 +22,9 @@ import { typeDefs } from './schemas';
 import { Server } from 'socket.io';
 import { setupSocketHandlers } from './socket_handlers';
 
+// peer
+import {ExpressPeerServer, expressPeerServer} from 'peer';
+
 import { authUser, signJwt, verifyJwt, isUniqueUser } from './utils';
 import { User } from './db';
 
@@ -206,6 +209,10 @@ async function startServer() {
     }
   });
   setupSocketHandlers(io);
+
+  // set up peer server to handle webrtc for audio calls
+  const peerServer = ExpressPeerServer(httpServer);
+  app.use('/peerjs',peerServer);
 
   // For serving the frontend statically, in the production environment
   if (process.env.NODE_ENV === "production") {
