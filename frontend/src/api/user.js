@@ -65,6 +65,31 @@ export const getUser = (id, callback) => {
     })
 }
 
+export const getUserByUsername = (username) => {
+    const query = `
+        query($username: String) {
+            getUsers(username: $username) {
+                _id
+                username
+                email
+            }
+        }
+    `;
+    const variables = { username };
+    fetch(graphqlUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(result.errors, result.data.getUsers);
+    });
+}
+
 export const addUser = (user, avatar, callback) => {
     // Copy the fields into form data
     const formData = new FormData();
@@ -125,4 +150,30 @@ export const getAvatar = (username, callback) => {
                 callback(defaultProfileImg);
             }
         })
+}
+
+export const updateUser = (username, user, callback) => {
+    const query = `
+        mutation($username: String, $user: UserUpdateInput) {
+            updateUser(username: $username, user: $user) {
+                _id
+                firstName
+                lastName
+                email
+            }
+        }
+    `;
+    const variables = { username, user };
+    fetch(graphqlUrl, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        callback(result.errors, result.data.updateUser);
+    });
 }
