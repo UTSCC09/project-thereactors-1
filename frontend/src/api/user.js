@@ -29,7 +29,6 @@ export const getUsers = (callback) => {
         callback(null, result.data.getUsers);
     })
     .catch((err) => {
-        console.log(err)
         callback(err, null);
     })
 }
@@ -60,12 +59,11 @@ export const getUser = (id, callback) => {
         callback(null, result.data.getUsers);
     })
     .catch((err) => {
-        console.log(err)
         callback(err, null);
     })
 }
 
-export const getUserByUsername = (username) => {
+export const getUserByUsername = (username, callback) => {
     const query = `
         query($username: String) {
             getUsers(username: $username) {
@@ -86,8 +84,11 @@ export const getUserByUsername = (username) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.getUsers);
-    });
+        callback(null, result.data.getUsers);
+    })
+    .catch((err) => {
+        callback(err, null);
+    })
 }
 
 export const addUser = (user, avatar, callback) => {
@@ -174,6 +175,9 @@ export const updateUser = (username, user, callback) => {
     })
     .then((response) => response.json())
     .then((result) => {
-        callback(result.errors, result.data.updateUser);
-    });
+        callback(null, result.data.updateUser);
+    })
+    .catch((err) => {
+        callback(err, null);
+    })
 }

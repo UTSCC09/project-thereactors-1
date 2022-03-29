@@ -36,9 +36,16 @@ export default function ProfilePage() {
         });
 
         // API call to get user data
-
-        setUser(defaultUser); // replace defaultUser with api data
-        setNewUser(defaultUser); // replace defaultUser with api data
+        UserAPI.getUserByUsername(AuthAPI.getUser(), (err, res) => {
+            if (err) {
+                console.log('err', err)
+            }
+            if (!err) {
+                console.log(res);
+                setUser(defaultUser); // replace defaultUser with api data
+                setNewUser(defaultUser); // replace defaultUser with api data
+            }
+        })
 
         UserAPI.getAvatar(AuthAPI.getUser(), (avatar) => {
             setAvatar(avatar);
@@ -86,7 +93,7 @@ export default function ProfilePage() {
             }, 5000)
         }
         else {
-            // API call to replace curr user data with the new data
+            // API call to update user data
 
             setUser(newUser);
             setAvatar(newAvatar);
