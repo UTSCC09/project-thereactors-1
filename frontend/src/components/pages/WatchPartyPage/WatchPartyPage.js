@@ -4,12 +4,13 @@ import ReactPlayer from 'react-player';
 import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
 import * as authAPI from 'auth/auth_utils.js';
-import { getSocket } from 'components/utils/socket_utils';
+import { getSocket, reconnectToSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
 import uuid from 'react-uuid';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-
+import { useHistory } from 'react-router-dom'
+import VoiceCall from './VoiceCall/VoiceCall';
 /*
     party_video_state 
         playedSeconds
@@ -17,10 +18,9 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 
 */
-
 export default function WatchPartyPage() {
     // these are react-player states
-
+    const history = useHistory() 
     const [videoId, setVideoId] = useState('');
     const [tempVideoId, setTempVideoId] = useState('');
     const [tempVideoId2, setTempVideoId2] = useState('');
@@ -49,7 +49,11 @@ export default function WatchPartyPage() {
         '2734','1f4a3'
     ];
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
-    
+    useEffect(() => {
+        return history.listen((location) => { 
+           reconnectToSocket();
+        }) 
+     },[history]) ;
     useEffect(() => {
         if (localStorage.getItem('theme')) {
             setTheme(localStorage.getItem('theme'));
@@ -82,7 +86,10 @@ export default function WatchPartyPage() {
         } else {
             window.location.href = '/join';
         }
-            
+        getSocket().on('connect', () => {
+            if (authAPI.signedIn())
+                getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+        });
         getSocket().on('curr_users',(usernames)=> {
             console.log(usernames);
             setConnectedUsers(usernames);
@@ -390,6 +397,9 @@ export default function WatchPartyPage() {
                     <div className='emote-text'>emote</div>
                 </Button>
                 </div>
+            </div>
+            <div className='col4'>
+                <VoiceCall />
             </div>
             <div className={theme === 'dark' ? 'padding-col-dark' : 'padding-col'}></div>
         </div>

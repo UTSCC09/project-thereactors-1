@@ -65,7 +65,7 @@ export const getUser = (id, callback) => {
     })
 }
 
-export const getUserByUsername = (username) => {
+export const getUserByUsername = (username,callback) => {
     const query = `
         query($username: String) {
             getUsers(username: $username) {
