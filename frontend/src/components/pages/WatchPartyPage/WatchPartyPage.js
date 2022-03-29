@@ -86,7 +86,7 @@ export default function WatchPartyPage() {
         } else {
             window.location.href = '/join';
         }
-        getSocket().on('connect', () => {
+        getSocket().on('connection', () => {
             if (authAPI.signedIn())
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         });
