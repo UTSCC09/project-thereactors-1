@@ -14,10 +14,10 @@ import * as AuthAPI from 'auth/auth_utils.js';
 export default function ProfilePage() {
     const [theme, setTheme] = useState('');
     const [user, setUser] = useState({});
-    const [newUser, setNewUser] = useState({});
+    const [newUser, setNewUser] = useState({username:"", email:"", password:""});
     const [originalAvatar, setOriginalAvatar] = useState(null);
     const [avatar, setAvatar] = useState(null);
-    const [avatarPreview, setAvatarPreview] = useState("");
+    const [avatarPreview, setAvatarPreview] = useState(null);
     const [avatarChanged, setAvatarChanged] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangePassword, setIsChangePassword] = useState(false);
