@@ -2,9 +2,10 @@ import './VoiceCall.scss';
 import React, { useEffect, useState } from "react";
 import { Button } from '@mui/material';
 import { getSocket } from 'components/utils/socket_utils';
-import { handleBreakpoints } from '@mui/system';
 import Peer from 'peerjs';
-import { Socket } from 'socket.io-client';
+import { useHistory } from 'react-router-dom'
+import { UserAudio } from './UserAudio';
+
 const mediaConstraints = {audio: true, video: false }
 // TODO  audio analyzer on the streams to have a list of currently talking users
 const iceServers = {
@@ -16,17 +17,43 @@ const iceServers = {
       { urls: 'stun:stun4.l.google.com:19302' },
     ],
   }
-let localStream;
 let peer;
+let localStream;
 export default function VoiceCall() {
-  const [userlist,setuserlist] = useState([]); // userlist =  [{username: string, id: string}]
-  const [streamlist, setStreamList] = useState([]);
+  // const [userlist,setuserlist] = useState([]); // userlist =  [{username: string, id: string}]
+  let userlist = [];
+  const setuserlist = (data) => {
+    userlist = data;
+  }
+  const adduserlist = (data) => {
+    // data.filter(obj => obj.)
+  }
+  const removefromuserlist = (data) => {
+
+  }
   const [isDisconnected,setIsDisconnected] = useState(true);
   const [isInCall,setIsInCall] = useState(false);
   const [isMuted,setIsMuted] = useState(false);
+  const [audiolist, setaudiolist] = useState([]);
+  const history = useHistory() 
+  useEffect(() => {
+    return history.listen((location) => { 
+       disconnectCall();
+    }) 
+ },[history]) ;
 
-  getSocket().on('voice-userlist', (data) => {
+ useEffect(() => {
+  console.log(audiolist);
+ },[audiolist])
+
+  getSocket().on('voice-joiner', (id,data) => {
     
+    if(!id) {
+      removefromuserlist(data)
+      setaudiolist(userlist)
+    } else {
+      adduserlist(data);
+    }
   });
 
   function getPeer() {
@@ -39,7 +66,7 @@ export default function VoiceCall() {
         config: iceServers,
       });
       setIsDisconnected(false);
-      console.log("new peer")
+      console.log("new peer connection")
     }
     return peer;
   }
@@ -48,9 +75,10 @@ export default function VoiceCall() {
   }
 
   function joinRoom() {
-    console.log("join-call")
+    console.log("attempt to join-call")
     getSocket().emit('join-call');
     setIsInCall(true);
+    getSocket().on()
     navigator.mediaDevices.getUserMedia(mediaConstraints).then((stream)=> {
       localStream = stream;
       answerCalls();
@@ -61,18 +89,16 @@ export default function VoiceCall() {
     getPeer().on('call',(call) => {
       console.log("received call");
       call.answer(localStream);
-      const audio = document.createElement('audio');
-      audio.id = call.peer;
       // answer incoming stream
       call.on('stream',(stream) => {
         console.log("received stream from call")
-        console.log(stream)
-        addAudioStream(audio, stream);
+        handleGetStream(stream, call.peer);
       });
     });
     // set up to handle new user events
     getSocket().on('voice-joiner',(userid) => {
-      handleNewJoiner(userid);
+      if(userid)
+        handleNewJoiner(userid);
     });
   }
 
@@ -84,25 +110,30 @@ export default function VoiceCall() {
       document.querySelector("#audiolists").append(audio);
     });
   }
-
+  const handleGetStream = (stream, userid) => {
+    // const audio = document.createElement('audio');
+    // audio.id= userid;
+    // addAudioStream(audio, stream);
+    let index = userlist.findIndex((obj=> obj.userid === userid));
+    userlist[index].stream = stream;
+    let index2 = userlist.findIndex((obj=> obj.userid === getPeer()._id))
+    userlist[index2].stream = localStream;
+    setaudiolist(userlist);
+  } 
   // this function is called when there is a socket event to add a new user to the call
-  const connectToNewUser =  (userId) => {
+  const connectToNewUser = (userId) => {
+    // no self calling
+    if(userId === getPeer()._id) {
+      return;
+    }
     // the client will call the new client 
-    const call =  getPeer().call(userId, localStream);
+    const call = getPeer().call(userId, localStream);
     console.log("connecting to new user " + userId);
-    const audio = document.createElement('audio');
-    audio.id= userId;
     call.on('stream', (stream) => {
-      console.log("received stream");
-      addAudioStream(audio, stream);
+      console.log("received stream from callee");
+      handleGetStream(stream,userId);
     });
   };
-  // handle client side disconnects
-  // const handleDisconnect = () => {
-  //   getPeer().on('disconnected', () => {
-  //     // disconnect and call join call
-  //   });
-  // }
 
   const muteAudio = () => {
     setIsMuted(true);
@@ -118,8 +149,17 @@ export default function VoiceCall() {
     setIsInCall(false);
     getSocket().emit("leave-call");
     getPeer().destroy();
+    if(localStream) {
+      localStream.getTracks().forEach((track)=> {
+        track.stop();
+      })
+      localStream = null;
+    }
+    
     // TODO remove current audio streams that are playing
+    setIsMuted(false);
     setuserlist([]);
+    setaudiolist([]);
   }
   getPeer().on('open', (id)=> {
     getSocket().emit("set-id",id);
@@ -133,7 +173,7 @@ export default function VoiceCall() {
           {isMuted &&isInCall && <Button onClick={unmuteAudio}>Unmute microphone</Button>}
           {isInCall && <Button onClick={disconnectCall}>Leave Call</Button>}
           <div id="audiolists">
-            {userlist.map((user)=> {<audio id={user} controls autoPlay></audio>})}
+            {audiolist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
           </div>  
       </div>
   )

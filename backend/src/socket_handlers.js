@@ -248,16 +248,47 @@ export function setupSocketHandlers(io) {
     socket.on("join-call", () => {
       checkUserInvited(socket.data.user, socket.data.current_party, (err, res) => {
         if (res) {
-          console.log(socket.data.user + " joins call")
           socket.data.voice_party = socket.data.current_party+"call";
-          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid)
+          if (!io.sockets.adapter.rooms[socket.data.voice_party]) {
+            io.sockets.adapter.rooms[socket.data.voice_party] = [];
+          }
+          // check if user is in the call already
+          let curr_user = io.sockets.adapter.rooms[socket.data.voice_party].find(x=>x.user === socket.data.user);
+          if(curr_user && curr_user.userid === socket.data.voiceid) {
+            return;
+          }
+          // add user to the list
+          if(!curr_user) {
+            curr_user = {user: socket.data.user, userid:socket.data.voiceid, stream:""};
+            io.sockets.adapter.rooms[socket.data.voice_party].push(curr_user);
+          } else {
+          // update userid of curr_user
+            let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+            curr_user = {user: socket.data.user, userid:socket.data.voiceid, stream:""};
+            io.sockets.adapter.rooms[socket.data.voice_party][i] = curr_user;
+          }
+          console.log(io.sockets.adapter.rooms[socket.data.voice_party]);
+          // send user the current usernames in the call
           socket.join(socket.data.current_party+"call");
+          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid,io.sockets.adapter.rooms[socket.data.voice_party]);
           console.log(socket.data.user + " joining with id " + socket.data.voiceid )
+
         }
       });
     });
     socket.on("leave-call",() => {
-      socket.leave(socket.data.voice_party);
+      if(socket.data.voice_party)
+        socket.leave(socket.data.voice_party);
+      // notify others of the change in users in the call
+      if(io.sockets.adapter.rooms[socket.data.voice_party]) {
+        let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+        // remove from the list of connected users
+        if (i > -1) {
+          io.sockets.adapter.rooms[socket.data.voice_party].splice(i, 1); 
+        }
+        io.to(socket.data.voice_party).emit('voice-joiner', null,io.sockets.adapter.rooms[socket.data.voice_party]);
+  
+      }
       socket.data.voice_party = null;
     } );
 
