@@ -50,6 +50,7 @@ export default function WatchPartyPage() {
         '2734','1f4a3'
     ];
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
+
     useEffect(() => {
         return history.listen((location) => { 
            reconnectToSocket();
@@ -125,14 +126,17 @@ export default function WatchPartyPage() {
             handlePlayListChange(data);
         })
 
-        getSocket().on('user-left', (usernames) => {
+        getSocket().on('user-left', (data) => {
+            if (data.host) {
+                setHost(data.host);
+            }
             let tempUsers = [];
-            usernames.forEach((name, index) => {
+            data.users.forEach((name, index) => {
                 let temp = {username: name};
                 UserAPI.getAvatar(name, (avatar) => {
                     temp.avatar = avatar;
                     tempUsers.push(temp);
-                    if (index === usernames.length - 1) {
+                    if (index === data.users.length - 1) {
                         setConnectedUsers(tempUsers);
                     }
                 });
@@ -344,7 +348,7 @@ export default function WatchPartyPage() {
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                {connectedUsers?.length > 0 &&
+                {connectedUsers?.length > 0 && host &&
                     <SidePanel 
                         playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
                         usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
@@ -396,7 +400,7 @@ export default function WatchPartyPage() {
                 <div className='desc-row'>
                     <div className='host'>
                         <span style={{marginRight: 4}}>Host:</span>
-                        {connectedUsers?.length > 0 &&
+                        {connectedUsers?.length > 0 && host &&
                             <>
                             <Avatar src={getAvatar(host)} style={{marginRight: 4}} title={host} className='host-icon' />
                             <p>{host}</p>
