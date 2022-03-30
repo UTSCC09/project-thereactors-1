@@ -144,11 +144,16 @@ export default function WatchPartyPage() {
         })
     }, []);
 
+    const [firstPlay, setFirstPlay] = useState(true);
     const play = () => {
-        if(playerRefValid) {
+        if(playerRef.current) {
             if(host === authAPI.getUser()) {
                 getSocket().emit('play-video');
             } else {
+                if (firstPlay) {
+                    setFirstPlay(false);
+                    playerRef.current.seekTo(0);
+                }
                 setPlaying(true)
                 setPlaying(videoIsPlaying);
                 // console.log("play  "+ videoIsPlaying);
@@ -159,7 +164,7 @@ export default function WatchPartyPage() {
     }
 
     const pause = () => {
-        if(playerRefValid) {
+        if(playerRef.current) {
             if(host === authAPI.getUser()) {
                 getSocket().emit('pause-video', playerRef.current.getCurrentTime());
             } else {
