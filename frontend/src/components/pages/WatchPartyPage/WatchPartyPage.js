@@ -87,7 +87,7 @@ export default function WatchPartyPage() {
         } else {
             window.location.href = '/join';
         }
-        getSocket().on('connect', () => {
+        getSocket().on('connection', () => {
             if (authAPI.signedIn())
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         });
@@ -350,6 +350,7 @@ export default function WatchPartyPage() {
                         usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                     />
                 }
+                <VoiceCall />
             </div>
             <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
@@ -441,9 +442,6 @@ export default function WatchPartyPage() {
                     <div className='emote-text'>emote</div>
                 </Button>
                 </div>
-            </div>
-            <div className='col4'>
-                <VoiceCall />
             </div>
             <div className={theme === 'dark' ? 'padding-col-dark' : 'padding-col'}></div>
         </div>
