@@ -29,6 +29,8 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         let newIndex = doc.current_vid;
         if(doc.current_vid < doc.ytLink.length && doc.current_vid < playlist.length) {
           indexChanged = doc.ytLink[doc.current_vid].link !== playlist[doc.current_vid].link;
+        } else if (doc.current_vid < doc.ytLink.length && doc.current_vid >= playlist.length) {
+          indexChanged = true;
         }
         if(indexChanged && playlist.some(x => x.link === doc.ytLink[doc.current_vid].link)) {
           newIndex = playlist.findIndex(x => x.link === doc.ytLink[doc.current_vid].link);
@@ -41,14 +43,12 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
   }
   export const loadPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
-      if(doc && doc.hostedBy == user ) {
-        
+      if(doc && doc.hostedBy == user ) {   
         doc.ytLink = playlist;
-        doc.current_vid = playlist.length -1 ;
+        doc.current_vid = playlist.length - 1;
         doc.save().then( (res) => {callback(null, {playlist, "current_vid":res.current_vid} )});
-      } 
+      }
     });
-  
   }
 
   

@@ -42,14 +42,15 @@ export function setupSocketHandlers(io) {
         socket.data.user,
         socket.data.current_party,
         (users) => {
-          io.to(socket.data.current_party).emit("user-left", users);
           console.log("removed connected user");
           updateHostClosestOrClose(
             socket.data.user,
             socket.data.current_party,
             (err, host) => {
               if (host) {
-                io.to(socket.data.current_party).emit("host", host);
+                io.to(socket.data.current_party).emit("user-left", {users, host});
+              } else {
+                io.to(socket.data.current_party).emit("user-left", {users, host:""});
               }
             }
           );
