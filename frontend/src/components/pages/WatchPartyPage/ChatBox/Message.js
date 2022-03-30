@@ -2,7 +2,7 @@ import { Avatar } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import * as authAPI from 'auth/auth_utils';
 
-export const Message = ({ message: { sender, content } })  => {
+export const Message = ({ message: { sender, content }, avatar })  => {
     const isSelf = () => {
         return authAPI.getUser() === sender;
     }
@@ -11,7 +11,7 @@ export const Message = ({ message: { sender, content } })  => {
         !isSelf() ? (
             <div className="message-container-other">
                 <div className="inner-box">
-                <Avatar className="user-icon" />
+                <Avatar src={avatar} className="user-icon" />
                 <div className="message-box">
                     <div className="sender"><b>{sender}</b></div>
                     <div className="message-text">{content}</div>
@@ -26,7 +26,7 @@ export const Message = ({ message: { sender, content } })  => {
                     <div className="sender"><b>{sender}</b></div>
                     <div className="message-text">{content}</div>
                 </div>
-                <Avatar className="user-icon" />
+                <Avatar src={avatar} className="user-icon" />
                 </div>
             </div>
         )
