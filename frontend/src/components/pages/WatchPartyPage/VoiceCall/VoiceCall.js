@@ -9,7 +9,10 @@ import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { getConfig } from 'environments';
 
+const peerhost = getConfig("peerhost");
+const peerhostport = getConfig("peerhostport");
 const mediaConstraints = {audio: true, video: false }
 // TODO  audio analyzer on the streams to have a list of currently talking users
 const iceServers = {
@@ -71,8 +74,8 @@ export default function VoiceCall() {
       // can add options here
       peer = new Peer(undefined, {
         path: '/peerjs',
-        host: 'localhost',
-        port: '3001',
+        host:  peerhost,
+        port: peerhostport,
         config: iceServers,
       });
       setIsDisconnected(false);
