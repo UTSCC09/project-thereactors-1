@@ -46,40 +46,40 @@ export default function UsersPanel({usersData, setCloseIcon}) {
                     return (
                         <div key={index} className={getClass()}>
                             <div className='user-wrapper-col1'>
-                            <Avatar className='icon' />
-                            <div className='username'>{user} 
-                                {user === usersData.host &&
-                                    user !== usersData.originalHost && 
+                            <Avatar src={user.avatar} className='icon' />
+                            <div className='username'>{user.username} 
+                                {user.username === usersData.host &&
+                                    user.username !== usersData.originalHost && 
                                     <span> (host)</span>
                                 }
-                                {user !== usersData.host && 
-                                    user === usersData.originalHost &&
+                                {user.username !== usersData.host && 
+                                    user.username === usersData.originalHost &&
                                     <span> (owner)</span>
                                 }
-                                {user === usersData.host && 
-                                    user === usersData.originalHost &&
+                                {user.username === usersData.host && 
+                                    user.username === usersData.originalHost &&
                                     <span> (owner, host)</span>
                                 }
                             </div>
                             </div>
-                            {getUser() === usersData.host && user !== usersData.host && 
+                            {getUser() === usersData.host && user.username !== usersData.host && 
                                 <div className='user-wrapper-col2'>
                                     <Button 
                                         size='small' 
                                         className='pass-remote-btn'
-                                        onClick={()=>passRemote(user)}
+                                        onClick={()=>passRemote(user.username)}
                                     >
                                         pass remote
                                     </Button>
                                 </div>
                             }
-                            {getUser() === usersData.originalHost && user === usersData.originalHost &&
-                                user !== usersData.host && 
+                            {getUser() === usersData.originalHost && user.username === usersData.originalHost &&
+                                user.username !== usersData.host && 
                                 <div className='user-wrapper-col2'>
                                     <Button 
                                         size='small' 
                                         className='pass-remote-btn'
-                                        onClick={()=>getRemote(user)}
+                                        onClick={()=>getRemote(user.username)}
                                     >
                                         get remote
                                     </Button>

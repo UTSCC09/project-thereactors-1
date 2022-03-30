@@ -3,7 +3,7 @@ import React, { useEffect,useState } from "react";
 import { MessagesContainer } from "./MessagesContainer";
 import { Input } from "./Input";
 
-export default function ChatBox({socket, height}) {
+export default function ChatBox({socket, height, users}) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [theme, setTheme] = useState('');
@@ -41,7 +41,7 @@ export default function ChatBox({socket, height}) {
                 <div className="header">Chat</div>
             </div>
             <div className="chatbox" style={{height: height - 40}}>
-                <MessagesContainer messages={messages} />
+                <MessagesContainer messages={messages} users={users} />
                 <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
             </div>
         </div>

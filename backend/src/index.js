@@ -71,6 +71,9 @@ async function startServer() {
       const avatar = req.file;
       // validate email and normalize it
       if (!validator.isEmail(email)) {
+        if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+          if (err) console.log(err);
+        });
         return res.status(400).json({ message: "Invalid input", error: "Invalid email" });
       } else {
         email = validator.normalizeEmail(email);
@@ -80,23 +83,42 @@ async function startServer() {
       username = validator.escape(username);
       // validate password length
       if (!validator.isLength(password, { min: 8 })) {
+        if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+          if (err) console.log(err);
+        });
         return res.status(400).json({ message: "Invalid input", error: "Invalid password" });
       }
       // validate
       const validationErrors = validationResult(req);
       if (!validationErrors.isEmpty()) {
+        if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+          if (err) console.log(err);
+        });
         return res.status(400).json({ message: "Invalid input", errors: validationErrors });
       }
       isUniqueUser(username, email, (isUnique, error) => {
         if (!isUnique) {
+          if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+            if (err) console.log(err);
+          });
           return res.status(400).json({ message: error });
         } else {
           // Hash the given password, create a user and sign a token
           bcrypt.genSalt(getConfig("passwordSaltRounds"), (err, salt) => {
             bcrypt.hash(password, salt, (err, hash) => {
-              if (err) return res.status(500).json({ message: err });
+              if (err) {
+                if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+                  if (err) console.log(err);
+                });
+                return res.status(500).json({ message: err });
+              }
               User.create({ username, email, avatar, password: hash }, (err, user) => {
-                if (err) return res.status(500).json({ message: err });
+                if (err) {
+                  if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+                    if (err) console.log(err);
+                  });
+                  return res.status(500).json({ message: err });
+                }
                 const token = signJwt({ username: user.username });
                 res.cookie('token', token, {
                   maxAge: getConfig("cookieMaxAge"),
@@ -126,19 +148,31 @@ async function startServer() {
     if (valid) {
       if (!avatar) return res.status(400).json({ message: 'No avatar given' });
       User.findOne({ username: decoded.username }, (err, user) => {
-        if (err) return res.status(500).json({ message: err });
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (err) {
+          if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+            if (err) console.log(err);
+          });
+          return res.status(500).json({ message: err });
+        }
+        if (!user) {
+          if (avatar) fs.unlink(path.resolve(__dirname, '..', avatar.path), (err) => {
+            if (err) console.log(err);
+          });
+          return res.status(404).json({ message: 'User not found' });
+        }
         // If old avatar exists, delete it then save the new one, otherwise, just save the new one
         const oldAvatar = user.avatar;
         if (oldAvatar) {
           fs.unlink(path.resolve(__dirname, '..', oldAvatar.path), (err) => {
-            if (err) return res.status(500).json({ message: err });
+            if (err) console.log(err);
             user.avatar = avatar;
             user.save();
+            return res.json({ success: true });
           });
         } else {
           user.avatar = avatar;
           user.save();
+          return res.json({ success: true })
         }
       });
     } else {
@@ -151,7 +185,7 @@ async function startServer() {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      const token = req.cookies['token'] || ''
+      const token = req.cookies['token'] || '';
       const { valid, decoded } = verifyJwt(token);
       if (valid) {
         return { userData: decoded };
