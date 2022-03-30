@@ -63,7 +63,8 @@ export default function VoiceCall() {
   getSocket().on('voice-leaver',(id) => {
     let index = userlist.findIndex((obj=> obj.userid === id))
     // remove from list and update
-    if( index != -1) {
+    if(index != -1) {
+      console.log("someone left");
       userlist.splice(index,1);
       setaudiolist(userlist);
     }
