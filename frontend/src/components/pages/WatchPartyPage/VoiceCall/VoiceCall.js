@@ -5,6 +5,10 @@ import { getSocket } from 'components/utils/socket_utils';
 import Peer from 'peerjs';
 import { useHistory } from 'react-router-dom'
 import { UserAudio } from './UserAudio';
+import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import MicIcon from '@mui/icons-material/Mic';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const mediaConstraints = {audio: true, video: false }
 // TODO  audio analyzer on the streams to have a list of currently talking users
@@ -35,7 +39,8 @@ export default function VoiceCall() {
   const [isInCall,setIsInCall] = useState(false);
   const [isMuted,setIsMuted] = useState(false);
   const [audiolist, setaudiolist] = useState([]);
-  const history = useHistory() 
+  const history = useHistory();
+
   useEffect(() => {
     return history.listen((location) => { 
        disconnectCall();
@@ -167,14 +172,14 @@ export default function VoiceCall() {
 
 
   return (
-      <div id="voicecall">
-          {!isInCall && <Button onClick={joinRoom}>Join Call</Button>}
-          {!isMuted && isInCall&& <Button onClick={muteAudio}>Mute microphone</Button>}
-          {isMuted &&isInCall && <Button onClick={unmuteAudio}>Unmute microphone</Button>}
-          {isInCall && <Button onClick={disconnectCall}>Leave Call</Button>}
-          <div id="audiolists">
-            {audiolist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
-          </div>  
+    <div className='voicecall'>
+      {!isInCall && <RecordVoiceOverIcon className='voicecall-btn' onClick={joinRoom} />}
+      {isInCall && <ExitToAppIcon className='voicecall-btn leave-icon' onClick={disconnectCall} />}
+      {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
+      {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
+      <div id="audiolists">
+        {audiolist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
       </div>
+    </div>
   )
 }

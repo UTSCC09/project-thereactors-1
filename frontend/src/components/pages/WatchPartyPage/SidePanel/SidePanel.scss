@@ -1,32 +1,43 @@
 @import "src/global.scss";
 
-.icon-btn {
-    margin-bottom: 10px;
+.side-panel-col {
+    display: flex;
+    flex-direction: column;
 
-    svg {
-        font-size: 30px; 
+    .playlist-icon, .users-icon {
+        font-size: 30px;
     }
-}
 
-.playlist-icon {
-    margin-top: 4px;
-}
+    .playlist-icon {
+        padding-bottom: 10px;
+        padding-top: 4px;
+    }
 
-.side-panel {
-    margin-top: $navbar-height;
-    height: $main-component-height;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow: auto;
-    transition: 0.5s;
-    box-shadow: rgb(0 0 0 / 24%) 0px 8px 8px;
-    background-color: white;
+    .users-icon {
+        padding-bottom: 14px;
 
-    &-dark {
-        @extend .side-panel;
-        background-color: $side-panel-dark;
+        &-dark {
+            @extend .users-icon;
+            border-bottom: 1px solid white;
+        }
+    }
+
+    .side-panel {
+        margin-top: $navbar-height;
+        height: $main-component-height;
+        width: 0;
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        overflow: auto;
+        transition: 0.5s;
+        box-shadow: rgb(0 0 0 / 24%) 0px 8px 8px;
+        background-color: white;
+
+        &-dark {
+            @extend .side-panel;
+            background-color: $side-panel-dark;
+        }
     }
 }
