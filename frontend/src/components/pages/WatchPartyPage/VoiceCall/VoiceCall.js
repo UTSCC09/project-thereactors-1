@@ -25,12 +25,6 @@ export default function VoiceCall() {
   const setuserlist = (data) => {
     userlist = data;
   }
-  const adduserlist = (data) => {
-    // data.filter(obj => obj.)
-  }
-  const removefromuserlist = (data) => {
-
-  }
   const [isDisconnected,setIsDisconnected] = useState(true);
   const [isInCall,setIsInCall] = useState(false);
   const [isMuted,setIsMuted] = useState(false);
@@ -46,13 +40,24 @@ export default function VoiceCall() {
   console.log(audiolist);
  },[audiolist])
 
-  getSocket().on('voice-joiner', (id,data) => {
-    
-    if(!id) {
-      removefromuserlist(data)
-      setaudiolist(userlist)
-    } else {
-      adduserlist(data);
+  getSocket().on('user-id-map',(data) => {
+    userlist = data;
+  }); 
+
+  getSocket().on('voice-joiner', (id,username) => {
+    let index = userlist.findIndex((obj=> obj.userid === id))
+    if(index == -1) {
+      userlist.push({user:username, userid:id, stream:''});
+      // setaudiolist(userlist);
+    }
+  });
+
+  getSocket().on('voice-leaver',(id) => {
+    let index = userlist.findIndex((obj=> obj.userid === id))
+    // remove from list and update
+    if( index != -1) {
+      userlist.splice(index,1);
+      setaudiolist(userlist);
     }
   });
 
@@ -78,7 +83,6 @@ export default function VoiceCall() {
     console.log("attempt to join-call")
     getSocket().emit('join-call');
     setIsInCall(true);
-    getSocket().on()
     navigator.mediaDevices.getUserMedia(mediaConstraints).then((stream)=> {
       localStream = stream;
       answerCalls();
@@ -115,9 +119,12 @@ export default function VoiceCall() {
     // audio.id= userid;
     // addAudioStream(audio, stream);
     let index = userlist.findIndex((obj=> obj.userid === userid));
-    userlist[index].stream = stream;
+    if(index != -1){
+      userlist[index].stream = stream;
+    }
     let index2 = userlist.findIndex((obj=> obj.userid === getPeer()._id))
-    userlist[index2].stream = localStream;
+    if(index2 != -1)
+      userlist[index2].stream = localStream;
     setaudiolist(userlist);
   } 
   // this function is called when there is a socket event to add a new user to the call

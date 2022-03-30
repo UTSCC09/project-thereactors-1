@@ -5,7 +5,8 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid: client
     useEffect(()=> {
 
         let audio = document.getElementById(user+"-audio");
-        audio.srcObject = stream;
+        if(stream)
+            audio.srcObject = stream;
         audio.controls = 'controls';
         audio.addEventListener("loadedmetadata",() => {
             if(clientid === userid) {
@@ -14,7 +15,6 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid: client
                 audio.play();
             }
           });
-        console.log("here")
     },[]);
     return (
         <audio id={user+ "-audio"} controls autoPlay></audio>

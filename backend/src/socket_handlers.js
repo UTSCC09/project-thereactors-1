@@ -269,8 +269,9 @@ export function setupSocketHandlers(io) {
           }
           console.log(io.sockets.adapter.rooms[socket.data.voice_party]);
           // send user the current usernames in the call
-          socket.join(socket.data.current_party+"call");
-          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid,io.sockets.adapter.rooms[socket.data.voice_party]);
+          socket.emit('user-id-map',io.sockets.adapter.rooms[socket.data.voice_party]);
+          socket.join(socket.data.voice_party);
+          io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid, socket.data.user);
           console.log(socket.data.user + " joining with id " + socket.data.voiceid )
 
         }
@@ -286,8 +287,8 @@ export function setupSocketHandlers(io) {
         if (i > -1) {
           io.sockets.adapter.rooms[socket.data.voice_party].splice(i, 1); 
         }
-        io.to(socket.data.voice_party).emit('voice-joiner', null,io.sockets.adapter.rooms[socket.data.voice_party]);
-  
+        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.userid);
+        console.log(socket.data.user + " left call" )
       }
       socket.data.voice_party = null;
     } );
