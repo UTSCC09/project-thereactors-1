@@ -26,7 +26,7 @@ const iceServers = {
   }
 let peer;
 let localStream;
-export default function VoiceCall() {
+export default function VoiceCall({videoHeight}) {
   // const [userlist,setuserlist] = useState([]); // userlist =  [{username: string, id: string}]
   let userlist = [];
   const setuserlist = (data) => {
@@ -187,7 +187,7 @@ export default function VoiceCall() {
       {isInCall && <ExitToAppIcon className='voicecall-btn leave-icon' onClick={disconnectCall} />}
       {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
-      <div id="audiolists">
+      <div id="audiolists" className='audiolists' style={{height: videoHeight - 185}}>
         {audiolist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
       </div>
     </div>
