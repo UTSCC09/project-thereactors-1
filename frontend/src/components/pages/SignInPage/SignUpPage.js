@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
 import * as UserAPI from 'api/user';
 import defaultProfileImg from 'api/assets/default-profile.png';
+import { Buffer } from 'buffer';
 
 const defaultUser = {
     username: "",
@@ -35,7 +36,14 @@ export default function SignUpPage() {
         });
 
         setAvatarPreview(defaultProfileImg);
+        setAvatar(convertImgToFile(defaultProfileImg, 'defaultProfileImg'));
     }, []);
+
+    const convertImgToFile = (dataurl, filename) => {
+        let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = Buffer.from(arr[1], 'base64');
+        return new File([bstr], filename, {type:mime});
+    }
 
     const toSignIn = () => {
         history.replace('sign-in');

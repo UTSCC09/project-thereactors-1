@@ -93,13 +93,13 @@
 
             .textfield {
                 width: 73%;
-            }
-    
-            .Mui-disabled {
-                -webkit-text-fill-color: white;
-    
-                .MuiOutlinedInput-notchedOutline {
-                    border-color: grey;
+
+                .Mui-disabled {
+                    -webkit-text-fill-color: grey;
+        
+                    .MuiOutlinedInput-notchedOutline {
+                        border-color: grey;
+                    }
                 }
             }
         }

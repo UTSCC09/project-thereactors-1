@@ -1,0 +1,16 @@
+@import 'src/global.scss';
+
+.voicecall {
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+
+    &-btn {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .leave-icon {
+        transform: rotate(180deg);
+    }
+}

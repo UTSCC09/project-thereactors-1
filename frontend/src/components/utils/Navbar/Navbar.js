@@ -72,9 +72,11 @@ export default function Navbar() {
 
     useEffect(() => {
         setSignedIn(authAPI.signedIn());
-        UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
-            setAvatar(avatar);
-        });
+        if (authAPI.getUser()) {
+            UserAPI.getAvatar(authAPI.getUser(), (avatar) => {
+                setAvatar(avatar);
+            });
+        }
     }, [location]);
 
     useEffect(() => {
