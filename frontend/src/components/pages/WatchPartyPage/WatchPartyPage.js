@@ -127,7 +127,7 @@ export default function WatchPartyPage() {
         })
 
         getSocket().on('user-left', (data) => {
-            if (data.host) {
+            if (data.host !== "") {
                 setHost(data.host);
             }
             let tempUsers = [];

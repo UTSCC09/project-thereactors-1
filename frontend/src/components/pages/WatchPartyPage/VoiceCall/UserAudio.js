@@ -5,10 +5,13 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid: client
     useEffect(()=> {
 
         let audio = document.getElementById(user+"-audio");
-        if(stream)
+        console.log("update audio " + user);
+        if(stream) {
+            console.log("updating stream " + user);
             audio.srcObject = stream;
+        }
         audio.controls = 'controls';
-        audio.addEventListener("loadedmetadata",() => {
+        audio.addEventListener("loadeddata",() => {
             if(clientid === userid) {
                 audio.pause();
             } else {

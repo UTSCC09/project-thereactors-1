@@ -56,6 +56,20 @@ export function setupSocketHandlers(io) {
           );
         }
       );
+      if(socket.data.voice_party)
+        socket.leave(socket.data.voice_party);
+      // notify others of the change in users in the call
+      if(io.sockets.adapter.rooms[socket.data.voice_party]) {
+        // let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+        // remove from the list of connected users
+        // console.log("removed");
+        io.sockets.adapter.rooms[socket.data.voice_party] = io.sockets.adapter.rooms[socket.data.voice_party].filter((e) => {return e.user !== socket.data.user}); 
+        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.user);
+        console.log(socket.data.user + " left call" )
+        console.log(io.sockets.adapter.rooms[socket.data.voice_party])
+      }
+      socket.data.voice_party = null;
+
     });
     socket.on("get-remote", () => {
       if (socket.data.current_party && socket.data.user) {
@@ -270,8 +284,9 @@ export function setupSocketHandlers(io) {
           }
           console.log(io.sockets.adapter.rooms[socket.data.voice_party]);
           // send user the current usernames in the call
-          socket.emit('user-id-map',io.sockets.adapter.rooms[socket.data.voice_party]);
+          socket.emit('user-id-map',io.sockets.adapter.rooms[socket.data.voice_party],socket.data.user);
           socket.join(socket.data.voice_party);
+
           io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid, socket.data.user);
           console.log(socket.data.user + " joining with id " + socket.data.voiceid )
 
@@ -283,13 +298,13 @@ export function setupSocketHandlers(io) {
         socket.leave(socket.data.voice_party);
       // notify others of the change in users in the call
       if(io.sockets.adapter.rooms[socket.data.voice_party]) {
-        let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+        // let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
         // remove from the list of connected users
-        if (i > -1) {
-          io.sockets.adapter.rooms[socket.data.voice_party].splice(i, 1); 
-        }
-        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.userid);
+        // console.log("removed");
+        io.sockets.adapter.rooms[socket.data.voice_party] = io.sockets.adapter.rooms[socket.data.voice_party].filter((e) => {return e.user !== socket.data.user}); 
+        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.user);
         console.log(socket.data.user + " left call" )
+        console.log(io.sockets.adapter.rooms[socket.data.voice_party])
       }
       socket.data.voice_party = null;
     } );
