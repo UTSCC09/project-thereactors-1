@@ -5,7 +5,9 @@ export const development = {
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
   "API_KEY":"AIzaSyDFF4pfMtCwFrz_jGe2z73OWSH6ZK9KIVI",
-  "frontendUrl":"http://localhost:3000"
+  "frontendUrl":"http://localhost:3000",
+  "securecookie":false,
+  "samesitecookie":'none',
 }
 
 export const production = {
@@ -15,7 +17,9 @@ export const production = {
   "passwordSaltRounds": 10,
   "cookieMaxAge": 604800000,
   "API_KEY":"AIzaSyDFF4pfMtCwFrz_jGe2z73OWSH6ZK9KIVI",
-  "frontendUrl":"https://ytwatch.party"
+  "frontendUrl":"https://ytwatch.party",
+  "securecookie":true,
+  "samesitecookie":'strict',
 }
 
 /**

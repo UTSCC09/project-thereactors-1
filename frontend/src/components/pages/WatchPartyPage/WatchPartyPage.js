@@ -169,7 +169,7 @@ export default function WatchPartyPage() {
 
         if (authAPI.signedIn()){
             getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
-            console.log('join room');
+            // console.log('join room');
         }
        
 
