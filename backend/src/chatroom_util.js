@@ -60,16 +60,19 @@ export const checkUserInvited = (username,roomid, callback) =>  {
   }
   
 export const addConnectedUser = (username,roomid,callback) =>  {
-    Party.where({_id : roomid}).findOne((err,doc)=> {
+    Party.where({_id : roomid}).findOne().exec().then((doc)=> {
       if(doc) {
         if(!doc.connectedUsers.includes(username)) {
+          doc.connectedUsers = doc.connectedUsers.filter((i => i != username));
           doc.connectedUsers.push(username);
           doc.save().then(()=>{callback(true)});
+        } else if(doc.connectedUsers.includes(username)) {
+          doc.connectedUsers = doc.connectedUsers.filter((c,i,ar) => i == 0 || ar[i] !== ar[i-1]);
+          doc.save().then(()=>{callback(false);}).catch((err)=>{callback(false);});
+
         }
-      } else {
-        callback(false);
       }
-    });
+    }).catch((err)=>{callback(false);});
   }
   
   export const removeConnectedUser = (username,roomid, callback) =>  {

@@ -51,6 +51,7 @@ export default function WatchPartyPage() {
         '2734','1f4a3'
     ];
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         return history.listen(() => { 
@@ -103,9 +104,6 @@ export default function WatchPartyPage() {
         getSocket().on('connect', () => {
            getSocket().emit('rejoin-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         });
-        if (authAPI.signedIn())
-            getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
-       
         getSocket().on('curr_users',(usernames)=> {
             let tempUsers = [];
             usernames.forEach((name, index) => {
@@ -162,6 +160,19 @@ export default function WatchPartyPage() {
         getSocket().on('emote', (data) => {
             displayEmote({dispId:uuid(), id: data.emote_code, x: data.x, y: data.y})
         })
+        getSocket().on("receive",data => {
+            setMessages(msgs=>[...msgs,data]);
+        });
+        getSocket().on("joined",chat_history => {
+            setMessages(()=>[...chat_history]);
+        });
+
+        if (authAPI.signedIn()){
+            getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+            console.log('join room');
+        }
+       
+
     }, []);
 
 
@@ -427,7 +438,7 @@ export default function WatchPartyPage() {
             <div className='col3'>
                 <div className='chat-box-wrapper'>
                     {connectedUsers?.length > 0 &&
-                        <ChatBox height={videoHeight} users={connectedUsers}></ChatBox>
+                        <ChatBox height={videoHeight} users={connectedUsers} messages={messages}></ChatBox>
                     }
                 </div>
                 <div className='emote-list-toggle-wrapper'>

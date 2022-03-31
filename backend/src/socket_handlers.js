@@ -118,6 +118,7 @@ export function setupSocketHandlers(io) {
             socket.join(roomName);
             // remove user from previous room
             if (socket.data.current_party && socket.data.current_party !== roomName) {
+              console.log("remove connected user");
               removeConnectedUser(
                 socket.data.user,
                 socket.data.current_party,
@@ -144,6 +145,7 @@ export function setupSocketHandlers(io) {
               );
             } else {
               // if didnt need to remove user from previous room, then join to new room
+              console.log("new user");
               socketJoinRoom(io, socket, roomdata);
             }
           }
@@ -343,12 +345,15 @@ export function setupSocketHandlers(io) {
 const socketJoinRoom = (io, socket, roomdata) => {
   const safeRoomName = validator.escape(roomdata.roomname);
   socket.data.current_party = safeRoomName;
+  
   addConnectedUser(socket.data.user, safeRoomName, (val) => {
-    if(val)
+    if(val) {
       io.to(safeRoomName).emit("new-joiner", socket.data.user);
+    }
     sendPrevPartyMessages(safeRoomName, (err, messages) => {
       socket.emit("joined", messages);
     });
+
     sendPartyInfo(safeRoomName, (err, data) => {
       if (data) {
         io.to(safeRoomName).emit("curr_users", data.connectedUsers);
