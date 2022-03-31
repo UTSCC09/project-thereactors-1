@@ -109,7 +109,7 @@ export function setupSocketHandlers(io) {
                 socket.data.current_party,
                 // tell current users that someone left
                 (users) => {
-                  io.to(socket.data.current_party).emit("user-left", {users,host:""} );
+                  // io.to(socket.data.current_party).emit("user-left", {users,host:""} );
                   socket.leave(socket.data.current_party);
                   // transfer host priviledges to the nearest available, or clost hte room otherwise
                   updateHostClosestOrClose(
@@ -117,10 +117,9 @@ export function setupSocketHandlers(io) {
                     socket.data.current_party,
                     (err, host) => {
                       if (host) {
-                        console.log(
-                          "new host" + host + " in " + socket.data.current_party
-                        );
-                        io.to(socket.data.current_party).emit("host", host);
+                        io.to(socket.data.current_party).emit("user-left", {users, host});
+                      } else {
+                        io.to(socket.data.current_party).emit("user-left", {users, host:""});
                       }
                       // join user to new room once cleanup is finished
                       socketJoinRoom(io, socket, roomdata);

@@ -153,16 +153,17 @@ export default function WatchPartyPage() {
     }, []);
 
 
+    const handleOnStart = () => {
+        playerRef.current.seekTo(0);
+        getSocket().emit('update-video-progress', 0);
+    }
+
     // handle when user clicks the play button
     const play = () => {
         if(playerRef.current) {
             if(host === authAPI.getUser()) {
                 getSocket().emit('play-video');
             } else {
-                if (firstPlay) {
-                    setFirstPlay(false);
-                    playerRef.current.seekTo(0);
-                }
                 setPlaying(true)
                 setPlaying(videoIsPlaying);
             }
@@ -174,14 +175,10 @@ export default function WatchPartyPage() {
             if(host === authAPI.getUser()) {
                 getSocket().emit('pause-video', playerRef.current.getCurrentTime());
             } else {
-                // console.log("pause "+ videoIsPlaying);
                 setPlaying(false)
                 setPlaying(videoIsPlaying);
             }
         }
-        
-
-        // sync with all users
     }
 
     const addToPlaylist = (url, type) => {
@@ -202,14 +199,6 @@ export default function WatchPartyPage() {
         }
     }
 
-    // called when video player is ready to play video
-    const handleOnReady = () => {
-        if (firstLoad) {
-            setFirstLoad(false);
-        } else {
-            playerRef.current.seekTo(0);
-        }
-    }
     // called when video finiishes, then host changes the video
     const handleOnEnded = () => {
         // check if state of video should be playing
@@ -358,7 +347,7 @@ export default function WatchPartyPage() {
                             onPause={pause}
                             width={videoWidth}
                             height={videoHeight}
-                            onReady={handleOnReady}
+                            onStart={handleOnStart}
                             // onBufferEnd={handleOnBufferEnd}
                             onEnded={handleOnEnded}
                             muted={muted}
