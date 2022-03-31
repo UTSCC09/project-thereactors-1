@@ -57,30 +57,34 @@ export default function SignUpPage() {
             );
     };
 
+    let timeoutMsg;
     const signUp = (e) => {
         e.preventDefault();
         if (!validateEmail(newUser.email)) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Invalid email address!";
-            setTimeout(() => {
+            clearTimeout(timeoutMsg);
+            timeoutMsg = setTimeout(() => {
                 document.getElementById('warning').style.display = 'none';
-            }, 5000)
+            }, 4000);
         }
         else if (newUser.password !== confirmPassword) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Password doesn't match!";
-            setTimeout(() => {
+            clearTimeout(timeoutMsg);
+            timeoutMsg = setTimeout(() => {
                 document.getElementById('warning').style.display = 'none';
-            }, 5000)
+            }, 4000);
         }
         else {
             UserAPI.addUser(newUser, avatar, (err, res) => {
                 if (err && (err.message === 'DUPLICATE_USER' || err.message === 'DUPLICATE_EMAIL')) {
                     document.getElementById('warning').style.display = 'block';
                     document.getElementById('warning').innerHTML = "User already exists!";
-                    setTimeout(() => {
+                    clearTimeout(timeoutMsg);
+                    timeoutMsg = setTimeout(() => {
                         document.getElementById('warning').style.display = 'none';
-                    }, 5000)
+                    }, 4000);
                 }
                 if (!err) {
                     toSignIn();

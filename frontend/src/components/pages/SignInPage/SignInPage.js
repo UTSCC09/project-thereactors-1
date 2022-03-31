@@ -23,21 +23,24 @@ export default function SignInPage() {
         });
     }, []);
 
+    let timeoutMsg;
     const signIn = (e) => {
         e.preventDefault();
         UserAPI.signIn(username, password, (err, res) => {
             if (err && err.message === 'Authentication failed') {
                 document.getElementById('invalid-cred-warning').style.display = 'block';
-                setTimeout(() => {
+                clearTimeout(timeoutMsg);
+                timeoutMsg = setTimeout(() => {
                     document.getElementById('invalid-cred-warning').style.display = 'none';
-                }, 5000);
+                }, 4000);
             }
             if (!err) {
                 if (!res.token) {
                     document.getElementById('invalid-cred-warning').style.display = 'block';
-                    setTimeout(() => {
+                    clearTimeout(timeoutMsg);
+                    timeoutMsg = setTimeout(() => {
                         document.getElementById('invalid-cred-warning').style.display = 'none';
-                    }, 5000);
+                    }, 4000);
                 } else {
                     setUsername('');
                     setPassword('');
