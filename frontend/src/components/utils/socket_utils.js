@@ -2,7 +2,7 @@
 import io from 'socket.io-client';
 import { getConfig } from 'environments';
 
-const socket = io(getConfig("backendUrl"), { withCredentials: true });
+const socket = io(getConfig("backendUrl"), { withCredentials: true }).connect();
 
 export function disconnectSocket() {
     socket.disconnect();
