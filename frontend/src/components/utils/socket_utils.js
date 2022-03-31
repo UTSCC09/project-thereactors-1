@@ -6,12 +6,13 @@ const socket = io(getConfig("backendUrl"), { withCredentials: true });
 
 export function disconnectSocket() {
     socket.disconnect();
-    // socket.connect();
+    socket.connect();
+    socket.removeAllListeners();
 }
 
 export function getSocket() {
-    if(!socket.connected){
-        socket.connect();
-    }
+    //if(!socket.connected){
+    //    socket.connect();
+    //}
     return socket;
 }
