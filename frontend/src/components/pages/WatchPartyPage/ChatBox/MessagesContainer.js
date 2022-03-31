@@ -3,7 +3,11 @@ import { Message } from "./Message";
 
 export const MessagesContainer = ({ messages, users }) => {
     const getAvatar = (username) => {
-        return users[users.findIndex(user => user.username === username)].avatar;
+        if (users[users.findIndex(user => user.username === username)]) {
+            return users[users.findIndex(user => user.username === username)].avatar;
+        }else {
+            return '';
+        }
     }
 
     return (
