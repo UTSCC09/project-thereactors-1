@@ -16,15 +16,21 @@
 
     .audiolists {
         margin-top: 4px;
-        overflow-x: hidden;
-        overflow-y: auto;
 
-        .audio-avatar {
-            margin-bottom: 14px;
+        div:first-of-type {
+            margin-right: -19px !important;
+            margin-bottom: -19px !important;
 
-            .icon {
-                width: 32px;
-                height: 32px;
+            .audio-avatar {
+                margin-right: 0px !important;
+                margin-bottom: 14px !important;
+    
+                .icon {
+                    margin-right: 0px !important;
+                    margin-bottom: 0px !important;
+                    width: 32px;
+                    height: 32px;
+                }
             }
         }
     }

@@ -9,6 +9,30 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { getConfig } from 'environments';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+
+const renderThumbVertical = ({ style, ...props }) => {
+  const thumbStyle = {
+    borderRadius: 6,
+    backgroundColor: 'rgba(140, 140, 140, 0.8)'
+  };
+  return <div style={{ ...style, ...thumbStyle }} {...props} />;
+};
+
+const renderThumbHorizontal = ({ style, ...props }) => {
+  const thumbStyle = {
+    display: 'none'
+  };
+  return <div style={{ ...style, ...thumbStyle }} {...props} />;
+};
+
+export const CustomScrollbar = props => (
+  <Scrollbars
+    renderThumbHorizontal={renderThumbHorizontal}
+    renderThumbVertical={renderThumbVertical}
+    {...props}
+  />
+);
 
 const peerhost = getConfig("peerhost");
 const peerhostport = getConfig("peerhostport");
@@ -21,7 +45,7 @@ const iceServers = {
     ],
   }
 let peer;
-export default function VoiceCall() {
+export default function VoiceCall({videoHeight}) {
   const [localStream,setLocalStream] = useState();
   const [userlist,setuserlist] = useState([]);
   const [isInCall, setIsInCall] = useState(false);
@@ -223,9 +247,10 @@ export default function VoiceCall() {
       {isInCall && <ExitToAppIcon className='voicecall-btn leave-icon' onClick={disconnectCall} />}
       {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
-      <div className="audiolists">
+      <CustomScrollbar className="audiolists" style={{height: videoHeight - 186}}
+                        autoHide autoHideTimeout={500} autoHideDuration={200} color="grey">
         {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
-      </div>
+      </CustomScrollbar>
     </div>
   )
 }
