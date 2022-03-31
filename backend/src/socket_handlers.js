@@ -90,7 +90,18 @@ export function setupSocketHandlers(io) {
         );
       }
     });
-
+    socket.on("rejoin-room", (roomdata) => {
+      try {
+        const roomName = validator.escape(roomdata.roomname);
+        if (socket.data.user && roomName) {
+          checkUserInvited(socket.data.user, roomName, (err, res) => {
+            if(res) {
+              socket.join(roomName);
+            }
+          });
+        }
+      } catch(err) {}
+    });
     // this handles users joining a watch party
     socket.on("join-room", (roomdata) => {
       try {
