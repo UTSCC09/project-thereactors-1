@@ -20,7 +20,6 @@ export default function CreatePartyPage() {
         partyAPI.addParty(password,(err,id)=> {
             if(err) 
                 console.log(err);
-            console.log(id);
             if(id) {
                 history.push('/party?id='+id);
             }

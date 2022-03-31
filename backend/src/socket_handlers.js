@@ -105,7 +105,7 @@ export function setupSocketHandlers(io) {
                 socket.data.current_party,
                 // tell current users that someone left
                 (users) => {
-                  io.to(socket.data.current_party).emit("user-left", users);
+                  io.to(socket.data.current_party).emit("user-left", {users,host:""} );
                   socket.leave(socket.data.current_party);
                   // transfer host priviledges to the nearest available, or clost hte room otherwise
                   updateHostClosestOrClose(
