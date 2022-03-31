@@ -3,24 +3,19 @@
 .side-panel-col {
     display: flex;
     flex-direction: column;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    width: 30px;
+    border-bottom: 1px solid black;
 
+    &-dark {
+        @extend .side-panel-col;
+        border-bottom: 1px solid white;
+    }
+    
     .playlist-icon, .users-icon {
         font-size: 30px;
-    }
-
-    .playlist-icon {
-        padding-bottom: 10px;
-        padding-top: 4px;
-    }
-
-    .users-icon {
-        padding-bottom: 14px;
-        border-bottom: 1px solid black;
-
-        &-dark {
-            @extend .users-icon;
-            border-bottom: 1px solid white;
-        }
+        margin-bottom: 10px;
     }
 
     .side-panel {

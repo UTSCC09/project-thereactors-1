@@ -55,9 +55,9 @@ export default function SidePanel({playlistData, usersData}) {
     }, []);
     
     return (
-        <div className='side-panel-col'>
+        <div className={theme === 'dark' ? 'side-panel-col-dark' : 'side-panel-col'}>
             <PlaylistPlayIcon id='openPlaylistBtn' className='playlist-icon' onClick={()=>openPanel(PLAYLIST_TYPE)} />
-            <GroupIcon id='openUsersBtn' className={theme === 'dark' ? "users-icon-dark" : "users-icon"} onClick={()=>openPanel(USERS_TYPE)} />
+            <GroupIcon id='openUsersBtn' className="users-icon" onClick={()=>openPanel(USERS_TYPE)} />
             <div id="sidePanel" className={theme === 'dark' ? "side-panel-dark" : "side-panel"}>
                 {panelType !== -1 && panelType === PLAYLIST_TYPE &&
                     <PlaylistPanel playlistData={playlistData} setCloseIcon={setCloseIcon} />
