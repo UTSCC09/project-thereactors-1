@@ -101,9 +101,11 @@ export default function WatchPartyPage() {
         getSocket().off('user-left');
 
         getSocket().on('connect', () => {
-            if (authAPI.signedIn())
-                getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+           getSocket().emit('rejoin-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         });
+        if (authAPI.signedIn())
+            getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+       
         getSocket().on('curr_users',(usernames)=> {
             let tempUsers = [];
             usernames.forEach((name, index) => {
