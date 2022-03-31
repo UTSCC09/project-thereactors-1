@@ -32,7 +32,7 @@ export default function ChatBox({ height, users}) {
         event.preventDefault();
         setMessage('')
         if (message) {
-            socket.emit('send', message);
+            getSocket().emit('send', message);
         }
     }
 
