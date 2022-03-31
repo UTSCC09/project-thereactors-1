@@ -21,7 +21,6 @@ const iceServers = {
     ],
   }
 let peer;
-// let localStream;
 export default function VoiceCall() {
   const [localStream,setLocalStream] = useState();
   const [userlist,setuserlist] = useState([]);
@@ -225,7 +224,7 @@ export default function VoiceCall() {
       {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
       <div id="audiolists">
-        {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
+        {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
       </div>
     </div>
   )

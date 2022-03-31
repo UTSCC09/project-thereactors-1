@@ -348,13 +348,15 @@ export default function WatchPartyPage() {
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                {connectedUsers?.length > 0 && host &&
+                {connectedUsers?.length > 0 && host !== '' &&
                     <SidePanel 
                         playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
                         usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
                     />
                 }
-                <VoiceCall />
+                {videoHeight !== 0 &&
+                    <VoiceCall videoHeight={videoHeight} />
+                }
             </div>
             <div className='col2'>
                 <div id='video-player-wrapper' className='video-player-wrapper'>
@@ -400,7 +402,7 @@ export default function WatchPartyPage() {
                 <div className='desc-row'>
                     <div className='host'>
                         <span style={{marginRight: 4}}>Host:</span>
-                        {connectedUsers?.length > 0 && host &&
+                        {connectedUsers?.length > 0 && host !== '' &&
                             <>
                             <Avatar src={getAvatar(host)} style={{marginRight: 4}} title={host} className='host-icon' />
                             <p>{host}</p>

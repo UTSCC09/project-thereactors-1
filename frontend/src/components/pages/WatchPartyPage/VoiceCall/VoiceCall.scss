@@ -13,4 +13,19 @@
     .leave-icon {
         transform: rotate(180deg);
     }
+
+    .audiolists {
+        margin-top: 4px;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        .audio-avatar {
+            margin-bottom: 14px;
+
+            .icon {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
 }
