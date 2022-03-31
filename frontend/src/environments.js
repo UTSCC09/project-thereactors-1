@@ -3,7 +3,7 @@ export const production = {
   graphqlUrl: "https://ytwatch.party/api/graphql",
   googleApiKey: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw",
   peerhost: "/",
-  peerhostport:"3001",
+  peerhostport:"",
 }
 
 export const development = {
