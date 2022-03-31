@@ -4,9 +4,8 @@ import { MessagesContainer } from "./MessagesContainer";
 import { Input } from "./Input";
 import { getSocket } from 'components/utils/socket_utils';
 
-export default function ChatBox({ height, users}) {
+export default function ChatBox({ height, users, messages}) {
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
     const [theme, setTheme] = useState('');
 
     useEffect(() => {
@@ -16,15 +15,8 @@ export default function ChatBox({ height, users}) {
         document.addEventListener('themeChange', () => {
             setTheme(localStorage.getItem('theme'));
         });
-
         getSocket().on("test",()=>{
             console.log("here");
-        });
-        getSocket().on("receive",data => {
-            setMessages(msgs=>[...msgs,data]);
-        });
-        getSocket().on("joined",chat_history => {
-            setMessages(()=>[...chat_history]);
         });
     }, []);
 

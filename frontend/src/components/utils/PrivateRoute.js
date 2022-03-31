@@ -12,7 +12,6 @@ export const PrivateRoute = ({ component: Component, ...rest }) => (
             // not logged in so redirect to login page with the return url
             return <Redirect to={{ pathname: '/sign-in', state: { from: props.location } }} />
         }
-        socket_utils.connectToSocket();
         return <Component {...props} />
     }} />
 )

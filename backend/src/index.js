@@ -3,7 +3,7 @@ import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { getConfig } from './config';
+import { getConfig } from './config';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { body, validationResult } from 'express-validator';
