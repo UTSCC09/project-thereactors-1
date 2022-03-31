@@ -47,10 +47,10 @@ export default function VoiceCall() {
         config: iceServers,
       });
       peer.on('open', (id)=> {
-        console.log("set id");
+        // console.log("set id");
         getSocket().emit("set-id",id);
       });
-      console.log("start new peer connection")
+      // console.log("start new peer connection")
     }
     return peer;
   }
@@ -136,16 +136,16 @@ export default function VoiceCall() {
   const connectToNewUser = (userId,username) => {
     // no self calling
     // console.log("connecting");
-    console.log(userlist);
+    // console.log(userlist);
     if(userId === getPeer().id) {
       return;
     }
     // the client will call the new client 
     let call = getPeer().call(userId, localStream);
     if (call) {
-      console.log("connecting to new user " + userId);
+      // console.log("connecting to new user " + userId);
       call.on('stream', (stream) => {
-        console.log("received stream from callee");
+        // console.log("received stream from callee");
         handleGetStream(stream,userId);
       });
     } else {
@@ -156,30 +156,30 @@ export default function VoiceCall() {
     // const audio = document.createElement('audio');
     // audio.id= userid;
     // addAudioStream(audio, stream);
-    console.log("handling stream");
+    // console.log("handling stream");
     let index = userlist.findIndex((obj=> obj.userid === userid));
     let tmp = userlist;
-    console.log(tmp);
+    // console.log(tmp);
 
     if(index != -1){
-      console.log('updated ' + userlist[index].user + "'s stream");
-      console.log('AFTHWEIOAFHIEAWOFJWA P;')
+      // console.log('updated ' + userlist[index].user + "'s stream");
+      // console.log('AFTHWEIOAFHIEAWOFJWA P;')
       // didnt trigger refresh which is weird
       // console.log(stream);
       // tmp = tmp.map(obj => (obj.userid === userid ? {... obj} : obj));
       // setaudiolist(prev => {return prev.map(obj => (obj.userid === userid ? {... obj,stream} : obj));});
       setuserlist(prev => {return updatestream(prev,stream,userid);});
     }
-    console.log(userlist);
+    // console.log(userlist);
   } 
     // happens whenever the user joins the voice call
     // sets the list of current users in the room
     getSocket().on('user-id-map',(data,username) => {
-      console.log("just joined ")
+      // console.log("just joined ")
       let tmp = data;
       let index = tmp.findIndex((obj=> obj.user === username));
       if(index != -1){
-        console.log('updated ' + tmp[index].user + "'s stream")
+        // console.log('updated ' + tmp[index].user + "'s stream")
         tmp[index].stream = localStream;
       }
       setuserlist(tmp)
@@ -188,10 +188,10 @@ export default function VoiceCall() {
     // check when other users disconnect
     getSocket().on('voice-leaver',(username) => {
       // remove from list and update
-      console.log(username + " left call");
-      console.log(userlist);
+      // console.log(username + " left call");
+      // console.log(userlist);
       let tmp = userlist.filter((e) => {return e.user !== username}); 
-      console.log(userlist);
+      // console.log(userlist);
       setuserlist(tmp)
       // setaudiolist(tmp);
     });
@@ -200,17 +200,17 @@ export default function VoiceCall() {
     // socket listens for new user joining the call 
     // it should update the user to id mapping list
     getSocket().on('voice-joiner',(userid,username) => {
-      console.log("voice joiner "  + userid + " " + username);
-      console.log(userlist)
+      // console.log("voice joiner "  + userid + " " + username);
+      // console.log(userlist)
       let tmp = userlist;
       let index = tmp.findIndex((obj=> obj.user === username));
       if(index == -1) {
-        console.log("add voice joiner");
+        // console.log("add voice joiner");
         tmp.push({user:username, userid:userid, stream:''});
-        console.log(tmp);
+        // console.log(tmp);
       } else {
         // update user mapping if it already exists for some reason
-        console.log("update voice joiner id");
+        // console.log("update voice joiner id");
         tmp[index].userid = userid;
       }
       setuserlist(tmp)
