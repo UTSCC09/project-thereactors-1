@@ -133,16 +133,18 @@ export default function WatchPartyPage() {
                 setHost(data.host);
             }
             let tempUsers = [];
-            data.users.forEach((name, index) => {
-                let temp = {username: name};
-                UserAPI.getAvatar(name, (avatar) => {
-                    temp.avatar = avatar;
-                    tempUsers.push(temp);
-                    if (index === data.users.length - 1) {
-                        setConnectedUsers(tempUsers);
-                    }
+            if(data.users) {
+                data.users.forEach((name, index) => {
+                    let temp = {username: name};
+                    UserAPI.getAvatar(name, (avatar) => {
+                        temp.avatar = avatar;
+                        tempUsers.push(temp);
+                        if (index === data.users.length - 1) {
+                            setConnectedUsers(tempUsers);
+                        }
+                    });
                 });
-            });
+            }
         })
 
         getSocket().on('emote', (data) => {

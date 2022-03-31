@@ -27,7 +27,6 @@ export default function JoinPartyPage() {
 
     const joinRoom = (e, id, code) => {
         e.preventDefault();
-        console.log(id, code);
         setPartyCode('');
         // redirect to generated room
         PartyAPI.joinParty(id, code, (err, res)=> {
