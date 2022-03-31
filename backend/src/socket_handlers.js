@@ -39,43 +39,44 @@ export function setupSocketHandlers(io) {
 
     socket.on("disconnecting", () => {
       console.log(socket.data.user + " disconnected");
+      let curr_party = socket.data.current_party;
+      let curr_user = socket.data.user;
+      let curr_voice_party = socket.data.voice_party;
       removeConnectedUser(
-        socket.data.user,
-        socket.data.current_party,
+        curr_user,
+        curr_party,
         (users) => {
           console.log("removed connected user");
           updateHostClosestOrClose(
-            socket.data.user,
-            socket.data.current_party,
+            curr_user,
+            curr_party,
             (err, host) => {
-              
               if (host) {
-                io.to(socket.data.current_party).emit("user-left", {users, host});
+                io.to(curr_party).emit("user-left", {users, host});
               } else {
-                io.to(socket.data.current_party).emit("user-left", {users, host:""});
+                io.to(curr_party).emit("user-left", {users, host:""});
               }
             }
           );
         }
       );
+      if(socket.data.current_party)
+        socket.leave(curr_party);
       if(socket.data.voice_party)
-        socket.leave(socket.data.voice_party);
+        socket.leave(curr_voice_party);
       // notify others of the change in users in the call
       if(io.sockets.adapter.rooms[socket.data.voice_party]) {
-        // let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
         // remove from the list of connected users
-        // console.log("removed");
-        io.sockets.adapter.rooms[socket.data.voice_party] = io.sockets.adapter.rooms[socket.data.voice_party].filter((e) => {return e.user !== socket.data.user}); 
-        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.user);
-        console.log(socket.data.user + " left call" )
-        // console.log(io.sockets.adapter.rooms[socket.data.voice_party])
+        io.sockets.adapter.rooms[curr_voice_party] = io.sockets.adapter.rooms[curr_voice_party].filter((e) => {return e.user !== socket.data.user}); 
+        io.to(curr_voice_party).emit('voice-leaver', curr_user);
+        console.log(curr_user + " left call" )
       }
       socket.data.voice_party = null;
       // remove frome everything else
       socket.data.current_party = '';
-      socket.data.user
-
     });
+
+
     socket.on("get-remote", () => {
       if (socket.data.current_party && socket.data.user) {
         retrieveRemote(
@@ -89,9 +90,11 @@ export function setupSocketHandlers(io) {
         );
       }
     });
+
     // this handles users joining a watch party
     socket.on("join-room", (roomdata) => {
       try {
+      console.log(socket.id);
       const roomName = validator.escape(roomdata.roomname);
       console.log(socket.data.user + " attempts to join " + roomName);
       console.log("current party " + socket.data.current_party);
@@ -100,7 +103,7 @@ export function setupSocketHandlers(io) {
         // makes sure the user is authenticated for this room
         checkUserInvited(socket.data.user, roomName, (err, res) => {
           if (res) {
-            console.log(socket.data.user + " joins room " + roomName);
+            console.log(socket.data.user + " joining room " + roomName);
             socket.join(roomName);
             // remove user from previous room
             if (socket.data.current_party && socket.data.current_party !== roomName) {
@@ -329,8 +332,9 @@ export function setupSocketHandlers(io) {
 const socketJoinRoom = (io, socket, roomdata) => {
   const safeRoomName = validator.escape(roomdata.roomname);
   socket.data.current_party = safeRoomName;
-  addConnectedUser(socket.data.user, safeRoomName, () => {
-    io.to(safeRoomName).emit("new-joiner", socket.data.user);
+  addConnectedUser(socket.data.user, safeRoomName, (val) => {
+    if(val)
+      io.to(safeRoomName).emit("new-joiner", socket.data.user);
     sendPrevPartyMessages(safeRoomName, (err, messages) => {
       socket.emit("joined", messages);
     });

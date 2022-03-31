@@ -4,7 +4,7 @@ import ReactPlayer from 'react-player';
 import { Avatar, Button, TextField } from '@mui/material';
 import ChatBox from "./ChatBox/ChatBox";
 import * as authAPI from 'auth/auth_utils.js';
-import { getSocket, reconnectToSocket } from 'components/utils/socket_utils';
+import { getSocket, disconnectSocket } from 'components/utils/socket_utils';
 import SidePanel from './SidePanel/SidePanel';
 import * as videoUtils from 'components/utils/video_utils';
 import uuid from 'react-uuid';
@@ -54,7 +54,7 @@ export default function WatchPartyPage() {
 
     useEffect(() => {
         return history.listen(() => { 
-           reconnectToSocket();
+            disconnectSocket();
         }) 
      },[history]);
 
@@ -90,6 +90,16 @@ export default function WatchPartyPage() {
         } else {
             window.location.href = '/join';
         }
+        getSocket().off('connect');
+        getSocket().off('curr_users');
+        getSocket().off('host');
+        getSocket().off('original-host');
+        getSocket().off('password-missing');
+        getSocket().off('update-progress');
+        getSocket().off('playlist-changed');
+        getSocket().off('emote');
+        getSocket().off('user-left');
+
         getSocket().on('connect', () => {
             if (authAPI.signedIn())
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});

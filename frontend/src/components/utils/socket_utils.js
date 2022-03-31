@@ -4,17 +4,14 @@ import { getConfig } from 'environments';
 
 const socket = io(getConfig("backendUrl"), { withCredentials: true });
 
-export function connectToSocket() {
-    if(!socket.connected){
-        socket.connect();
-    }
-}
-export function reconnectToSocket() {
-    console.log("reconnect")
+export function disconnectSocket() {
     socket.disconnect();
-    socket.connect();
+    // socket.connect();
 }
 
 export function getSocket() {
+    if(!socket.connected){
+        socket.connect();
+    }
     return socket;
 }
