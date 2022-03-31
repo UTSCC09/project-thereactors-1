@@ -48,6 +48,7 @@ export function setupSocketHandlers(io) {
             socket.data.user,
             socket.data.current_party,
             (err, host) => {
+              
               if (host) {
                 io.to(socket.data.current_party).emit("user-left", {users, host});
               } else {
@@ -70,6 +71,9 @@ export function setupSocketHandlers(io) {
         // console.log(io.sockets.adapter.rooms[socket.data.voice_party])
       }
       socket.data.voice_party = null;
+      // remove frome everything else
+      socket.data.current_party = '';
+      socket.data.user
 
     });
     socket.on("get-remote", () => {
@@ -99,7 +103,7 @@ export function setupSocketHandlers(io) {
             console.log(socket.data.user + " joins room " + roomName);
             socket.join(roomName);
             // remove user from previous room
-            if (socket.data.current_party) {
+            if (socket.data.current_party && socket.data.current_party !== roomName) {
               removeConnectedUser(
                 socket.data.user,
                 socket.data.current_party,

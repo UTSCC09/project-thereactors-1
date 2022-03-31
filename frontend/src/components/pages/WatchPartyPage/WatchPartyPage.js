@@ -415,7 +415,7 @@ export default function WatchPartyPage() {
             <div className='col3'>
                 <div className='chat-box-wrapper'>
                     {connectedUsers?.length > 0 &&
-                        <ChatBox socket={getSocket()} height={videoHeight} users={connectedUsers}></ChatBox>
+                        <ChatBox height={videoHeight} users={connectedUsers}></ChatBox>
                     }
                 </div>
                 <div className='emote-list-toggle-wrapper'>
