@@ -2,8 +2,8 @@ export const production = {
   backendUrl: "https://ytwatch.party",
   graphqlUrl: "https://ytwatch.party/api/graphql",
   googleApiKey: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw",
-  peerhost: "/",
-  peerhostport:"3001",
+  peerhost: "ytwatch.party",
+  peerhostport:"443",
 }
 
 export const development = {
