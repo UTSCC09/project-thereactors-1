@@ -2,10 +2,10 @@ import './ChatBox.scss';
 import React, { useEffect,useState } from "react";
 import { MessagesContainer } from "./MessagesContainer";
 import { Input } from "./Input";
+import { getSocket } from 'components/utils/socket_utils';
 
-export default function ChatBox({socket, height, users}) {
+export default function ChatBox({ height, users, messages}) {
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
     const [theme, setTheme] = useState('');
 
     useEffect(() => {
@@ -15,15 +15,8 @@ export default function ChatBox({socket, height, users}) {
         document.addEventListener('themeChange', () => {
             setTheme(localStorage.getItem('theme'));
         });
-
-        socket.on("test",()=>{
+        getSocket().on("test",()=>{
             console.log("here");
-        });
-        socket.on("receive",data => {
-            setMessages(msgs=>[...msgs,data]);
-        });
-        socket.on("joined",chat_history => {
-            setMessages(()=>[...chat_history]);
         });
     }, []);
 
@@ -31,7 +24,7 @@ export default function ChatBox({socket, height, users}) {
         event.preventDefault();
         setMessage('')
         if (message) {
-            socket.emit('send', message);
+            getSocket().emit('send', message);
         }
     }
 

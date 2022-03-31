@@ -3,7 +3,7 @@ import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import { getConfig } from './config';
+import { getConfig } from './config';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { body, validationResult } from 'express-validator';
@@ -27,6 +27,7 @@ import {ExpressPeerServer, expressPeerServer} from 'peer';
 
 import { authUser, signJwt, verifyJwt, isUniqueUser } from './utils';
 import { User } from './db';
+import { config } from 'process';
 
 async function startServer() {
   // Express server
@@ -50,6 +51,7 @@ async function startServer() {
         res.cookie('token', token, {
           maxAge: getConfig("cookieMaxAge"),
           httpOnly: true,
+          secure:getConfig('securecookie'),
         });
         return res.json({ username: user.username, token });
       }

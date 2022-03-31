@@ -103,7 +103,6 @@ export default function ProfilePage() {
                     console.log(err)
                 }
                 else if (avatarChanged) {
-                    console.log(avatar);
                     UserAPI.updateAvatar(avatar, (err, res) => {
                         if (err) console.log(err);
                         else window.location.reload(false);
