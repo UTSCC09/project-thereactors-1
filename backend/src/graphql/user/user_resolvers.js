@@ -60,7 +60,7 @@ export const userMutationResolvers = {
           });
         }
         else {
-          User.findOneAndUpdate(query, userInput, { new: true }, (err, user) => {
+          User.findOneAndUpdate(query, {email:userInput.email}, { new: true }, (err, user) => {
             if (err) return reject(err);
             resolve(user);
           });
