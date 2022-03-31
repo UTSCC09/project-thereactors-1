@@ -223,7 +223,7 @@ export default function VoiceCall() {
       {isInCall && <ExitToAppIcon className='voicecall-btn leave-icon' onClick={disconnectCall} />}
       {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
-      <div id="audiolists">
+      <div className="audiolists">
         {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
       </div>
     </div>
