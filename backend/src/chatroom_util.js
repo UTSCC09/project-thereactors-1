@@ -8,9 +8,6 @@ export async function saveMessage(content,sender,party,callback) {
     callback(new_message);
 }
 
-export function createTempUser(nickname,callback) {
-    let new_tmp_user = new User({})
-}
 export function getCookie(name,cookies) {
     var arr = cookies.split(";");
     for(var i = 0; i < arr.length; i++) {
@@ -29,6 +26,8 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
         let newIndex = doc.current_vid;
         if(doc.current_vid < doc.ytLink.length && doc.current_vid < playlist.length) {
           indexChanged = doc.ytLink[doc.current_vid].link !== playlist[doc.current_vid].link;
+        } else if (doc.current_vid < doc.ytLink.length && doc.current_vid >= playlist.length) {
+          indexChanged = true;
         }
         if(indexChanged && playlist.some(x => x.link === doc.ytLink[doc.current_vid].link)) {
           newIndex = playlist.findIndex(x => x.link === doc.ytLink[doc.current_vid].link);
@@ -41,14 +40,12 @@ export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
   }
   export const loadPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
-      if(doc && doc.hostedBy == user ) {
-        
+      if(doc && doc.hostedBy == user ) {   
         doc.ytLink = playlist;
-        doc.current_vid = playlist.length -1 ;
+        doc.current_vid = playlist.length - 1;
         doc.save().then( (res) => {callback(null, {playlist, "current_vid":res.current_vid} )});
-      } 
+      }
     });
-  
   }
 
   
@@ -75,11 +72,11 @@ export const addConnectedUser = (username,roomid,callback) =>  {
   }
   
   export const removeConnectedUser = (username,roomid, callback) =>  {
-    Party.where({_id : roomid}).findOne((err,doc)=> {
-      if(doc&& doc.connectedUsers) {
+    Party.where({_id : roomid}).findOne().then((doc)=> {
+      if(doc && doc.connectedUsers) {
         doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
         let temp = doc.connectedUsers;
-        doc.save().then(()=>{callback(temp)});
+        doc.save().then(()=>{callback(temp)}).catch((err) => {console.log(err)});
         
       } else {
       }

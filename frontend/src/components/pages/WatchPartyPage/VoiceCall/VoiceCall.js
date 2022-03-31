@@ -1,6 +1,5 @@
 import './VoiceCall.scss';
-import React, { useEffect, useState } from "react";
-import { Button } from '@mui/material';
+import React, { useEffect, useRef, useState } from "react";
 import { getSocket } from 'components/utils/socket_utils';
 import Peer from 'peerjs';
 import { useHistory } from 'react-router-dom'
@@ -10,6 +9,30 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import MicIcon from '@mui/icons-material/Mic';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { getConfig } from 'environments';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+
+const renderThumbVertical = ({ style, ...props }) => {
+  const thumbStyle = {
+    borderRadius: 6,
+    backgroundColor: 'rgba(140, 140, 140, 0.8)'
+  };
+  return <div style={{ ...style, ...thumbStyle }} {...props} />;
+};
+
+const renderThumbHorizontal = ({ style, ...props }) => {
+  const thumbStyle = {
+    display: 'none'
+  };
+  return <div style={{ ...style, ...thumbStyle }} {...props} />;
+};
+
+export const CustomScrollbar = props => (
+  <Scrollbars
+    renderThumbHorizontal={renderThumbHorizontal}
+    renderThumbVertical={renderThumbVertical}
+    {...props}
+  />
+);
 
 const peerhost = getConfig("peerhost");
 const peerhostport = getConfig("peerhostport");
@@ -19,21 +42,13 @@ const iceServers = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun4.l.google.com:19302' },
     ],
   }
 let peer;
-let localStream;
-export default function VoiceCall() {
-  // const [userlist,setuserlist] = useState([]); // userlist =  [{username: string, id: string}]
-  let userlist = [];
-  const setuserlist = (data) => {
-    userlist = data;
-  }
-  const [isDisconnected,setIsDisconnected] = useState(true);
-  const [isInCall,setIsInCall] = useState(false);
+export default function VoiceCall({videoHeight}) {
+  const [localStream,setLocalStream] = useState();
+  const [userlist,setuserlist] = useState([]);
+  const [isInCall, setIsInCall] = useState(false);
   const [isMuted,setIsMuted] = useState(false);
   const [audiolist, setaudiolist] = useState([]);
   const history = useHistory();
@@ -42,35 +57,11 @@ export default function VoiceCall() {
     return history.listen((location) => { 
        disconnectCall();
     }) 
- },[history]) ;
+  },[history]) ;
 
- useEffect(() => {
-  console.log(audiolist);
- },[audiolist])
 
-  getSocket().on('user-id-map',(data) => {
-    userlist = data;
-  }); 
-
-  getSocket().on('voice-joiner', (id,username) => {
-    let index = userlist.findIndex((obj=> obj.userid === id))
-    if(index == -1) {
-      userlist.push({user:username, userid:id, stream:''});
-      // setaudiolist(userlist);
-    }
-  });
-
-  getSocket().on('voice-leaver',(id) => {
-    let index = userlist.findIndex((obj=> obj.userid === id))
-    // remove from list and update
-    if( index != -1) {
-      userlist.splice(index,1);
-      setaudiolist(userlist);
-    }
-  });
-
-  function getPeer() {
-    if(!peer || isDisconnected) {
+  const getPeer = ()=> {
+    if(!peer || peer.destroyed) {
       // can add options here
       peer = new Peer(undefined, {
         path: '/peerjs',
@@ -78,78 +69,46 @@ export default function VoiceCall() {
         port: peerhostport,
         config: iceServers,
       });
-      setIsDisconnected(false);
-      console.log("new peer connection")
+      peer.on('open', (id)=> {
+        // console.log("set id");
+        getSocket().emit("set-id",id);
+      });
+      // console.log("start new peer connection")
     }
     return peer;
   }
-  function handleNewJoiner(userid) {
-    connectToNewUser(userid,localStream );
+
+  const disconnectCall = () => {
+    setIsInCall(false);
+    getSocket().emit("leave-call");
+    getPeer().destroy();
+    if(localStream) {
+      localStream.getTracks().forEach((track)=> {
+        track.stop();
+      })
+      setLocalStream(null);
+    }
+    // setReadyForCall(false);
+    setIsMuted(false);
+    setuserlist([]);
+    // setaudiolist([]);
   }
 
-  function joinRoom() {
-    console.log("attempt to join-call")
-    getSocket().emit('join-call');
-    setIsInCall(true);
+  // called whenever the user clicks join room
+  // should tell server that it joins room, 
+  // then allow the user to answer calls
+  const joinRoom = ()=> {
+    // console.log("attempt to join-call")
     navigator.mediaDevices.getUserMedia(mediaConstraints).then((stream)=> {
-      localStream = stream;
-      answerCalls();
-    });
-  }
-  const answerCalls = () => {
-    // set up to handle webrtc call requests
-    getPeer().on('call',(call) => {
-      console.log("received call");
-      call.answer(localStream);
-      // answer incoming stream
-      call.on('stream',(stream) => {
-        console.log("received stream from call")
-        handleGetStream(stream, call.peer);
-      });
-    });
-    // set up to handle new user events
-    getSocket().on('voice-joiner',(userid) => {
-      if(userid)
-        handleNewJoiner(userid);
+      setLocalStream(stream);
+      getSocket().emit('join-call');
+      setIsInCall(true);
     });
   }
 
-  const addAudioStream = (audio, stream) => {
-    audio.srcObject = stream;
-    audio.controls = 'controls';
-    audio.addEventListener("loadedmetadata",() => {
-      audio.play();
-      document.querySelector("#audiolists").append(audio);
-    });
-  }
-  const handleGetStream = (stream, userid) => {
-    // const audio = document.createElement('audio');
-    // audio.id= userid;
-    // addAudioStream(audio, stream);
-    let index = userlist.findIndex((obj=> obj.userid === userid));
-    if(index != -1){
-      userlist[index].stream = stream;
-    }
-    let index2 = userlist.findIndex((obj=> obj.userid === getPeer()._id))
-    if(index2 != -1)
-      userlist[index2].stream = localStream;
-    setaudiolist(userlist);
-  } 
-  // this function is called when there is a socket event to add a new user to the call
-  const connectToNewUser = (userId) => {
-    // no self calling
-    if(userId === getPeer()._id) {
-      return;
-    }
-    // the client will call the new client 
-    const call = getPeer().call(userId, localStream);
-    console.log("connecting to new user " + userId);
-    call.on('stream', (stream) => {
-      console.log("received stream from callee");
-      handleGetStream(stream,userId);
-    });
-  };
-
+  // useEffect(()=> {
+  //   // console.log(localStream);
+  // },[localStream]) 
   const muteAudio = () => {
     setIsMuted(true);
     localStream.getAudioTracks()[0].enabled = false;
@@ -158,28 +117,129 @@ export default function VoiceCall() {
     setIsMuted(false);
     localStream.getAudioTracks()[0].enabled = true;
   }
-  // 
-  const disconnectCall = () => {
-    setIsDisconnected(true);
-    setIsInCall(false);
-    getSocket().emit("leave-call");
-    getPeer().destroy();
-    if(localStream) {
-      localStream.getTracks().forEach((track)=> {
-        track.stop();
-      })
-      localStream = null;
-    }
-    
-    // TODO remove current audio streams that are playing
-    setIsMuted(false);
-    setuserlist([]);
-    setaudiolist([]);
-  }
-  getPeer().on('open', (id)=> {
-    getSocket().emit("set-id",id);
-  })
+  const updatestream = (arr,stream,userid) => {
+    let tmp = [...arr];
+    tmp = tmp.map(obj => (obj.userid === userid ? {... obj,stream:stream} : obj)); 
+    // console.log(tmp);
+    return tmp;
+  } 
 
+  useEffect(()=> {
+    // console.log("rerender");
+    // console.log(userlist);
+    for(const obj of userlist) {
+      if (document.getElementById(obj.user+ "-audio") && !document.getElementById(obj.user+ "-audio").srcObject && obj.stream){
+        document.getElementById(obj.user+ "-audio").srcObject = obj.stream;
+      }
+    }
+    setaudiolist([...userlist]);
+  },[userlist])
+
+  useEffect(()=> {
+    getSocket().off('user-id-map');
+    getSocket().off('voice-leaver');
+    getSocket().off('voice-joiner');
+    getPeer();
+    if(isInCall) {
+      getPeer().off('call');
+      getPeer().on('call',(call) => {
+        // console.log("received call from " + call.peer);
+        call.answer(localStream);
+        // answer incoming stream
+        call.on('stream',(stream) => {
+          // console.log("received stream from " + call.peer);
+          handleGetStream(stream, call.peer);
+        });
+      });
+  
+    }
+
+  // this function is called when there is a socket event to add a new user to the call
+  // peer calls the peerid and sends the users mediastream
+  const connectToNewUser = (userId,username) => {
+    // no self calling
+    // console.log("connecting");
+    // console.log(userlist);
+    if(userId === getPeer().id) {
+      return;
+    }
+    // the client will call the new client 
+    let call = getPeer().call(userId, localStream);
+    if (call) {
+      // console.log("connecting to new user " + userId);
+      call.on('stream', (stream) => {
+        // console.log("received stream from callee");
+        handleGetStream(stream,userId);
+      });
+    } else {
+      console.log("call failed");
+    }
+  };
+  const handleGetStream = (stream, userid) => {
+    // const audio = document.createElement('audio');
+    // audio.id= userid;
+    // addAudioStream(audio, stream);
+    // console.log("handling stream");
+    let index = userlist.findIndex((obj=> obj.userid === userid));
+    let tmp = userlist;
+    // console.log(tmp);
+
+    if(index != -1){
+      // console.log('updated ' + userlist[index].user + "'s stream");
+      // console.log('AFTHWEIOAFHIEAWOFJWA P;')
+      // didnt trigger refresh which is weird
+      // console.log(stream);
+      // tmp = tmp.map(obj => (obj.userid === userid ? {... obj} : obj));
+      // setaudiolist(prev => {return prev.map(obj => (obj.userid === userid ? {... obj,stream} : obj));});
+      setuserlist(prev => {return updatestream(prev,stream,userid);});
+    }
+    // console.log(userlist);
+  } 
+    // happens whenever the user joins the voice call
+    // sets the list of current users in the room
+    getSocket().on('user-id-map',(data,username) => {
+      // console.log("just joined ")
+      let tmp = data;
+      let index = tmp.findIndex((obj=> obj.user === username));
+      if(index != -1){
+        // console.log('updated ' + tmp[index].user + "'s stream")
+        tmp[index].stream = localStream;
+      }
+      setuserlist(tmp)
+    });
+
+    // check when other users disconnect
+    getSocket().on('voice-leaver',(username) => {
+      // remove from list and update
+      // console.log(username + " left call");
+      // console.log(userlist);
+      let tmp = userlist.filter((e) => {return e.user !== username}); 
+      // console.log(userlist);
+      setuserlist(tmp)
+      // setaudiolist(tmp);
+    });
+
+    // set up to handle new user events
+    // socket listens for new user joining the call 
+    // it should update the user to id mapping list
+    getSocket().on('voice-joiner',(userid,username) => {
+      // console.log("voice joiner "  + userid + " " + username);
+      // console.log(userlist)
+      let tmp = userlist;
+      let index = tmp.findIndex((obj=> obj.user === username));
+      if(index == -1) {
+        // console.log("add voice joiner");
+        tmp.push({user:username, userid:userid, stream:''});
+        // console.log(tmp);
+      } else {
+        // update user mapping if it already exists for some reason
+        // console.log("update voice joiner id");
+        tmp[index].userid = userid;
+      }
+      setuserlist(tmp)
+      connectToNewUser(userid,username);
+    });
+  },[userlist,isInCall,audiolist,localStream]); 
 
   return (
     <div className='voicecall'>
@@ -187,9 +247,10 @@ export default function VoiceCall() {
       {isInCall && <ExitToAppIcon className='voicecall-btn leave-icon' onClick={disconnectCall} />}
       {!isMuted && isInCall && <MicIcon className='voicecall-btn' onClick={muteAudio} />}
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
-      <div id="audiolists">
-        {audiolist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer()._id}/>)}
-      </div>
+      <CustomScrollbar className="audiolists" style={{height: videoHeight - 186}}
+                        autoHide autoHideTimeout={500} autoHideDuration={200} color="grey">
+        {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
+      </CustomScrollbar>
     </div>
   )
 }

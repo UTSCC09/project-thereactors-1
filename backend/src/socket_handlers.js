@@ -25,9 +25,10 @@ export function setupSocketHandlers(io) {
     /*
     socket data fields
     socket.data.current_party  // is the party id in the db
-    socket.data.userid // user id in the db
+    socket.data.userid // user id of the peer connection
+    socket.data.voice_party // voice party id
+
     */
-    console.log("connection");
     if (socket.handshake.headers.cookie) {
       let res = verifyJwt(getCookie("token", socket.handshake.headers.cookie));
       if (res.valid) {
@@ -42,19 +43,34 @@ export function setupSocketHandlers(io) {
         socket.data.user,
         socket.data.current_party,
         (users) => {
-          io.to(socket.data.current_party).emit("user-left", users);
           console.log("removed connected user");
           updateHostClosestOrClose(
             socket.data.user,
             socket.data.current_party,
             (err, host) => {
               if (host) {
-                io.to(socket.data.current_party).emit("host", host);
+                io.to(socket.data.current_party).emit("user-left", {users, host});
+              } else {
+                io.to(socket.data.current_party).emit("user-left", {users, host:""});
               }
             }
           );
         }
       );
+      if(socket.data.voice_party)
+        socket.leave(socket.data.voice_party);
+      // notify others of the change in users in the call
+      if(io.sockets.adapter.rooms[socket.data.voice_party]) {
+        // let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+        // remove from the list of connected users
+        // console.log("removed");
+        io.sockets.adapter.rooms[socket.data.voice_party] = io.sockets.adapter.rooms[socket.data.voice_party].filter((e) => {return e.user !== socket.data.user}); 
+        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.user);
+        console.log(socket.data.user + " left call" )
+        // console.log(io.sockets.adapter.rooms[socket.data.voice_party])
+      }
+      socket.data.voice_party = null;
+
     });
     socket.on("get-remote", () => {
       if (socket.data.current_party && socket.data.user) {
@@ -69,29 +85,29 @@ export function setupSocketHandlers(io) {
         );
       }
     });
-
+    // this handles users joining a watch party
     socket.on("join-room", (roomdata) => {
       try {
       const roomName = validator.escape(roomdata.roomname);
       console.log(socket.data.user + " attempts to join " + roomName);
       console.log("current party " + socket.data.current_party);
-      // how to make sure that the user leaves other rooms
+      
       if (socket.data.user && roomName) {
-        // do real sanitization on these fields
+        // makes sure the user is authenticated for this room
         checkUserInvited(socket.data.user, roomName, (err, res) => {
           if (res) {
             console.log(socket.data.user + " joins room " + roomName);
-
             socket.join(roomName);
-            console.log(socket.data.current_party);
-
+            // remove user from previous room
             if (socket.data.current_party) {
               removeConnectedUser(
                 socket.data.user,
                 socket.data.current_party,
+                // tell current users that someone left
                 (users) => {
                   io.to(socket.data.current_party).emit("user-left", users);
                   socket.leave(socket.data.current_party);
+                  // transfer host priviledges to the nearest available, or clost hte room otherwise
                   updateHostClosestOrClose(
                     socket.data.user,
                     socket.data.current_party,
@@ -102,13 +118,15 @@ export function setupSocketHandlers(io) {
                         );
                         io.to(socket.data.current_party).emit("host", host);
                       }
-                      leaveConnectedUsers(io, socket, roomdata);
+                      // join user to new room once cleanup is finished
+                      socketJoinRoom(io, socket, roomdata);
                     }
                   );
                 }
               );
             } else {
-              leaveConnectedUsers(io, socket, roomdata);
+              // if didnt need to remove user from previous room, then join to new room
+              socketJoinRoom(io, socket, roomdata);
             }
           }
           if (err) {
@@ -120,7 +138,7 @@ export function setupSocketHandlers(io) {
       console.log(err);
     }
     });
-
+    // sending text messages in the party chat
     socket.on("send", (content) => {
       const safeContent = sanitize(content);
       if (socket.data.current_party) {
@@ -134,7 +152,8 @@ export function setupSocketHandlers(io) {
         );
       }
     });
-    // video socket handling
+    // video playlist handling
+    // updates the current set of videos 
     socket.on("update-playlist", (playlist) => {
       setPartyPlaylist(
         playlist,
@@ -151,6 +170,9 @@ export function setupSocketHandlers(io) {
       );
     });
 
+    // called when user loads a new video
+    // the current video will be changed to this new video which should be appended to the end of the video list
+    // signals client to update their current video and playlist
     socket.on("load-playlist", (playlist) => {
       loadPartyPlaylist(
         playlist,
@@ -167,6 +189,7 @@ export function setupSocketHandlers(io) {
       );
     });
 
+    // when host pauses video, tell other users to pause
     socket.on("pause-video", (playedSeconds) => {
       pauseVideo(
         playedSeconds,
@@ -180,6 +203,7 @@ export function setupSocketHandlers(io) {
         }
       );
     });
+    // when host plays video, tell other users to play
     socket.on("play-video", () => {
       playVideo(socket.data.current_party, socket.data.user, (err, res) => {
         if (res) {
@@ -188,6 +212,7 @@ export function setupSocketHandlers(io) {
         }
       });
     });
+    // called frequently by host to update the video progress so client remains in sync
     socket.on("update-video-progress", (playedSeconds) => {
       updateVideoProgress(
         playedSeconds,
@@ -195,12 +220,13 @@ export function setupSocketHandlers(io) {
         socket.data.user,
         (err, res) => {
           if (res) {
-            console.log("update-progress");
+            // console.log("update-progress");
             io.to(socket.data.current_party).emit("update-progress", res);
           }
         }
       );
     });
+    // called by host to switch the current video in hte playlist to a new one
     socket.on("update-index", (newIndex) => {
       updateCurrentVid(
         newIndex,
@@ -216,7 +242,7 @@ export function setupSocketHandlers(io) {
         }
       );
     });
-
+    // change host
     socket.on("host-change", (newUser) => {
       const safeNewUser = validator.escape(newUser);
       updateHost(
@@ -267,12 +293,12 @@ export function setupSocketHandlers(io) {
             curr_user = {user: socket.data.user, userid:socket.data.voiceid, stream:""};
             io.sockets.adapter.rooms[socket.data.voice_party][i] = curr_user;
           }
-          console.log(io.sockets.adapter.rooms[socket.data.voice_party]);
           // send user the current usernames in the call
-          socket.emit('user-id-map',io.sockets.adapter.rooms[socket.data.voice_party]);
+          socket.emit('user-id-map',io.sockets.adapter.rooms[socket.data.voice_party],socket.data.user);
           socket.join(socket.data.voice_party);
+
           io.to(socket.data.voice_party).emit('voice-joiner', socket.data.voiceid, socket.data.user);
-          console.log(socket.data.user + " joining with id " + socket.data.voiceid )
+          console.log(socket.data.user + " joining voice with id " + socket.data.voiceid )
 
         }
       });
@@ -282,13 +308,13 @@ export function setupSocketHandlers(io) {
         socket.leave(socket.data.voice_party);
       // notify others of the change in users in the call
       if(io.sockets.adapter.rooms[socket.data.voice_party]) {
-        let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
+        // let i = io.sockets.adapter.rooms[socket.data.voice_party].findIndex(x=>x.user === socket.data.user);
         // remove from the list of connected users
-        if (i > -1) {
-          io.sockets.adapter.rooms[socket.data.voice_party].splice(i, 1); 
-        }
-        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.userid);
+        // console.log("removed");
+        io.sockets.adapter.rooms[socket.data.voice_party] = io.sockets.adapter.rooms[socket.data.voice_party].filter((e) => {return e.user !== socket.data.user}); 
+        io.to(socket.data.voice_party).emit('voice-leaver', socket.data.user);
         console.log(socket.data.user + " left call" )
+        // console.log(io.sockets.adapter.rooms[socket.data.voice_party])
       }
       socket.data.voice_party = null;
     } );
@@ -296,7 +322,7 @@ export function setupSocketHandlers(io) {
   });
 }
 
-const leaveConnectedUsers = (io, socket, roomdata) => {
+const socketJoinRoom = (io, socket, roomdata) => {
   const safeRoomName = validator.escape(roomdata.roomname);
   socket.data.current_party = safeRoomName;
   addConnectedUser(socket.data.user, safeRoomName, () => {
@@ -304,7 +330,6 @@ const leaveConnectedUsers = (io, socket, roomdata) => {
     sendPrevPartyMessages(safeRoomName, (err, messages) => {
       socket.emit("joined", messages);
     });
-    console.log("here");
     sendPartyInfo(safeRoomName, (err, data) => {
       if (data) {
         io.to(safeRoomName).emit("curr_users", data.connectedUsers);
