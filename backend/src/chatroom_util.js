@@ -22,15 +22,11 @@ export function getCookie(name,cookies) {
 export const setPartyPlaylist = (playlist,roomid,user,callback) =>  {
     const query = Party.where({_id : roomid}).findOne((err,doc)=> {
       if(doc && doc.hostedBy == user ) {
-        let indexChanged = false;
         let newIndex = doc.current_vid;
-        if(doc.current_vid < doc.ytLink.length && doc.current_vid < playlist.length) {
-          indexChanged = doc.ytLink[doc.current_vid].link !== playlist[doc.current_vid].link;
-        } else if (doc.current_vid < doc.ytLink.length && doc.current_vid >= playlist.length) {
-          indexChanged = true;
-        }
-        if(indexChanged && playlist.some(x => x.link === doc.ytLink[doc.current_vid].link)) {
+        if (playlist.some(x => x.link === doc.ytLink[doc.current_vid].link)) {
           newIndex = playlist.findIndex(x => x.link === doc.ytLink[doc.current_vid].link);
+        } else {
+          newIndex = playlist.length > 0 ? playlist.length - 1 : 0;
         }
         doc.ytLink = playlist;
         doc.current_vid = newIndex;
@@ -54,29 +50,32 @@ export const checkUserInvited = (username,roomid, callback) =>  {
       if(doc && doc.authenticatedUsers.includes(username) ) {
         callback(null, true);
       } else {
-        callback(true);
+        callback(true,null);
       }
     });
   }
   
 export const addConnectedUser = (username,roomid,callback) =>  {
-    Party.where({_id : roomid}).findOne((err,doc)=> {
+    Party.where({_id : roomid}).findOne().exec().then((doc)=> {
       if(doc) {
         if(!doc.connectedUsers.includes(username)) {
+          doc.connectedUsers = doc.connectedUsers.filter((i => i != username));
           doc.connectedUsers.push(username);
-          doc.save().then(()=>{callback()});
+          doc.save().then(()=>{callback(true)});
+        } else if(doc.connectedUsers.includes(username)) {
+          doc.connectedUsers = doc.connectedUsers.filter((c,i,ar) => i == 0 || ar[i] !== ar[i-1]);
+          doc.save().then(()=>{callback(false);}).catch((err)=>{callback(false);});
+
         }
-      } else {
       }
-    });
+    }).catch((err)=>{callback(false);});
   }
   
   export const removeConnectedUser = (username,roomid, callback) =>  {
-    Party.where({_id : roomid}).findOne().then((doc)=> {
+    Party.where({_id : roomid}).findOne().exec().then((doc)=> {
       if(doc && doc.connectedUsers) {
-        doc.connectedUsers = doc.connectedUsers.filter( i => i !== username );
-        let temp = doc.connectedUsers;
-        doc.save().then(()=>{callback(temp)}).catch((err) => {console.log(err)});
+        doc.connectedUsers = doc.connectedUsers.filter((i => i != username));
+        doc.save().then((newdoc)=>{callback(newdoc.connectedUsers)}).catch((err) => {console.log(err)});
         
       } else {
       }
@@ -166,7 +165,7 @@ export  const updateHost = ( newuser,roomid, username, callback) =>  {
 export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
   Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
       if(doc ) {
-          console.log(doc.connectedUsers);
+          // console.log(doc.connectedUsers);
           if(doc.connectedUsers.length > 0) {
             console.log("update host");
             doc.hostedBy = doc.connectedUsers[0];
