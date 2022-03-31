@@ -30,13 +30,14 @@ export default function WatchPartyPage() {
     const [videoWidth, setVideoWidth] = useState(0);
     const [videoHeight, setVideoHeight] = useState(0);
     const playerRef = useRef();
-    const [playerRefValid,setPlayerRefValid] = useState(false);
-    const [videoReady, setVideoReady] = useState(false);
+    const maxvideosyncdiff = .5;
     const [muted, setMuted] = useState(true);
+    const [firstPlay, setFirstPlay] = useState(true);
+    const [firstLoad, setFirstLoad] = useState(true);
+
     // custom states 
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [host, setHost] = useState('');
-    const [videoPlayedSeconds,setVideoPlayedSeconds] = useState(0);
     const [videoIsPlaying,setVideoIsPlaying] = useState(true); 
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
@@ -52,10 +53,11 @@ export default function WatchPartyPage() {
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
 
     useEffect(() => {
-        return history.listen((location) => { 
+        return history.listen(() => { 
            reconnectToSocket();
         }) 
-     },[history]) ;
+     },[history]);
+
     useEffect(() => {
         if (localStorage.getItem('theme')) {
             setTheme(localStorage.getItem('theme'));
@@ -88,7 +90,7 @@ export default function WatchPartyPage() {
         } else {
             window.location.href = '/join';
         }
-        getSocket().on('connection', () => {
+        getSocket().on('connect', () => {
             if (authAPI.signedIn())
                 getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         });
@@ -148,7 +150,8 @@ export default function WatchPartyPage() {
         })
     }, []);
 
-    const [firstPlay, setFirstPlay] = useState(true);
+
+    // handle when user clicks the play button
     const play = () => {
         if(playerRef.current) {
             if(host === authAPI.getUser()) {
@@ -160,11 +163,8 @@ export default function WatchPartyPage() {
                 }
                 setPlaying(true)
                 setPlaying(videoIsPlaying);
-                // console.log("play  "+ videoIsPlaying);
             }
         }
-
-        // sync with all users
     }
 
     const pause = () => {
@@ -200,25 +200,15 @@ export default function WatchPartyPage() {
         }
     }
 
-    const [firstLoad, setFirstLoad] = useState(true);
+    // called when video player is ready to play video
     const handleOnReady = () => {
-        console.log("ready");
-        setPlayerRefValid(true);
-        setVideoReady(true);
-        console.log(playerRefValid);
         if (firstLoad) {
             setFirstLoad(false);
         } else {
             playerRef.current.seekTo(0);
         }
-        // setPlaying(party_video_state.video_is_playing);
-        // playerRef.current.seekTo(party_video_state.playedSeconds);
-        console.log("ready done");
-
     }
-    const handleOnBufferEnd = () => {
-        // check if state of video should be playing
-    }
+    // called when video finiishes, then host changes the video
     const handleOnEnded = () => {
         // check if state of video should be playing
         if(host === authAPI.getUser()) {
@@ -228,44 +218,30 @@ export default function WatchPartyPage() {
             }
         }
     }
+
+    // called by the player when progress is updates
     const handleVideoProgress = (progress) => {
-        // party_video_state.playedSeconds = progress.playedSeconds;
         // use host's current video playtime to sync with other users
         // to make it seems like everyone is watching at the same time.
         // i.e, if other users stop their video, once they resume it, we 
         // will use the host's current video playtime to make them catch up.
-        console.log("progress")
-        console.log(playerRefValid);
         if(host === authAPI.getUser()) {
-            // console.log('progress', progress.playedSeconds);
             getSocket().emit('update-video-progress', progress.playedSeconds);
         }
-        // setMuted(false);
     }
 
-    // handle socket events
+    // handle call from socket to update the video progress
     const handleUpdateProgress= (new_party_video_state)=> {
-        // console.log('old video state ' + playing + " " + videoPlayedSeconds);
-        console.log(" new video state")
-        // console.log(new_party_video_state)
-        setVideoPlayedSeconds(new_party_video_state.playedSeconds);
         setVideoIsPlaying(new_party_video_state.video_is_playing);
-        // console.log(playerRef.current );
-        console.log(playerRefValid);
-        if(playerRef.current ) {
-            console.log("here1");
+        if(playerRef.current) {
             setPlaying(new_party_video_state.video_is_playing);
-            // console.log("here2.6");
-            if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > .5) {
-                // console.log("here3");
+            // sync video if time is greater than some margin
+            if(Math.abs(playerRef.current.getCurrentTime() - new_party_video_state.playedSeconds) > maxvideosyncdiff) {
                 playerRef.current.seekTo(new_party_video_state.playedSeconds);
-                // console.log("here4");
             }
-      
-            // console.log("here5");
         }
     }
-
+    // handle call from socket to update the playlist 
     const handlePlayListChange= (data)=> {
         setPlaylist(data.playlist);
         setPlaylistIndex(data.current_vid);
@@ -278,10 +254,14 @@ export default function WatchPartyPage() {
             }
         }
     }
-
+    
     const getUsersRightOrder = (users) => {
         let rest = users.filter(user => user.username !== host);
-        let tempHost = {username: host, avatar: users[users.findIndex(user => user.username === host)].avatar};
+        let avatar;
+        if (users[users.findIndex(user => user.username === host)]){
+             avatar = users[users.findIndex(user => user.username === host)].avatar
+        }
+        let tempHost = {username: host, avatar: avatar };
         return [tempHost].concat(rest);
     }
 
@@ -342,7 +322,12 @@ export default function WatchPartyPage() {
     }
 
     const getAvatar = (username) => {
-        return connectedUsers[connectedUsers.findIndex(user => user.username === username)].avatar;
+        if(connectedUsers[connectedUsers.findIndex(user => user.username === username)]) {
+            return connectedUsers[connectedUsers.findIndex(user => user.username === username)].avatar;
+        } else {
+            // console.log("cannot get avatar");
+            return '';
+        }
     }
 
     return (

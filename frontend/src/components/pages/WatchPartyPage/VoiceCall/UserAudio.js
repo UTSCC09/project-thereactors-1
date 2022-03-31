@@ -9,7 +9,7 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
         let audio = document.getElementById(user+"-audio");
         console.log("update audio " + user);
         if(stream) {
-            console.log("updating stream " + user);
+            // console.log("updating stream " + user);
             audio.srcObject = stream;
         }
         audio.controls = 'controls';
