@@ -72,12 +72,9 @@ export const addConnectedUser = (username,roomid,callback) =>  {
   }
   
   export const removeConnectedUser = (username,roomid, callback) =>  {
-    Party.where({_id : roomid}).findOne().then((doc)=> {
+    Party.where({_id : roomid}).findOne().exec().then((doc)=> {
       if(doc && doc.connectedUsers) {
-        console.log(username)
         doc.connectedUsers = doc.connectedUsers.filter((i => i != username));
-        console.log(doc.connectedUsers.filter((i => i != username)))
-
         doc.save().then((newdoc)=>{callback(newdoc.connectedUsers)}).catch((err) => {console.log(err)});
         
       } else {
@@ -168,7 +165,7 @@ export  const updateHost = ( newuser,roomid, username, callback) =>  {
 export  const updateHostClosestOrClose = (username,roomid, callback) =>  {
   Party.where({_id : roomid, hostedBy:username}).findOne((err,doc)=> {
       if(doc ) {
-          console.log(doc.connectedUsers);
+          // console.log(doc.connectedUsers);
           if(doc.connectedUsers.length > 0) {
             console.log("update host");
             doc.hostedBy = doc.connectedUsers[0];

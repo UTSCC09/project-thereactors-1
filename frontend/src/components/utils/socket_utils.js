@@ -8,7 +8,7 @@ export function disconnectSocket() {
     socket.disconnect();
     socket.connect();
     socket.removeAllListeners();
-    socket.onAny((event)=>(console.log(event)))
+    // socket.onAny((event)=>(console.log(event)))
 }
 
 export function getSocket() {

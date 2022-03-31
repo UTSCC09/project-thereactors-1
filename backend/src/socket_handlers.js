@@ -46,7 +46,6 @@ export function setupSocketHandlers(io) {
         curr_user,
         curr_party,
         (users) => {
-          console.log("removed connected user");
           updateHostClosestOrClose(
             curr_user,
             curr_party,
@@ -105,9 +104,8 @@ export function setupSocketHandlers(io) {
     // this handles users joining a watch party
     socket.on("join-room", (roomdata) => {
       try {
-      console.log(socket.id);
       const roomName = validator.escape(roomdata.roomname);
-      console.log(socket.data.user + " attempts to join " + roomName);
+      console.log(socket.data.user+ " with id " + socket.id + " attempts to join " + roomName );
       console.log("current party " + socket.data.current_party);
       
       if (socket.data.user && roomName) {
@@ -118,7 +116,6 @@ export function setupSocketHandlers(io) {
             socket.join(roomName);
             // remove user from previous room
             if (socket.data.current_party && socket.data.current_party !== roomName) {
-              console.log("remove connected user");
               removeConnectedUser(
                 socket.data.user,
                 socket.data.current_party,

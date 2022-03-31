@@ -91,14 +91,14 @@ export default function ProfilePage() {
         }
         else {
             // API call to update user data
-            console.log(newUser)
+            // console.log(newUser)
             let reqBody = {email: newUser.email, password: newUser.password};
             UserAPI.updateUser(newUser.username, reqBody, (err, res) => {
                 if (err) {
                     console.log(err)
                 }
                 else if (avatarChanged) {
-                    console.log(avatar);
+                    // console.log(avatar);
                     UserAPI.updateAvatar(avatar, (err, res) => {
                         if (err) console.log(err);
                         else window.location.reload(false);
