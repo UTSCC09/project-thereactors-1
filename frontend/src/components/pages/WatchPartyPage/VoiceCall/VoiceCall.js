@@ -68,6 +68,7 @@ export default function VoiceCall({videoHeight}) {
         host:  peerhost,
         port: peerhostport,
         config: iceServers,
+        secure:true,
       });
       peer.on('open', (id)=> {
         // console.log("set id");
