@@ -35,14 +35,42 @@ The general user flow is as follows
 - The current video playing is synchronized with the progress of the host
     - The host can pause,play,skip ahead, and other users will be brought to that timestamp at the same time
     - Other users will not be able to modify the current progress.
-- All users can interact through the chat box by sending messages, or react through emojis which will be displayed on top of the video.
+- All users can interact through the chat box by sending messages, or react by sending emojis on the video itself
 - All users can join a voice call
-- Users can leave or rejoin the party or call whenever they feel
+    - There is an option to mute their microphone or leave call and then rejoin.
+- Users can leave or rejoin the room or call whenever they feel
+- The room will be deleted once all users leave
 
 
 ## Development
 
 **Task:** Leaving deployment aside, explain how the app is built. Please describe the overall code design and be specific about the programming languages, framework, libraries and third-party api that you have used. 
+
+The app is made up of three components 
+
+The frontend
+- The frontend is built with React
+    - 
+
+The backend
+- mongoose which is an interface using the mongodb drivers
+    - schemas are built on mongodb objects
+    - querying users, room information, messages are done through mongodb.
+- graphql
+- RESTAPI
+
+
+- express server
+    - socket io is also listening on top of this express server
+
+    - peerjs server which is listening to /peerjs path 
+        - peerjs is a peer to peer webrtc api to coordinate the sending of audio streams to peers
+        - This server allows users to 
+
+
+The database
+- This is a mongodb instance running from a docker container
+
 
 ## Deployment
 
@@ -64,7 +92,7 @@ The general user flow is as follows
 
 **Task:** Describe the contribution of each team member to the project. Please provide the full name of each team member (but no student number). 
 
-Victor Ko: Added features such as voice call, messaging, and video synchronization
+Victor Ko: Added functionality for features such as voice call, messaging, and video synchronization
 
 # One more thing? 
 
