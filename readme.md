@@ -6,7 +6,6 @@
 - Victor Ko, 1005070628 
 - JunXing Xu, 1004019028
 
-a
 ## Project URL
 
 - https://ytwatch.party/
