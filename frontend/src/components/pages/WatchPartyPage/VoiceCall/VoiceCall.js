@@ -56,8 +56,8 @@ export default function VoiceCall({videoHeight}) {
   useEffect(() => {
     return history.listen((location) => { 
        disconnectCall();
-    }) 
-  },[history]) ;
+    })
+  }, [history]);
 
 
   const getPeer = ()=> {
@@ -124,16 +124,16 @@ export default function VoiceCall({videoHeight}) {
     return tmp;
   } 
 
-  useEffect(()=> {
-    // console.log("rerender");
-    // console.log(userlist);
-    for(const obj of userlist) {
-      if (document.getElementById(obj.user+ "-audio") && !document.getElementById(obj.user+ "-audio").srcObject && obj.stream){
-        document.getElementById(obj.user+ "-audio").srcObject = obj.stream;
-      }
-    }
-    setaudiolist([...userlist]);
-  },[userlist])
+  // useEffect(()=> {
+  //   // console.log("rerender");
+  //   // console.log(userlist);
+  //   for(const obj of userlist) {
+  //     if (document.getElementById(obj.user+ "-audio") && !document.getElementById(obj.user+ "-audio").srcObject && obj.stream){
+  //       document.getElementById(obj.user+ "-audio").srcObject = obj.stream;
+  //     }
+  //   }
+  //   setaudiolist([...userlist]);
+  // },[userlist])
 
   useEffect(()=> {
     getSocket().off('user-id-map');
@@ -249,7 +249,7 @@ export default function VoiceCall({videoHeight}) {
       {isMuted && isInCall && <MicOffIcon className='voicecall-btn' onClick={unmuteAudio} />}
       <CustomScrollbar className="audiolists" style={{height: videoHeight - 186}}
                         autoHide autoHideTimeout={500} autoHideDuration={200} color="grey">
-        {userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
+        {userlist?.length > 0 && userlist.map((user)=> <UserAudio key={user.user} thisUser={user} clientid={getPeer().id}/>)}
       </CustomScrollbar>
     </div>
   )
