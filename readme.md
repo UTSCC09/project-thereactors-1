@@ -49,20 +49,70 @@ The general user flow is as follows
 The app is made up of three components
 
 ### The frontend
-- The frontend is built with React
+
+The frontend is built with the React framework, using javascript, some html and scss (which is similar to css but is easier to nest classes
+-  It uses axios to fetch user data asynchronously
+-  It uses socketio for server communication with the client
+    - It handles chat synchronization, video synchronization, voice call joining synchronization, emote synchronization, and playlist updates
+-  Peerjs is used in the frontend for peer to peer webrtc connections in order to start the call between peers
+
+In terms of the technical overview of the frontend the app is built in the following way.
+
+- Pages are routed through a browser with various paths
+- Certain pages will redirect to the sign in page through another component that checks if the user is currently signed in. Sources were used to figure out how to implement the privateroute to redirect to the sign in page from the following article https://medium.com/@thanhbinh.tran93/private-route-public-route-and-restricted-route-with-react-router-d50b27c15f5e. 
+- A navbar is included onto every page with logic to display the current user or a sign in button otherwise
+
+- For the main page, sign in, sign up,room creation, room join, and edit profile pages. They are rendered mostly statically with form fields and buttons to submit async rest requests to the server for updating user information or creating new rooms. Redirection logic is also included with the button clicks.
+
+- For authentication, a jwt token is included in cookie with samesite,secure, and httponly flags included. This cookie is also sent to the socket on connection, to ensure that the socket client has an authenticated user. When user logs out, the token is removed. 
+
+For the dynamic aspects of the application, it is in the '/party' page. 
+- The overall logic is to use socketio to receive and emit events which will render components when needed.
+- When a user joins, the socket would be initialized, and send a connection request to the server along with a join-room event
+    - The server will send the appropriate information through the socket such as chat logs, video information, users and other room information to be rendered
+    - The client will also continue to listen for any updates to the video progress, chat, video playlist, user joining updates through the socket and handle them accordingly
+- The party page will have several components such as chat, sidepanel, connected users, video playlist, and emotes.
+    - The chat includes an input that will emit a socket event to send the message to the server
+        - When the user receives the message from the server, it will update the messages
+- The video uses React-Player api which provides an interface for playing youtube videos inside an iframe and allowing controls and video progress updates
+    - These updates will be emitted to the server where it can tell clients to play, pause, or update their progress
+- The user can click on emotes to display a specific emote on the video. This is through signaling the server to send an emote similar to messaging
+- For voice calls, socketio is used to signal the client to establish a peer to peer connection with other clients
+    - First the client gets an peer id from the server
+    - Then the client tells the server its id, which the server can then map the user to the id, since the user has been authenticated through the socket
+    - When another user attempts to join call, the server will send everyone in that call an event that tells the other users to call that joiner with its peer id
+    - that way multiway calls can be established
+    - mediaStreams are acquired through the browser interface, and similarly with muting the stream.
+
+
 
 ### The backend
-- mongoose which is an interface using the mongodb drivers
-    - schemas are built on mongodb objects
-    - querying users, room information, messages are done through mongodb.
-- graphql
-- RESTAPI
-- express server
-    - socket io is also listening on top of this express server
 
-    - peerjs server which is listening to /peerjs path
+The backend is written in javascript.
+
+The following frameworks/apis are used
+
+- mongoose which is an interface for querying mongodb using the mongodb drivers
+    - Schemas are built on mongodb objects
+    - Querying users, room information, and messages are done through mongodb.
+- graphql
+    - These endpoints were used to handle requests for user information, and room information from the database
+- RESTAPI
+    - This was used to send cookie information and user information when the user signs in/up and for updating user profiles 
+- express server
+    - The express server had middleware handling many other parts of the server.
+    - Socket io is listening on top of this express server
+        - It handles all the coordinations of videos, voice calls, chat, and other information in order to send to all users in the room for updates
+    - peerjs express server is listening to /peerjs path
         - peerjs is a peer to peer webrtc api to coordinate the sending of audio streams to peers
-        - This server allows users to
+        - This server allows users to send the correct information to perform peer web rtc connections
+        - The server is a library from peer
+
+Otherwise, handling was done through utility functions such as checking if user was authenticated, and then executing certain procedures. 
+
+bcryptjs was used to salt and hash the passwords stored in the database. 
+json web tokens were used to authenticate users 
+validator and mongo-sanitize were used to ensure client data were correct and valid.
 
 
 ### The database
@@ -106,9 +156,9 @@ We use the graphs provided by DigitalOcean to monitor our server. We monitor dat
 
 **Task:** What is the top 3 most challenging things that you have learned/developed for you app? Please restrict your answer to only three items.
 
-1. Using WEBRTC / PEER-WEBRTC in a way that synchronizes data between users, such as implmenting voice calls or synchronizing videos.
-2.
-3. Deploying the docker containers from github container registry onto Digital Ocean, and setting up the production configurations for it such as ssl.
+1. Using PEER-WEBRTC to connect users in a call and provide calling functionality both ways, for n users.
+2. Using socketio (webrtc) to synchronize events happening in the room, such as video progress, user joins, disconnects, sending emotes, updating video playlists, providing authentication. 
+3. Setting up github container registry to pull and build from main, then deploy onto Digital Ocean, and setting up the production configurations for it
 
 ## Contributions
 
