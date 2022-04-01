@@ -32,13 +32,11 @@ export default function WatchPartyPage() {
     const playerRef = useRef();
     const maxvideosyncdiff = .5;
     const [muted, setMuted] = useState(true);
-    const [firstPlay, setFirstPlay] = useState(true);
-    const [firstLoad, setFirstLoad] = useState(true);
 
     // custom states 
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [host, setHost] = useState('');
-    const [videoIsPlaying,setVideoIsPlaying] = useState(true); 
+    const [videoIsPlaying, setVideoIsPlaying] = useState(false); 
     const [playlist, setPlaylist] = useState([]);
     const [playlist_index, setPlaylistIndex] = useState(0);
     const [originalHost, setOriginalHost] = useState('');
@@ -169,16 +167,15 @@ export default function WatchPartyPage() {
 
         if (authAPI.signedIn()){
             getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
-            // console.log('join room');
         }
-       
-
     }, []);
 
 
     const handleOnStart = () => {
         playerRef.current.seekTo(0);
-        getSocket().emit('update-video-progress', 0);
+        if (host === authAPI.getUser()) {
+            getSocket().emit('update-video-progress', 0);
+        }
     }
 
     // handle when user clicks the play button
@@ -224,11 +221,11 @@ export default function WatchPartyPage() {
 
     // called when video finiishes, then host changes the video
     const handleOnEnded = () => {
-        // check if state of video should be playing
         if(host === authAPI.getUser()) {
-            getSocket().emit('video-ended');
             if (playlist_index < playlist.length - 1) {
                 getSocket().emit('update-index', playlist_index + 1);
+            } else {
+                getSocket().emit('pause-video', playerRef.current.getCurrentTime());
             }
         }
     }
@@ -255,6 +252,7 @@ export default function WatchPartyPage() {
             }
         }
     }
+
     // handle call from socket to update the playlist 
     const handlePlayListChange= (data)=> {
         setPlaylist(data.playlist);
@@ -339,7 +337,6 @@ export default function WatchPartyPage() {
         if(connectedUsers[connectedUsers.findIndex(user => user.username === username)]) {
             return connectedUsers[connectedUsers.findIndex(user => user.username === username)].avatar;
         } else {
-            // console.log("cannot get avatar");
             return '';
         }
     }
@@ -371,10 +368,8 @@ export default function WatchPartyPage() {
                             width={videoWidth}
                             height={videoHeight}
                             onStart={handleOnStart}
-                            // onBufferEnd={handleOnBufferEnd}
                             onEnded={handleOnEnded}
                             muted={muted}
-                            // volume={0.4}
                         />
                     }
                     {videoId === '' && 
