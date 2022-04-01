@@ -116,6 +116,8 @@ We use the graphs provided by DigitalOcean to monitor our server. We monitor dat
 
 Victor Ko: Added functionality for features such as voice call, messaging, and video synchronization
 
+JunXing Xu: Setup the framework for the application and implemented APIs needed for the frontend. Setup deployment and GitHub action for CI/CD. Server maintenance and monitoring the data on DigitalOcean.
+
 # One more thing?
 
 **Task:** Any additional comment you want to share with the course staff?
