@@ -4,6 +4,7 @@ import * as UserAPI from 'api/user';
 
 export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     const [avatar, setAvatar] = useState(null);
+    const [isStreamed, setStreamed ] = useState(false);
 
     let loopFn = null;
     let audioSrc = null;
@@ -32,7 +33,10 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
         let audio = document.getElementById(userid+"-audio");
         audio.addEventListener("loadeddata",() => {
             if (clientid !== userid) {
-                analyser.connect(audioCtx.destination); // so that user doesn't hear himself
+                if(stream && !isStreamed) {
+                    analyser.connect(audioCtx.destination); // so that user doesn't hear himself
+                    setStreamed(true);
+                }
             }
         });
         
@@ -42,9 +46,11 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
         
         return () => {
             clearInterval(loopFn);
-            document.getElementById(`${user}-audio-icon`).style.border = 'none';
+            if(document.getElementById(`${user}-audio-icon`))
+                document.getElementById(`${user}-audio-icon`).style.border = 'none';
             analyser.disconnect();
-            audioSrc.disconnect();
+            if(audioSrc)
+                audioSrc.disconnect();
         }
     },[]);
     
@@ -54,6 +60,10 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
             audio.srcObject = stream;
             audioSrc = audioCtx.createMediaStreamSource(stream);
             audioSrc.connect(analyser);
+            if (clientid !== userid && !isStreamed) {
+                analyser.connect(audioCtx.destination);
+                setStreamed(true);
+            }
             data = new Uint8Array(analyser.frequencyBinCount);
             loopFn = setInterval(() => {
                 loopingFunction();
