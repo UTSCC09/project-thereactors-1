@@ -52,6 +52,7 @@ async function startServer() {
           maxAge: getConfig("cookieMaxAge"),
           httpOnly: true,
           secure:getConfig('securecookie'),
+          samesite:getConfig('samesitecookie'),
         });
         return res.json({ username: user.username, token });
       }

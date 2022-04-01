@@ -14,11 +14,12 @@ import * as AuthAPI from 'auth/auth_utils.js';
 export default function ProfilePage() {
     const [theme, setTheme] = useState('');
     const [user, setUser] = useState({});
-    const [newUser, setNewUser] = useState({username:"", email:"", password:""});
+    const [newUser, setNewUser] = useState({username:"", email:""});
     const [originalAvatar, setOriginalAvatar] = useState(null);
     const [avatar, setAvatar] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [avatarChanged, setAvatarChanged] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isChangePassword, setIsChangePassword] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -36,7 +37,6 @@ export default function ProfilePage() {
             if (err) { console.log(err) }
             if (!err) {
                 let temp = res[0];
-                temp.password = "";
                 setUser(temp);
                 setNewUser(temp);
             }
@@ -73,32 +73,36 @@ export default function ProfilePage() {
         };
     }
 
+    let timeoutMsg;
     const handleSave = (e) => {
         e.preventDefault();
         if (!validateEmail(newUser.email)) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Invalid email address!";
-            setTimeout(() => {
+            clearTimeout(timeoutMsg);
+            timeoutMsg = setTimeout(() => {
                 document.getElementById('warning').style.display = 'none';
-            }, 5000)
+            }, 4000);
         }
-        else if (isChangePassword && newUser.password !== confirmPassword) {
+        else if (isChangePassword && newPassword !== confirmPassword) {
             document.getElementById('warning').style.display = 'block';
             document.getElementById('warning').innerHTML = "Password doesn't match!";
-            setTimeout(() => {
+            clearTimeout(timeoutMsg);
+            timeoutMsg = setTimeout(() => {
                 document.getElementById('warning').style.display = 'none';
-            }, 5000)
+            }, 4000);
         }
         else {
             // API call to update user data
-            // console.log(newUser)
-            let reqBody = {email: newUser.email, password: newUser.password};
+            let reqBody = {email: newUser.email};
+            if (newPassword) {
+                reqBody.password = newPassword;
+            }
             UserAPI.updateUser(newUser.username, reqBody, (err, res) => {
                 if (err) {
                     console.log(err)
                 }
                 else if (avatarChanged) {
-                    // console.log(avatar);
                     UserAPI.updateAvatar(avatar, (err, res) => {
                         if (err) console.log(err);
                         else window.location.reload(false);
@@ -116,6 +120,7 @@ export default function ProfilePage() {
         setAvatarPreview(originalAvatar);
         setIsEdit(false);
         setIsChangePassword(false);
+        setNewPassword('');
         setConfirmPassword('');
     }
 
@@ -187,7 +192,7 @@ export default function ProfilePage() {
                         value={newUser.password}
                         type='password'
                         inputProps={{ minLength: 8 }}
-                        onChange={(e)=>changeField(e, 'password')}
+                        onChange={(e)=>setNewPassword(e.target.value)}
                         required
                     />
                     </div>
