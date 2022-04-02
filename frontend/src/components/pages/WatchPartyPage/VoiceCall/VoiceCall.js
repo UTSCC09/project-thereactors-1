@@ -36,7 +36,9 @@ export const CustomScrollbar = props => (
 
 const peerhost = getConfig("peerhost");
 const peerhostport = getConfig("peerhostport");
-const mediaConstraints = {audio: true, video: false }
+const mediaConstraints = {audio: true, video: false };
+const securepeer = getConfig("securepeer");
+
 // TODO  audio analyzer on the streams to have a list of currently talking users
 const iceServers = {
     iceServers: [
@@ -68,7 +70,7 @@ export default function VoiceCall({videoHeight}) {
         host:  peerhost,
         port: peerhostport,
         config: iceServers,
-        secure:true,
+        secure: securepeer,
       });
       peer.on('open', (id)=> {
         // console.log("set id");
