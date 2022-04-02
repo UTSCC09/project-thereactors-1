@@ -65,7 +65,7 @@ The frontend is built with the React framework, using javascript, some html and 
 
 In terms of the technical overview of the frontend the app is built in the following way.
 
-- Pages are routed through the BrowserRouter component of the "react-router-dom" library, with various paths
+- Pages are routed through the BrowserRouter component of the "react-router-dom" library, with various paths.
 - Certain pages will redirect to the sign in page through another component that checks if the user is currently signed in. Sources were used to figure out how to implement our own PrivateRoute component to redirect to the sign in page from the following article https://medium.com/@thanhbinh.tran93/private-route-public-route-and-restricted-route-with-react-router-d50b27c15f5e. 
 - A navbar is included onto every page with logic to display the current user or a sign in button otherwise.
 
@@ -75,24 +75,24 @@ In terms of the technical overview of the frontend the app is built in the follo
 
 For the dynamic aspects and the main feature of our application, it is found in the '/party' page. 
 - The overall logic is to use socketio to receive and emit events which will render components when needed.
-- When a user joins, the socket would be initialized, and send a connection request to the server along with a join-room event
-    - The server will send the appropriate information through the socket such as chat logs, video information, users and other room information to be rendered
-    - The client will also continue to listen for any updates to the video progress, chat, video playlist, user joining updates through the socket and handle them accordingly
+- When a user joins, the socket would be initialized, and send a connection request to the server along with a join-room event.
+    - The server will send the appropriate information through the socket such as chat logs, video information, users and other room information to be rendered.
+    - The client will also continue to listen for any updates to the video progress, chat, video playlist, user joining updates through the socket and handle them accordingly.
 - The party page will have several components such as chat, sidepanel, connected users, video playlist, and emotes.
-    - The chat includes an input that will emit a socket event to send the message to the server
-        - When the user receives the message from the server, it will update the messages
-- The video uses the React-Player library (https://www.npmjs.com/package/react-player) which provides an interface for playing youtube videos inside an iframe and allowing controls and video progress updates
+    - The chat includes an input that will emit a socket event to send the message to the server.
+        - When the user receives the message from the server, it will update the messages.
+- The video uses the React-Player library (https://www.npmjs.com/package/react-player) which provides an interface for playing youtube videos inside an iframe and allowing controls and video progress updates.
     - These updates will be emitted to the server where it can tell clients (other users) to play, pause, or update their progress.
 - The user can click on emotes to display a specific emote on the video as a way to react to the video content. 
     - To sync the current user's emote to all the other users, a signal is sent to the server, that will then send an emote signal similar to all other users, similar to how we implemented instant messaging. 
     - Coordinates x,y of the emotes are also sent so that all the users will have the emotes appear at the same location on the video.
     - Emotes were obtained from the EmojiAPI (https://emojiapi.dev/emojis).
 - For the sidepanel part, it is implemented as a single component that takes either type 'playlist' or 'users'. Depending on the type, it will display the corresponding content.
-- For voice calls, socketio is used to signal the client to establish a peer to peer connection with other clients
-    - First the client gets an peer id from the server
-    - Then the client tells the server its id, which the server can then map the user to the id, since the user has been authenticated through the socket
-    - When another user attempts to join call, the server will send everyone in that call an event that tells the other users to call that joiner with its peer id
-    - that way multiway calls can be established
+- For voice calls, socketio is used to signal the client to establish a peer to peer connection with other clients.
+    - First the client gets an peer id from the server.
+    - Then the client tells the server its id, which the server can then map the user to the id, since the user has been authenticated through the socket.
+    - When another user attempts to join call, the server will send everyone in that call an event that tells the other users to call that joiner with its peer id.
+    - that way multiway calls can be established.
     - mediaStreams are acquired through the browser interface, and similarly with muting the stream.
     - The AnalyserNode html component (https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode) is also used to recognize voice activity and highlight the icon of any user who is currently talking in the voice call.
 
@@ -108,15 +108,15 @@ The following frameworks/apis are used:
 - graphql
     - These endpoints were used to handle requests for user information, and room information from the database.
 - RESTAPI
-    - This was used to send cookie information and user information when the user signs in/up and for updating user profiles 
+    - This was used to send cookie information and user information when the user signs in/up and for updating user profiles.
 - express server
     - The express server had middleware handling many other parts of the server.
     - Socket io is listening on top of this express server.
-        - It handles all the coordinations of videos, voice calls, chat, and other information in order to send to all users in the room for updates
+        - It handles all the coordinations of videos, voice calls, chat, and other information in order to send to all users in the room for updates.
     - peerjs express server is listening to /peerjs path.
-        - peerjs is a peer to peer webrtc api to coordinate the sending of audio streams to peers
-        - This server allows users to send the correct information to perform peer web rtc connections
-        - The server is a library from peer
+        - peerjs is a peer to peer webrtc api to coordinate the sending of audio streams to peers.
+        - This server allows users to send the correct information to perform peer web rtc connections.
+        - The server is a library from peer.
 
 Otherwise, handling was done through utility functions such as checking if user was authenticated, and then executing certain procedures. 
 
