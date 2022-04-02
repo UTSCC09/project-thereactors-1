@@ -12,13 +12,88 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import { useHistory } from 'react-router-dom'
 import VoiceCall from './VoiceCall/VoiceCall';
 import * as UserAPI from 'api/user';
-/*
-    party_video_state 
-        playedSeconds
-        video_is_playing
 
+import { styled } from '@mui/system';
+import SwitchUnstyled, { switchUnstyledClasses } from '@mui/base/SwitchUnstyled';
 
-*/
+const blue = {
+    500: '#007FFF',
+  };
+  
+  const grey = {
+    400: '#BFC7CF',
+    500: '#AAB4BE',
+    600: '#6F7E8C',
+  };
+  
+  const Root = styled('span')(
+    ({ theme }) => `
+    font-size: 0;
+    position: relative;
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+    margin-right: 24px;
+    cursor: pointer;
+  
+    &.${switchUnstyledClasses.disabled} {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  
+    & .${switchUnstyledClasses.track} {
+      background: ${theme.palette.mode === 'dark' ? grey[600] : grey[400]};
+      border-radius: 10px;
+      display: block;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+    }
+  
+    & .${switchUnstyledClasses.thumb} {
+      display: block;
+      width: 14px;
+      height: 14px;
+      top: 3px;
+      left: 3.5px;
+      border-radius: 16px;
+      background-color: #fff;
+      position: relative;
+      transition: all 200ms ease;
+    }
+  
+    &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
+      background-color: ${grey[400]};
+      box-shadow: 0 0 1px 8px rgba(0, 0, 0, 0.25);
+    }
+  
+    &.${switchUnstyledClasses.checked} {
+      .${switchUnstyledClasses.thumb} {
+        left: 18px;
+        top: 3px;
+        background-color: #fff;
+      }
+  
+      .${switchUnstyledClasses.track} {
+        background: ${blue[500]};
+      }
+    }
+  
+    & .${switchUnstyledClasses.input} {
+      cursor: inherit;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: 1;
+      margin: 0;
+    }
+    `,
+  );
+  
+
 export default function WatchPartyPage() {
     // these are react-player states
     const history = useHistory() 
@@ -33,6 +108,11 @@ export default function WatchPartyPage() {
     const maxvideosyncdiff = .5;
     const [muted, setMuted] = useState(true);
 
+    /**
+     * party_video_states:
+     *  - playedSeconds
+     *  - video_is_playing
+     */
     // custom states 
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [host, setHost] = useState('');
@@ -50,6 +130,7 @@ export default function WatchPartyPage() {
     ];
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
     const [messages, setMessages] = useState([]);
+    const label = { componentsProps: { input: { 'aria-label': 'Demo switch' } } };
 
     useEffect(() => {
         return history.listen(() => { 
@@ -278,35 +359,38 @@ export default function WatchPartyPage() {
     }
 
     const displayEmote = (emote) => {
-        let padding = 20;
-        let vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
-        let video_X = vidWrapperBox.width;
-        let video_Y = (vidWrapperBox.width / 16) * 9;
-        let max_X = video_X - (emoteSize + padding);
-        let max_Y = video_Y - (emoteSize + padding);
-        let emote_X = emote.x * max_X;
-        let emote_Y = emote.y * max_Y;
-        emote_X = emote_X < padding ? padding : emote_X;
-        emote_Y = emote_Y < padding ? padding : emote_Y;
-        let emotesEl = document.getElementById('video-player-wrapper');
-        let div = document.createElement('div');
-        div.setAttribute('id', `emote-${emote.dispId}`);
-        div.setAttribute('class', 'emote');
-        div.style.transition = 'opacity .3s';
-        div.style.opacity = '1';
-        div.style.margin = `${emote_Y}px 0 0 ${emote_X}px`;
-        let img = document.createElement('img');
-        img.setAttribute('src', `https://emojiapi.dev/api/v1/${emote.id}/${emoteSize}.png`);
-        div.append(img);
-        emotesEl.prepend(div);
-        setTimeout(() => {
-            let emoteEl = document.getElementById(`emote-${emote.dispId}`);
-            emoteEl.style.transition = 'opacity 2.5s';
-            emoteEl.style.opacity = '0';
+        let emoteToggleEl = document.getElementById('emoteToggle').lastElementChild;
+        if (emoteToggleEl.checked) {
+            let padding = 20;
+            let vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
+            let video_X = vidWrapperBox.width;
+            let video_Y = (vidWrapperBox.width / 16) * 9;
+            let max_X = video_X - (emoteSize + padding);
+            let max_Y = video_Y - (emoteSize + padding);
+            let emote_X = emote.x * max_X;
+            let emote_Y = emote.y * max_Y;
+            emote_X = emote_X < padding ? padding : emote_X;
+            emote_Y = emote_Y < padding ? padding : emote_Y;
+            let emotesEl = document.getElementById('video-player-wrapper');
+            let div = document.createElement('div');
+            div.setAttribute('id', `emote-${emote.dispId}`);
+            div.setAttribute('class', 'emote');
+            div.style.transition = 'opacity .3s';
+            div.style.opacity = '1';
+            div.style.margin = `${emote_Y}px 0 0 ${emote_X}px`;
+            let img = document.createElement('img');
+            img.setAttribute('src', `https://emojiapi.dev/api/v1/${emote.id}/${emoteSize}.png`);
+            div.append(img);
+            emotesEl.prepend(div);
             setTimeout(() => {
-                document.getElementById('video-player-wrapper').removeChild(emoteEl);
-            }, 2500);
-        }, 700);
+                let emoteEl = document.getElementById(`emote-${emote.dispId}`);
+                emoteEl.style.transition = 'opacity 2.5s';
+                emoteEl.style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('video-player-wrapper').removeChild(emoteEl);
+                }, 2500);
+            }, 700);
+        }
     }
 
     const sendEmote = (id) => {
@@ -330,6 +414,20 @@ export default function WatchPartyPage() {
             emoteListEl.style.transform = 'translateX(101%)';
             toggleEl.style.borderRadius = '10px 0px 0px 10px';
             arrowEl.style.transform = 'rotate(360deg)';
+        }
+    }
+
+    const handleEmoteToggle = (e) => {
+        if (e.target.checked) {
+            let emotesEl = document.querySelectorAll('.emote-disabled');
+            emotesEl.forEach((el) => {
+                el.setAttribute('class', 'emote');
+            });
+        } else {
+            let emotesEl = document.querySelectorAll('.emote');
+            emotesEl.forEach((el) => {
+                el.setAttribute('class', 'emote-disabled');
+            });
         }
     }
 
@@ -403,6 +501,11 @@ export default function WatchPartyPage() {
                             </>
                         }
                     </div>
+                    <div className='desc-row-col2'>
+                    <div className='emote-toggle'>
+                        <div style={{marginRight:6}}>emote</div>
+                        <SwitchUnstyled id="emoteToggle" component={Root} {...label} defaultChecked onClick={(e)=>handleEmoteToggle(e)} />
+                    </div>
                     {authAPI.getUser() === host &&
                         <div className='addToPlaylist-wrapper'>
                             <TextField
@@ -416,6 +519,7 @@ export default function WatchPartyPage() {
                             <Button className='addToPlaylist-btn' variant='outlined' onClick={()=>addToPlaylist(tempVideoId2, 'queue')}>queue</Button>
                         </div>
                     }
+                    </div>
                 </div>
                 <div className='video-queue-wrapper'></div>
             </div>

@@ -25,6 +25,10 @@
         img {
           width: 100%;
         }
+
+        &-disabled {
+          display: none;
+        }
       }
 
       .add-video-wrapper {
@@ -63,17 +67,27 @@
         }
       }
 
-      .addToPlaylist-wrapper {
+      &-col2 {
         display: flex;
         align-items: center;
 
-        .input-field {
-          width: 20vw;
+        .emote-toggle {
+          display: flex;
+          align-items: center;
         }
 
-        .load-btn, .addToPlaylist-btn {
-            padding: 6.5px 12px;
-            margin-left: 4px;
+        .addToPlaylist-wrapper {
+          display: flex;
+          align-items: center;
+  
+          .input-field {
+            width: 20vw;
+          }
+  
+          .load-btn, .addToPlaylist-btn {
+              padding: 6.5px 12px;
+              margin-left: 4px;
+          }
         }
       }
     }

@@ -4,6 +4,7 @@ export const production = {
   googleApiKey: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw",
   peerhost: "ytwatch.party",
   peerhostport:"443",
+  securepeer:true,
 }
 
 export const development = {
@@ -12,6 +13,7 @@ export const development = {
   googleApiKey: "AIzaSyBnQYcaj09zjH_6qY1vHuMBPGcNk0Dw7aw",
   peerhost:"localhost",
   peerhostport:"3001",
+  securepeer:false,
 }
 
 /**

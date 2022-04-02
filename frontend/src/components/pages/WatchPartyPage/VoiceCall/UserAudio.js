@@ -4,7 +4,7 @@ import * as UserAPI from 'api/user';
 
 export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     const [avatar, setAvatar] = useState(null);
-    const [isStreamed, setStreamed ] = useState(false);
+    // const [isStreamed, setStreamed ] = useState(false);
 
     let loopFn = null;
     let audioSrc = null;
@@ -12,13 +12,14 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     const audioCtx = new AudioContext(); 
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
     
     const loopingFunction = () => {
         analyser.getByteFrequencyData(data);
-        let avgFreq = data.reduce((partialSum, x) => partialSum + x, 0) / data.length;
-        // let maxFreq = Math.max(...data);
-        // if (maxFreq > 100) {
-        if (avgFreq > 7) {
+        // let avgFreq = data.reduce((partialSum, x) => partialSum + x, 0) / data.length;
+        let maxFreq = Math.max(...data);
+        if (maxFreq > 95) {
+        // if (avgFreq > 5) {
             if (document.getElementById(`${userid}-audio-icon`)) {
                 document.getElementById(`${userid}-audio-icon`).style.border = '2.5px solid green';
             }
@@ -30,15 +31,15 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     };
     
     useEffect(()=> {
-        let audio = document.getElementById(userid+"-audio");
-        audio.addEventListener("loadeddata",() => {
-            if (clientid !== userid) {
-                if(stream && !isStreamed) {
-                    analyser.connect(audioCtx.destination); // so that user doesn't hear himself
-                    setStreamed(true);
-                }
-            }
-        });
+        // let audio = document.getElementById(userid+"-audio");
+        // audio.addEventListener("loadeddata",() => {
+        //     if (clientid !== userid) {
+        //         if(stream && !isStreamed) {
+        //             analyser.connect(audioCtx.destination); // so that user doesn't hear himself
+        //             setStreamed(true);
+        //         }
+        //     }
+        // });
         
         UserAPI.getAvatar(user, (avatar) => {
             setAvatar(avatar);
@@ -60,9 +61,12 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
             audio.srcObject = stream;
             audioSrc = audioCtx.createMediaStreamSource(stream);
             audioSrc.connect(analyser);
-            if (clientid !== userid && !isStreamed) {
-                analyser.connect(audioCtx.destination);
-                setStreamed(true);
+            // if (clientid !== userid && !isStreamed) {
+            //     analyser.connect(audioCtx.destination);
+            //     setStreamed(true);
+            // }
+            if (clientid !== userid) {
+                analyser.connect(audioCtx.destination); // to prevent audio feedback for current user
             }
             data = new Uint8Array(analyser.frequencyBinCount);
             loopFn = setInterval(() => {
