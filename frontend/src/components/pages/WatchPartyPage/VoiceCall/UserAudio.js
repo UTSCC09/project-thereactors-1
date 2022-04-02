@@ -4,8 +4,8 @@ import * as UserAPI from 'api/user';
 
 export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     const [avatar, setAvatar] = useState(null);
-    // const [isStreamed, setStreamed ] = useState(false);
 
+    /* vars used to analyse audio frequencies passed from the stream */
     let loopFn = null;
     let audioSrc = null;
     let data = new Uint8Array();
@@ -16,10 +16,8 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
     
     const loopingFunction = () => {
         analyser.getByteFrequencyData(data);
-        // let avgFreq = data.reduce((partialSum, x) => partialSum + x, 0) / data.length;
         let maxFreq = Math.max(...data);
         if (maxFreq > 95) {
-        // if (avgFreq > 5) {
             if (document.getElementById(`${userid}-audio-icon`)) {
                 document.getElementById(`${userid}-audio-icon`).style.border = '2.5px solid green';
             }
@@ -30,55 +28,43 @@ export const UserAudio = ({ thisUser: { user, userid ,stream }, clientid})  => {
         }
     };
     
-    useEffect(()=> {
-        // let audio = document.getElementById(userid+"-audio");
-        // audio.addEventListener("loadeddata",() => {
-        //     if (clientid !== userid) {
-        //         if(stream && !isStreamed) {
-        //             analyser.connect(audioCtx.destination); // so that user doesn't hear himself
-        //             setStreamed(true);
-        //         }
-        //     }
-        // });
-        
+    useEffect(() => {        
         UserAPI.getAvatar(user, (avatar) => {
             setAvatar(avatar);
         });
         
         return () => {
             clearInterval(loopFn);
-            if(document.getElementById(`${user}-audio-icon`))
-                document.getElementById(`${user}-audio-icon`).style.border = 'none';
+            if (document.getElementById(userid+"-audio-avatar")) {
+                document.getElementById(userid+"-audio-avatar").removeChild(document.getElementById(userid+"-audio-avatar").firstElementChild);
+            }
             analyser.disconnect();
-            if(audioSrc)
+            if(audioSrc) {
                 audioSrc.disconnect();
+            }
         }
     },[]);
     
-    useEffect(()=>{
+    useEffect(() => {
         if (stream) {
             let audio = document.getElementById(userid+"-audio");
             audio.srcObject = stream;
             audioSrc = audioCtx.createMediaStreamSource(stream);
             audioSrc.connect(analyser);
-            // if (clientid !== userid && !isStreamed) {
-            //     analyser.connect(audioCtx.destination);
-            //     setStreamed(true);
-            // }
             if (clientid !== userid) {
                 analyser.connect(audioCtx.destination); // to prevent audio feedback for current user
             }
             data = new Uint8Array(analyser.frequencyBinCount);
             loopFn = setInterval(() => {
                 loopingFunction();
-            }, 500);
+            }, 300);
         }
     }, [stream]);
 
     return (
         <>
         {avatar && 
-            <div className='audio-avatar'>
+            <div id={userid+"-audio-avatar"} className='audio-avatar'>
             <Avatar src={avatar} id={userid+"-audio-icon"} className='icon' title={user} />
             </div>
         }
