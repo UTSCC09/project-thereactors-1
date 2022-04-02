@@ -189,7 +189,7 @@ export default function ProfilePage() {
                     <TextField
                         className={theme === 'dark' ? 'textfield textfield-dark' : 'textfield'}
                         size='small'
-                        value={newUser.password}
+                        value={newPassword}
                         type='password'
                         inputProps={{ minLength: 8 }}
                         onChange={(e)=>setNewPassword(e.target.value)}
