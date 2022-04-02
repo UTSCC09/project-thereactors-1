@@ -82,7 +82,8 @@ For the dynamic aspects and the main feature of our application, it is found in 
     - The chat includes an input that will emit a socket event to send the message to the server.
         - When the user receives the message from the server, it will update the messages.
 - The video uses the React-Player library (https://www.npmjs.com/package/react-player) which provides an interface for playing youtube videos inside an iframe and allowing controls and video progress updates.
-    - These updates will be emitted to the server where it can tell clients (other users) to play, pause, or update their progress.
+    - Proper validation is done on the video url before playing it to ensure that it's a valid youtube link.
+    - The video progress updates will be emitted to the server where it can tell clients (other users) to play, pause, or update their progress.
 - The user can click on emotes to display a specific emote on the video as a way to react to the video content. 
     - To sync the current user's emote to all the other users, a signal is sent to the server, that will then send an emote signal similar to all other users, similar to how we implemented instant messaging. 
     - Coordinates x,y of the emotes are also sent so that all the users will have the emotes appear at the same location on the video.
