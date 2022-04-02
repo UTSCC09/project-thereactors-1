@@ -186,4 +186,5 @@ Emile Li Tim Cheong: Was in charge of anything UI/UX related, i.e. placing and d
 
 **Task:** Any additional comment you want to share with the course staff?
 
-Darkmode is implemented for this site for easy viewing and good cinematic experience when watching videos.
+- For testing purposes as a single user, using a normal browser window and an incognito one should enable the tester to sign in as two different users in order to test the virtual room features.
+- Darkmode is implemented for this site for easy viewing and good cinematic experience when watching videos.
