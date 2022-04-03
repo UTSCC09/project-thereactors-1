@@ -24,14 +24,19 @@ export default function JoinPartyPage() {
         }
     }
 
-
+    let errTimeout;
     const joinRoom = (e, id, code) => {
         e.preventDefault();
-        setPartyCode('');
         // redirect to generated room
-        PartyAPI.joinParty(id, code, (err, res)=> {
+        PartyAPI.joinParty(id, code, (err, res) => {
             if (err) {
-                console.log(err);
+                document.getElementById('join-err-msg').style.visibility = 'visible';
+                document.getElementById('join-err-msg').innerHTML = 'Invalid ID or password!';
+                clearTimeout(errTimeout);
+                errTimeout = setTimeout(() => {
+                    document.getElementById('join-err-msg').style.visibility = 'hidden';
+                    document.getElementById('join-err-msg').innerHTML = '';
+                }, 4000);
             } else {
                 history.push('party?id=' + res._id);
             }
@@ -80,6 +85,7 @@ export default function JoinPartyPage() {
                     onChange={(e)=>setPartyCode(e.target.value)}
                     required
                 />
+                <div id='join-err-msg' style={{color:'red',visibility:'hidden',marginTop:'10px'}}></div>
                 <div><Button type='submit' className='btn'  variant='outlined' size='small'>join</Button></div>
                 </form>
                 </div>

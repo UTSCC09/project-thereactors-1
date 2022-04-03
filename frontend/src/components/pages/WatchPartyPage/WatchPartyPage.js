@@ -76,14 +76,6 @@ export default function WatchPartyPage() {
             setEmoteListInnerHeight(emoteListEl1.width);
         }
 
-        if (new URLSearchParams(window.location.search).get("id")) {
-            if (authAPI.signedIn())
-                getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
-            else 
-                window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
-        } else {
-            window.location.href = '/join';
-        }
         getSocket().off('connect');
         getSocket().off('curr_users');
         getSocket().off('host');
@@ -94,9 +86,13 @@ export default function WatchPartyPage() {
         getSocket().off('emote');
         getSocket().off('user-left');
 
-        getSocket().on('connect', () => {
-           getSocket().emit('rejoin-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+        if (authAPI.signedIn()){
+            getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
+        }
+        getSocket().on('password-missing',()=> {
+            window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
         });
+        
         getSocket().on('curr_users',(usernames)=> {
             let tempUsers = [];
             usernames.forEach((name, index) => {
@@ -119,9 +115,6 @@ export default function WatchPartyPage() {
             setOriginalHost(originalHost);
         });
 
-        getSocket().on('password-missing',()=> {
-            window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
-        });
         // playlist and video updates handling 
         getSocket().on('update-progress',(party_video_state)=> {
             handleUpdateProgress(party_video_state);
@@ -159,10 +152,6 @@ export default function WatchPartyPage() {
         getSocket().on("joined",chat_history => {
             setMessages(()=>[...chat_history]);
         });
-
-        if (authAPI.signedIn()){
-            getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
-        }
     }, []);
 
 
@@ -350,18 +339,14 @@ export default function WatchPartyPage() {
         }
     }
 
-    const getAvatar = (username) => {
-        if(connectedUsers[connectedUsers.findIndex(user => user.username === username)]) {
-            return connectedUsers[connectedUsers.findIndex(user => user.username === username)].avatar;
-        } else {
-            return '';
-        }
+    const getAvatar = (username, userlist) => {
+        return userlist[userlist.findIndex(user => user.username === username)].avatar;
     }
 
     return (
         <div className="watch-party-page">
             <div className='col1'>
-                {connectedUsers?.length > 0 && host !== '' &&
+                {connectedUsers?.length > 0 && host !== '' && connectedUsers.some(x => x.username === host) &&
                     <SidePanel 
                         playlistData={{playlist:playlist, currentIdx:playlist_index, host:host}}
                         usersData={{users:getUsersRightOrder(connectedUsers), host:host, originalHost:originalHost}}
@@ -413,9 +398,9 @@ export default function WatchPartyPage() {
                 <div className='desc-row'>
                     <div className='host'>
                         <span style={{marginRight: 4}}>Host:</span>
-                        {connectedUsers?.length > 0 && host !== '' &&
+                        {connectedUsers?.length > 0 && host !== '' && connectedUsers.some(x => x.username === host) &&
                             <>
-                            <Avatar src={getAvatar(host)} style={{marginRight: 4}} title={host} className='host-icon' />
+                            <Avatar src={getAvatar(host, connectedUsers)} style={{marginRight: 4}} title={host} className='host-icon' />
                             <p>{host}</p>
                             </>
                         }
