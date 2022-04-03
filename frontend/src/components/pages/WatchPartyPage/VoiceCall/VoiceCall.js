@@ -149,7 +149,7 @@ export default function VoiceCall({ videoHeight }) {
 
     const handleGetStream = (stream, userid) => {
       let index = userlist.findIndex((obj) => obj.userid === userid);
-      if (index != -1) {
+      if (index !== -1) {
         setuserlist((prev) => {
           return updatestream(prev, stream, userid);
         });
@@ -161,7 +161,7 @@ export default function VoiceCall({ videoHeight }) {
     getSocket().on("user-id-map", (data, username) => {
       let tmp = data;
       let index = tmp.findIndex((obj) => obj.user === username);
-      if (index != -1) {
+      if (index !== -1) {
         tmp[index].stream = localStream;
       }
       setuserlist(tmp);
