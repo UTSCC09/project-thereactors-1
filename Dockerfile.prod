@@ -17,6 +17,7 @@ RUN npm run build
 WORKDIR /usr/src/app
 COPY backend /usr/src/app/backend
 WORKDIR /usr/src/app/backend
+RUN mkdir uploads
 RUN npm install
 RUN npm run build
 
