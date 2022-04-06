@@ -9,7 +9,7 @@
 
 ## Project URL
 
-- https://ytwatch.party/
+https://ytwatch.party/
 
 
 ## Project Video URL
