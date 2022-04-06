@@ -136,9 +136,12 @@ We are using the DigitalOcean Droplet VM for deployment. We build our applicatio
 2. After the image is built, we login to the VM by SSH and pull the latest image using `docker compose pull`.
 3. And lastly, we use `docker compose up -d` to restart the containers.
 
+The Nginx configuration file and the docker-compose.yml file to start the containers can be found [here](./DEPLOY.md).
+
 ### Load Balancing
 
 We use Nginx as a reverse proxy for load balancing. Another reason why we choose Nginx is it integrates well with Certbot and we do not need extra configurations for setting up HTTPS.
+
 ### HTTPS
 
 We use Certbot (Let's Encrypt) to certify our application.
