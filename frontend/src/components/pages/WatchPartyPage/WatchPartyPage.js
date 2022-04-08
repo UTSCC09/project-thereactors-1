@@ -45,12 +45,33 @@ export default function WatchPartyPage() {
     ];
     const [emoteListInnerHeight, setEmoteListInnerHeight] = useState(0);
     const [messages, setMessages] = useState([]);
+    const [joined, setJoined] = useState(false); 
 
     useEffect(() => {
         return history.listen(() => { 
             disconnectSocket();
         }) 
-     },[history]);
+    },[history]);
+
+    useEffect(() => {
+        if (joined) {
+            const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
+            setVideoWidth(vidWrapperBox.width);
+            setVideoHeight((vidWrapperBox.width / 16) * 9);
+
+            const emoteListEl = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
+            setEmoteListInnerHeight(emoteListEl.width);
+
+            window.onresize = () => {
+                const vidWrapperBox1 = document.getElementById('video-player-wrapper').getBoundingClientRect();
+                setVideoWidth(vidWrapperBox1.width);
+                setVideoHeight((vidWrapperBox1.width / 16) * 9);
+
+                const emoteListEl1 = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
+                setEmoteListInnerHeight(emoteListEl1.width);
+            }
+        }
+    }, [joined])
 
     useEffect(() => {
         if (localStorage.getItem('theme')) {
@@ -59,22 +80,6 @@ export default function WatchPartyPage() {
         document.addEventListener('themeChange', () => {
             setTheme(localStorage.getItem('theme'));
         });
-
-        const vidWrapperBox = document.getElementById('video-player-wrapper').getBoundingClientRect();
-        setVideoWidth(vidWrapperBox.width);
-        setVideoHeight((vidWrapperBox.width / 16) * 9);
-
-        const emoteListEl = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
-        setEmoteListInnerHeight(emoteListEl.width);
-
-        window.onresize = () => {
-            const vidWrapperBox1 = document.getElementById('video-player-wrapper').getBoundingClientRect();
-            setVideoWidth(vidWrapperBox1.width);
-            setVideoHeight((vidWrapperBox1.width / 16) * 9);
-
-            const emoteListEl1 = document.querySelector('.emote-list-wrapper').getBoundingClientRect();
-            setEmoteListInnerHeight(emoteListEl1.width);
-        }
 
         getSocket().off('connect');
         getSocket().off('curr_users');
@@ -89,9 +94,13 @@ export default function WatchPartyPage() {
         if (authAPI.signedIn()){
             getSocket().emit('join-room', { roomname: new URLSearchParams(window.location.search).get("id")});
         }
-        getSocket().on('password-missing',()=> {
-            window.location.href= '/join?id='+ new URLSearchParams(window.location.search).get("id");
-        });
+        getSocket().on('join-status', (data) => {
+            if (data.joined) {
+                setJoined(true);
+            } else {
+                window.location.href = '/join?id=' + new URLSearchParams(window.location.search).get("id");
+            }
+        })
         
         getSocket().on('curr_users',(usernames)=> {
             let tempUsers = [];
@@ -344,6 +353,8 @@ export default function WatchPartyPage() {
     }
 
     return (
+        <>
+        {joined &&         
         <div className="watch-party-page">
             <div className='col1'>
                 {connectedUsers?.length > 0 && host !== '' && connectedUsers.some(x => x.username === host) &&
@@ -453,5 +464,7 @@ export default function WatchPartyPage() {
             </div>
             <div className={theme === 'dark' ? 'padding-col-dark' : 'padding-col'}></div>
         </div>
+        }
+        </>
     )
 }
