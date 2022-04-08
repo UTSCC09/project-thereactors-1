@@ -133,9 +133,10 @@ export function setupSocketHandlers(io) {
               console.log("new user");
               socketJoinRoom(io, socket, roomdata);
             }
+            socket.emit("join-status", {joined: true});
           }
           if (err) {
-            socket.emit("password-missing");
+            socket.emit("join-status", {joined: false});
           }
         });
       }
